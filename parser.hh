@@ -2,8 +2,27 @@
 #define __HEX_PARSER__
 
 #include <fstream>
+#include <string>
+#include <iostream>
 
 using namespace std;
+
+/**
+ * Validate if the upcoming hex value is the same as hexStr.
+ * @param the input file stream.
+ * @param the hex string used for validation.
+ * @param true if the pointer should rewind to the position before this
+ *        function is called.
+ * @return 0 if validated; 1 if not validated; -1 check errno.
+ */
+int validateHexBlock(ifstream &myfile, string hexStr, bool rewind);
+
+/**
+ * Rewind file pointer by rewindBytes.
+ * @param the input file stream.
+ * @param Bytes need to be rewinded (Number in POSITIVE)
+ */
+void goRewind(ifstream &myfile, int rewindBytes);
 
 /**
  * Move the file pointer bytesMoved bytes.
