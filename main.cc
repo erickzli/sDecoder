@@ -1,21 +1,40 @@
 #include <iostream>
 #include "parser.hh"
-
-using namespace std;
+#include "json_writer.hh"
 
 int main(int argc, char **argv) {
-    ifstream myfile;
-    myfile.open("BFiles/test_double", ios::binary | ios::in);
+    if (argc != 3) {
+        std::cout << "Input Format:" << std::endl;
+        std::cout << "./main [input_filename] [output_json_filename]" << std::endl;
+        exit(1);
+    }
+    std::string infile_name = argv[1];
+    std::string outfile_name = argv[2];
 
-    if (myfile.is_open()) {
+    std::ifstream infile;
+    std::ofstream outfile;
+
+    infile.open("BFiles/" + infile_name, std::ios::binary | std::ios::in);
+
+    if (infile.is_open()) {
         // Check if the version of style file is parseable.
-        int s = validateHexBlock(myfile, "04E6147992C8D0", false);
+        int s = validateHexBlock(infile, "04E6147992C8D0", false);
         if (s == 1) {
-            cout << "ERROR: Check style file version." << endl;
+            std::cout << "ERROR: Check style file version." << std::endl;
+            outfile.write("ERROR\n", 7);
+            outfile.close();
             return 1;
         } else {
-            cout << "LOG: File version is validated." << endl;
+            std::cout << "File version is validated." << std::endl;
         }
+
+        outfile.open("Outfiles/" + outfile_name + ".json", std::ios::out);
+        write_to_json(outfile, "", "{", 0, 2);
+
+        // Move infile pointer 28 bytes to skip the header metadata.
+        movePointer(infile, 28);
+
+        parse_color(infile, outfile);
     }
 
     return 0;

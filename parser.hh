@@ -1,56 +1,32 @@
-#ifndef __HEX_PARSER__
-#define __HEX_PARSER__
+#ifndef __PARSER__
+#define __PARSER__
 
-#include <fstream>
-#include <string>
-#include <iostream>
-
-using namespace std;
+#include "parser_helper.hh"
 
 /**
- * Validate if the upcoming hex value is the same as hexStr.
+ * Parser the binary block where it defines a color pattern
  * @param the input file stream.
- * @param the hex string used for validation.
- * @param true if the pointer should rewind to the position before this
- *        function is called.
- * @return 0 if validated; 1 if not validated; -1 check errno.
  */
-int validateHexBlock(ifstream &myfile, string hexStr, bool rewind);
+int parse_color(std::ifstream &infile, std::ofstream &outfile);
+
 
 /**
- * Rewind file pointer by rewindBytes.
+ * Parser the binary block where it defines a line pattern
  * @param the input file stream.
- * @param Bytes need to be rewinded (Number in POSITIVE)
  */
-void goRewind(ifstream &myfile, int rewindBytes);
+int parse_line(std::ifstream &infile, std::ofstream &outfile);
 
 /**
- * Move the file pointer bytesMoved bytes.
+ * Parser the binary block where it defines a marker pattern
  * @param the input file stream.
- * @param the amount of bytes the pointer moves.
  */
-void movePointer(ifstream &myfile, int bytesMoved);
+int parse_marker(std::ifstream &infile, std::ofstream &outfile);
 
 /**
- * Get the character integer value (8-bit) from the current position.
+ * Parser the binary block where it defines a double value
  * @param the input file stream.
- * @return the integer-type value of the character gotten.
  */
-int getChar(ifstream &myfile);
-
-/**
- * Get the integer value (32-bit) from the current position.
- * @param the input file stream.
- * @return the integer.
- */
-int getInt(ifstream &myfile);
-
-/**
- * Get the double value from the current position.
- * @param the input file stream.
- * @return the double value.
- */
-double getDouble(ifstream &myfile);
+int parse_double(std::ifstream &infile, std::ofstream &outfile);
 
 
 #endif
