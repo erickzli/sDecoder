@@ -1,7 +1,6 @@
 #include "json_writer.hh"
 
-void write_to_json(std::ofstream &jsonfile, std::string tag, std::string buf,
-                   int level, int type) {
+void write_to_json(std::ofstream &jsonfile, std::string tag, std::string buf, int level) {
     std::string output = "";
 
     // Insert indention for the line.
@@ -11,21 +10,10 @@ void write_to_json(std::ofstream &jsonfile, std::string tag, std::string buf,
 
     // If it has a tag -- `"tag": `
     if (0 != tag.length()) {
-        output += "\"" + tag + "\": ";
-
-        switch(type) {
-            // non-string
-            case 1:
-                output += buf + "\n";
-                break;
-            // string
-            case 2:
-                output += "\"" + buf + "\"\n";
-                break;
-            default:
-                std::cout << "What!" << std::endl;
-        }
+        output += ("\"" + tag + "\": ");
     }
+
+    output +=  buf + "\n";
 
     // flush output to json.
     jsonfile << output;

@@ -8,6 +8,13 @@ int main(int argc, char **argv) {
 
 	cout << to_string(num) << endl;
 	cout << argc << endl;
+
+	ofstream f;
+	f.open("test.txt", ios::out);
+	f << "hello" << endl;
+
+	f.close();
+
 	return 0;
 }
 

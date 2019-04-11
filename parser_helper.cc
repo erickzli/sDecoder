@@ -1,6 +1,6 @@
 #include "parser_helper.hh"
 
-int validateHexBlock(std::ifstream &infile, std::string hexStr, bool rewind) {
+int hexValidation(std::ifstream &infile, std::string hexStr, bool rewind) {
     int size = hexStr.length();
     // If the length of the hex string is not even, something is wrong...
     if (0 != size % 2)
@@ -13,9 +13,7 @@ int validateHexBlock(std::ifstream &infile, std::string hexStr, bool rewind) {
         int num2 = getChar(infile);
         currIdx += 2;
         remain -= 2;
-        std::cout << "num1: " << num1 << std::endl;
-        std::cout << "num2: " << num2 << std::endl;
-        std::cout << "curridx: " << currIdx << std::endl;
+
         if (num1 != num2) {
             if (rewind)
                 goRewind(infile, currIdx);
@@ -38,8 +36,8 @@ void movePointer(std::ifstream &infile, int bytesMoved) {
 }
 
 int getChar(std::ifstream &infile) {
-    char reader = 'a';
-    infile.read((char *)&reader, sizeof(char));
+    unsigned char reader = 'a';
+    infile.read((char *)&reader, sizeof(unsigned char));
     return (int)reader;
 }
 

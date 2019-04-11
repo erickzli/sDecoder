@@ -18,24 +18,40 @@ int main(int argc, char **argv) {
 
     if (infile.is_open()) {
         // Check if the version of style file is parseable.
-        int s = validateHexBlock(infile, "04E6147992C8D0", false);
+        int s = hexValidation(infile, "04E6147992C8D011", true);
         if (s == 1) {
             std::cout << "ERROR: Check style file version." << std::endl;
             outfile.write("ERROR\n", 7);
             outfile.close();
-            return 1;
+            exit(1);
         } else {
             std::cout << "File version is validated." << std::endl;
         }
 
         outfile.open("Outfiles/" + outfile_name + ".json", std::ios::out);
-        write_to_json(outfile, "", "{", 0, 2);
 
-        // Move infile pointer 28 bytes to skip the header metadata.
-        movePointer(infile, 28);
+        write_to_json(outfile, "", "{", 0);
+        // Move infile pointer 26 bytes to skip the header metadata.
+        movePointer(infile, 26);
+        // Parse the first color pattern. Usage so far is unknown...
+        parse_color(infile, outfile, "unknownColor", 1, PRINT_TO_FILE);
+        // Parse out the number of layers...
+        int num_of_layers = parse_layer_number(infile, outfile, 1, PRINT_TO_FILE);
+        // Test if the number of layers behaves weird...
+        if (-1 == num_of_layers)
+            exit(1);
 
-        parse_color(infile, outfile);
+        // Start parsing each layer.
+        for (int i = 0; i < num_of_layers; i++) {
+            write_to_json(outfile, "layerNumber", std::to_string(i) + ",", 1);
+            parse_layer(infile, outfile, 1, PRINT_TO_FILE);
+        }
+
+        write_to_json(outfile, "", "}", 0);
     }
+
+    infile.close();
+    outfile.close();
 
     return 0;
 }

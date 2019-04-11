@@ -13,7 +13,7 @@
  *        function is called.
  * @return 0 if validated; 1 if not validated; -1 check errno.
  */
-int validateHexBlock(std::ifstream &infile, std::string hexStr, bool rewind);
+int hexValidation(std::ifstream &infile, std::string hexStr, bool rewind);
 
 /**
  * Rewind file pointer by rewindBytes.
