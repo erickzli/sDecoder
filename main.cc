@@ -47,6 +47,7 @@ int main(int argc, char **argv) {
         }
 
         write_to_json(outfile, "", "}", 0);
+        std::cout << "DONE :-)" << std::endl;
     }
 
     infile.close();

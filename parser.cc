@@ -12,25 +12,21 @@ int parseLayer(std::ifstream &infile, std::ofstream &outfile, int level, int lay
     std::string filling_type_name = "";
 
     if (3 == filling_type) {
-        filling_type_name = "Simple";
-    } else if (6 == filling_type) {
-        filling_type_name = "Line";
-    } else if (8 == filling_type) {
-        filling_type_name = "Marker";
-    } else {
-        std::cout << "ERROR: Filling type not support or the file has problems." << std::endl;
-        return -1;
-    }
-
-    if (3 == filling_type) {
         parseSimpleFill(infile, outfile, level + 1, PRINT_TO_FILE);
     } else if (6 == filling_type) {
         parseLineFill(infile, outfile, level + 1, PRINT_TO_FILE);
     } else if (8 == filling_type) {
         parseMarkerFill(infile, outfile, level + 1, PRINT_TO_FILE);
+    } else {
+        std::cout << "ERROR: Filling type not support or the file has problems." << std::endl;
+        return -1;
     }
 
-    write_to_json(outfile, "", "}", level);
+    // Parse the tail pattern of the layer...
+    parseTailPattern(infile, 3);
+
+
+    write_to_json(outfile, "", "},", level);
 
     return 0;
 }
@@ -75,7 +71,7 @@ int parseColorPattern(std::ifstream &infile, std::ofstream &outfile, std::string
     } else if (150 == color_space) {
             std::cout << "Color Space: RGB." << std::endl;
         } else {
-            std::cout << "ERROR: Color Space not found." << std::endl;
+            std::cout << "ERROR: Color Space " << std::to_string(color_space) << " not found." << std::endl;
             return -1;
         }
         moveBytes(infile, 20);
@@ -151,6 +147,24 @@ int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
 
 
 int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    std::cout << "---------------------------" << std::endl;
+    std::cout << "Filling type: Line Fill" << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "fillingType", "\"Line Fill\",", level);
+    }
+
+    // Validate if the header is there.
+    if (0 != hexValidation(infile, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+        std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
+        return -1;
+    }
+
+    moveBytes(infile, 18);
+    parseLinePattern(infile, outfile, "Filling Line", level, printToFile);
+    parseLinePattern(infile, outfile, "Outline", level, printToFile);
+    parseDouble(infile, outfile, "angle", level, printToFile);
+    parseDouble(infile, outfile, "Offset", level, printToFile);
+    parseDouble(infile, outfile, "separation", level, printToFile);
 
     return 0;
 }
@@ -164,13 +178,15 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, std::string 
     std::cout << "START parsing line" << std::endl;
     if (printToFile) {
         write_to_json(outfile, "lineProperties", "{", level);
-        write_to_json(outfile, "name", "\"Outline\",", level + 1);
+        write_to_json(outfile, "name", "\"" + property + "\",", level + 1);
     }
     int line_type = getChar(infile);
+
     if (250 == line_type) {
         moveBytes(infile, 29);
+        line_type = getChar(infile);
     }
-    line_type = getChar(infile);
+
     moveBytes(infile, 17);
     switch(line_type) {
         case 249:
@@ -186,12 +202,22 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, std::string 
             parseMarkerLine(infile, outfile, level + 1, printToFile);
             break;
         default:
-            std::cout << "ERROR: Unknown line type...";
+            std::cout << "ERROR: Line type " << std::to_string(line_type) << " not found." << std::endl;
             return -1;
     }
 
     if (printToFile) {
-        write_to_json(outfile, "", "}", level);
+        write_to_json(outfile, "", "},", level);
+    }
+
+    // Ignore the tail pattern.
+    if (property == "Outline") {
+        parseTailPattern(infile, 1);
+    } else if (property == "Filling Line") {
+        parseTailPattern(infile, 2);
+    } else {
+        std::cout << "ERROR: Invalid line property..." << std::endl;
+        return -1;
     }
 
     return 0;
@@ -202,30 +228,28 @@ int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bo
     if (printToFile) {
         write_to_json(outfile, "type", "\"Simple Line\",", level);
     }
-    parseColorPattern(infile, outfile, "Outline Color", level, printToFile);
+    parseColorPattern(infile, outfile, "Line Color", level, printToFile);
     parseDouble(infile, outfile, "width", level, printToFile);
     parseLineStyle(infile, outfile, level, printToFile);
-    // Ignore the tail pattern.
-    moveBytes(infile, 7);
 
     return 0;
 }
 
 int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
-
+    return 0;
 }
 
 int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
-
+    return 0;
 }
 
 int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
-
+    return 0;
 }
 
 double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile) {
     double val = getDouble(infile);
-    std::cout << "Got " + tag + " is: " + std::to_string(val) << std::endl;
+    std::cout << tag + " is: " + std::to_string(val) << std::endl;
     if (printToFile) {
         write_to_json(outfile, tag, std::to_string(val) + ",", level);
     }
@@ -260,22 +284,29 @@ int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, boo
             return -1;
     }
 
+    std::cout << "The line style is " << line_style_name << std::endl;
     if (printToFile) {
         write_to_json(outfile, "style", "\"" + line_style_name + "\",", level);
     }
 
-    moveBytes(infile, 4);
+    moveBytes(infile, 3);
 
     return line_style_code;
 }
 
-int parseTailPattern(std::ifstream &infile) {
-    int oneByte = 0;
-
-    // NOTE: So far, no logical rules has been found for the tail pattern.
-    while (oneByte < 9) {
-        oneByte = getChar(infile);
+int parseTailPattern(std::ifstream &infile, int type) {
+    // OUTLINE
+    if (1 == type) {
+        moveBytes(infile, 22);
+    // LINE FILL
+    } else if (2 == type) {
+        moveBytes(infile, 8);
+    // FILL TAIL
+    } else if (3 == type) {
+        moveBytes(infile, 26);
+    } else {
+        std::cout << "ERROR: Not support this tail code..." << std::endl;
     }
-    // Go back to the previous byte for upcoming reading.
-    goRewind(infile, 1);
+
+    return 0;
 }

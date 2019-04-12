@@ -14,7 +14,7 @@
 			"name": "Outline",
 			"type": "Simple Line",
 			"color": {
-				"name": "Outline Color",
+				"name": "Line Color",
 				"space": "RGB",
 				"firstField": 44.615726,
 				"secondField": 68.063277,
@@ -22,8 +22,13 @@
 			},
 			"width": 2.000000,
 			"style": "Solid",
-		}
+		},
 		"color": {
 			"name": "Filling Color",
-	}
+			"space": "RGB",
+			"firstField": 75.098868,
+			"secondField": 11.291048,
+			"thirdField": 24.611984
+		},
+	},
 }

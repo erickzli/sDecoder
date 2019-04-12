@@ -80,6 +80,6 @@ int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bo
 
 int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
-int parseTailPattern(std::ifstream &infile);
+int parseTailPattern(std::ifstream &infile, int type);
 
 #endif
