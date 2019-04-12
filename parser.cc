@@ -264,6 +264,40 @@ double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string ta
     return val;
 }
 
+int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "START parsing template..." << std::endl;
+
+    // Validate if the header is there.
+    if (0 != hexValidation(infile, "713A0941E1CCD011BFAA0080C7E24280", !DO_REWIND)) {
+        std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
+        return -1;
+    }
+    moveBytes(infile, 2);
+
+    if (printToFile) {
+        write_to_json(outfile, "template", "{", level);
+    }
+    parseDouble(infile, outfile, "interval", level + 1, printToFile);
+    int num_of_patterns = getChar(infile);
+    moveBytes(infile, 3);
+
+    for (int i = 0; i < num_of_patterns; i++) {
+        if (printToFile) {
+            write_to_json(outfile, "cartoLine", "{", level);
+        }
+        parseDouble(infile, outfile, "patternLength", level + 1, printToFile);
+        parseDouble(infile, outfile, "gapLength", level + 1, printToFile);
+        if (printToFile) {
+            write_to_json(outfile, "", "},", level);
+        }
+    }
+
+    moveBytes(infile, 33);
+
+    return 0;
+}
+
 int parseLineCaps(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
     int line_caps_code = getChar(infile);
     std::string line_caps_name = "";
@@ -299,13 +333,13 @@ int parseLineJoins(std::ifstream &infile, std::ofstream &outfile, int level, boo
 
     switch(line_joins_code) {
         case 0:
-            line_joins_name = "Butt";
+            line_joins_name = "Miter";
             break;
         case 1:
             line_joins_name = "Round";
             break;
         case 2:
-            line_joins_name = "Square";
+            line_joins_name = "Bevel";
             break;
         default:
             std::cout << "ERROR: Line joins code " << line_joins_code << " not found."  << std::endl;
