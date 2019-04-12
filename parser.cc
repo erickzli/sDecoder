@@ -270,5 +270,12 @@ int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, boo
 }
 
 int parseTailPattern(std::ifstream &infile) {
-    
+    int oneByte = 0;
+
+    // NOTE: So far, no logical rules has been found for the tail pattern.
+    while (oneByte < 9) {
+        oneByte = getChar(infile);
+    }
+    // Go back to the previous byte for upcoming reading.
+    goRewind(infile, 1);
 }
