@@ -31,7 +31,7 @@ void goRewind(std::ifstream &infile, int bytesRewinded) {
     infile.seekg(-bytesRewinded, std::ios::cur);
 }
 
-void movePointer(std::ifstream &infile, int bytesMoved) {
+void moveBytes(std::ifstream &infile, int bytesMoved) {
     infile.seekg(bytesMoved, std::ios::cur);
 }
 

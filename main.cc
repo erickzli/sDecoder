@@ -32,19 +32,18 @@ int main(int argc, char **argv) {
 
         write_to_json(outfile, "", "{", 0);
         // Move infile pointer 26 bytes to skip the header metadata.
-        movePointer(infile, 26);
+        moveBytes(infile, 26);
         // Parse the first color pattern. Usage so far is unknown...
-        parse_color(infile, outfile, "unknownColor", 1, PRINT_TO_FILE);
+        parseColorPattern(infile, outfile, "Unknown", 1, PRINT_TO_FILE);
         // Parse out the number of layers...
-        int num_of_layers = parse_layer_number(infile, outfile, 1, PRINT_TO_FILE);
+        int num_of_layers = parseLayerNumber(infile, outfile, 1, PRINT_TO_FILE);
         // Test if the number of layers behaves weird...
         if (-1 == num_of_layers)
             exit(1);
 
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
-            write_to_json(outfile, "layerNumber", std::to_string(i) + ",", 1);
-            parse_layer(infile, outfile, 1, PRINT_TO_FILE);
+            parseLayer(infile, outfile, 1, 1, PRINT_TO_FILE);
         }
 
         write_to_json(outfile, "", "}", 0);

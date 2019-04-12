@@ -4,6 +4,7 @@
 #include "parser_helper.hh"
 
 const bool PRINT_TO_FILE = true;
+const bool DO_REWIND = true;
 
 /**
  * Parses the symbol flow, which is the largest and most essential pipeline in
@@ -13,7 +14,7 @@ const bool PRINT_TO_FILE = true;
  * \param the level(indention).
  * \param option for print to output file.
  */
-int parse_layer(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseLayer(std::ifstream &infile, std::ofstream &outfile, int level, int layer_no, bool printToFile);
 
 /**
  * Parses the binary block where it defines a color pattern
@@ -23,7 +24,7 @@ int parse_layer(std::ifstream &infile, std::ofstream &outfile, int level, bool p
  * \param the level(indention).
  * \param option for print to output file.
  */
-int parse_color(std::ifstream &infile, std::ofstream &outfile, std::string color_type,
+int parseColorPattern(std::ifstream &infile, std::ofstream &outfile, std::string color_type,
                 int level, bool printToFile);
 
 /**
@@ -36,7 +37,7 @@ int parse_color(std::ifstream &infile, std::ofstream &outfile, std::string color
  *    val > 0: the number of layers
  *    val == -1: something wrong...
  */
-int parse_layer_number(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseLayerNumber(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 
 /**
@@ -44,28 +45,41 @@ int parse_layer_number(std::ifstream &infile, std::ofstream &outfile, int level,
  * \param the input file stream.
  * \param the level(indention)
  */
-int parse_simple_fill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a line fill pattern
  * \param the input file stream.
  * \param the level(indention)
  */
-int parse_line_fill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a marker fill pattern
  * \param the input file stream.
  * \param the level(indention)
  */
-int parse_marker_fill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a double value
  * \param the input file stream.
  * \param the level(indention)
  */
-int parse_double(std::ifstream &infile, std::ofstream &outfile, int level);
+double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
 
+int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, std::string property, int level, bool printToFile);
+
+int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseTailPattern(std::ifstream &infile);
 
 #endif

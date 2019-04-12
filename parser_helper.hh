@@ -27,7 +27,7 @@ void goRewind(std::ifstream &infile, int rewindBytes);
  * @param the input file stream.
  * @param the amount of bytes the pointer moves.
  */
-void movePointer(std::ifstream &infile, int bytesMoved);
+void moveBytes(std::ifstream &infile, int bytesMoved);
 
 /**
  * Get the character integer value (8-bit) from the current position.

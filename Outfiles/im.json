@@ -1,0 +1,29 @@
+{
+	"color": {
+		"name": "Unknown",
+		"space": "RGB",
+		"firstField": 0.000000,
+		"secondField": 0.000000,
+		"thirdField": 0.000000
+	},
+	"numberOfLayers": 1,
+	"layer": {
+		"number": 1,
+		"fillingType": "Simple Fill",
+		"lineProperties": {
+			"name": "Outline",
+			"type": "Simple Line",
+			"color": {
+				"name": "Outline Color",
+				"space": "RGB",
+				"firstField": 44.615726,
+				"secondField": 68.063277,
+				"thirdField": -23.646208
+			},
+			"width": 2.000000,
+			"style": "Solid",
+		}
+		"color": {
+			"name": "Filling Color",
+	}
+}
