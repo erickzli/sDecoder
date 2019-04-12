@@ -236,13 +236,20 @@ int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bo
 }
 
 int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    std::cout << "Type: Cartographic Line..." << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "type", "\"Cartographic Line\",", level);
+    }
+
     parseLineCaps(infile, outfile, level, printToFile);
     parseLineJoins(infile, outfile, level, printToFile);
     parseDouble(infile, outfile, "width", level, printToFile);
     moveBytes(infile, 1);
     parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
     parseColorPattern(infile, outfile, "Line Color", level, printToFile);
-
+    parseTemplate(infile, outfile, level, printToFile);
+    // Tail pattern for carto line.
+    moveBytes(infile, 14);
 
     return 0;
 }
@@ -280,17 +287,22 @@ int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool
     }
     parseDouble(infile, outfile, "interval", level + 1, printToFile);
     int num_of_patterns = getChar(infile);
+    std::cout << "There is(are) " + std::to_string(num_of_patterns) + " patterns." << std::endl;
     moveBytes(infile, 3);
 
     for (int i = 0; i < num_of_patterns; i++) {
         if (printToFile) {
-            write_to_json(outfile, "cartoLine", "{", level);
+            write_to_json(outfile, "cartoLine", "{", level + 1);
         }
-        parseDouble(infile, outfile, "patternLength", level + 1, printToFile);
-        parseDouble(infile, outfile, "gapLength", level + 1, printToFile);
+        parseDouble(infile, outfile, "patternLength", level + 2, printToFile);
+        parseDouble(infile, outfile, "gapLength", level + 2, printToFile);
         if (printToFile) {
-            write_to_json(outfile, "", "},", level);
+            write_to_json(outfile, "", "},", level + 1);
         }
+    }
+
+    if (printToFile) {
+        write_to_json(outfile, "", "}", level);
     }
 
     moveBytes(infile, 33);
