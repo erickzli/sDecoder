@@ -78,6 +78,10 @@ int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool
 
 int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
+int parseLineCaps(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseLineJoins(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
 int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 int parseTailPattern(std::ifstream &infile, int type);

@@ -236,6 +236,14 @@ int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bo
 }
 
 int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    parseLineCaps(infile, outfile, level, printToFile);
+    parseLineJoins(infile, outfile, level, printToFile);
+    parseDouble(infile, outfile, "width", level, printToFile);
+    moveBytes(infile, 1);
+    parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
+    parseColorPattern(infile, outfile, "Line Color", level, printToFile);
+
+
     return 0;
 }
 
@@ -254,6 +262,64 @@ double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string ta
         write_to_json(outfile, tag, std::to_string(val) + ",", level);
     }
     return val;
+}
+
+int parseLineCaps(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    int line_caps_code = getChar(infile);
+    std::string line_caps_name = "";
+
+    switch(line_caps_code) {
+        case 0:
+            line_caps_name = "Butt";
+            break;
+        case 1:
+            line_caps_name = "Round";
+            break;
+        case 2:
+            line_caps_name = "Square";
+            break;
+        default:
+            std::cout << "ERROR: Line caps code " << line_caps_code << " not found."  << std::endl;
+            return -1;
+    }
+
+    std::cout << "The line cap is " << line_caps_name << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "lineCaps", "\"" + line_caps_name + "\",", level);
+    }
+
+    moveBytes(infile, 3);
+
+    return line_caps_code;
+}
+
+int parseLineJoins(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    int line_joins_code = getChar(infile);
+    std::string line_joins_name = "";
+
+    switch(line_joins_code) {
+        case 0:
+            line_joins_name = "Butt";
+            break;
+        case 1:
+            line_joins_name = "Round";
+            break;
+        case 2:
+            line_joins_name = "Square";
+            break;
+        default:
+            std::cout << "ERROR: Line joins code " << line_joins_code << " not found."  << std::endl;
+            return -1;
+    }
+
+    std::cout << "The line join is " << line_joins_name << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "lineJoins", "\"" + line_joins_name + "\",", level);
+    }
+
+    moveBytes(infile, 3);
+
+    return line_joins_code;
 }
 
 int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
@@ -280,7 +346,7 @@ int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, boo
             line_style_name = "Null";
             break;
         default:
-            std::cout << "ERROR: Cannot recognize the line style code..." << std::endl;
+            std::cout << "ERROR: Line style code " << line_style_code << " not found."  << std::endl;
             return -1;
     }
 
