@@ -14,7 +14,7 @@ const bool DO_REWIND = true;
  * \param the level(indention).
  * \param option for print to output file.
  */
-int parseLayer(std::ifstream &infile, std::ofstream &outfile, int level, int layer_no, bool printToFile);
+int parseLayer(std::ifstream &infile, std::ofstream &outfile, int type, int level, int layer_no, bool printToFile);
 
 /**
  * Parses the binary block where it defines a color pattern
@@ -45,7 +45,7 @@ int parseLayerNumber(std::ifstream &infile, std::ofstream &outfile, int level, b
  * \param the input file stream.
  * \param the level(indention)
  */
-int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a line fill pattern
@@ -68,6 +68,10 @@ int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
  */
 double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
 
+int parseInt(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
+
+int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
+
 int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, std::string property, int level, bool printToFile);
 
 int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
@@ -78,11 +82,17 @@ int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool
 
 int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
+int parseCharacterMarker(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
 int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 int parseLineCaps(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 int parseLineJoins(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseMaskTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+
+int parseMarkerTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 

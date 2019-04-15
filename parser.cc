@@ -1,18 +1,23 @@
 #include "parser.hh"
 #include "json_writer.hh"
 
-int parseLayer(std::ifstream &infile, std::ofstream &outfile, int level, int layer_no, bool printToFile) {
+int parseLayer(std::ifstream &infile, std::ofstream &outfile, int type, int level, int layer_no, bool printToFile) {
     std::cout << "-------------------------------" << std::endl;
     std::cout << "START parsing a symbol/layer..." << std::endl;
 
-    write_to_json(outfile, "layer", "{", level);
-    write_to_json(outfile, "number", std::to_string(layer_no) + ",", level + 1);
+    if (type == 0) {
+        write_to_json(outfile, "layer", "{", level);
+        write_to_json(outfile, "number", std::to_string(layer_no) + ",", level + 1);
+    } else {
+        write_to_json(outfile, "fillSymbol", "{", level);
+    }
+
 
     int filling_type = getChar(infile);
     std::string filling_type_name = "";
 
     if (3 == filling_type) {
-        parseSimpleFill(infile, outfile, level + 1, PRINT_TO_FILE);
+        parseSimpleFill(infile, outfile, type, level + 1, PRINT_TO_FILE);
     } else if (6 == filling_type) {
         parseLineFill(infile, outfile, level + 1, PRINT_TO_FILE);
     } else if (8 == filling_type) {
@@ -22,9 +27,12 @@ int parseLayer(std::ifstream &infile, std::ofstream &outfile, int level, int lay
         return -1;
     }
 
-    // Parse the tail pattern of the layer...
-    parseTailPattern(infile, 3);
-
+    if (type == 0) {
+        // Parse the tail pattern of the layer...
+        parseTailPattern(infile, 3);
+    } else {
+        moveBytes(infile, 17);
+    }
 
     write_to_json(outfile, "", "},", level);
 
@@ -126,7 +134,7 @@ int parseLayerNumber(std::ifstream &infile, std::ofstream &outfile, int level, b
 }
 
 
-int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile) {
     std::cout << "---------------------------" << std::endl;
     std::cout << "Filling type: Simple Fill" << std::endl;
     if (printToFile) {
@@ -139,7 +147,13 @@ int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
         return -1;
     }
     moveBytes(infile, 2);
-    parseLinePattern(infile, outfile, 0, "Outline", level, PRINT_TO_FILE);
+
+    if (type == 0) {
+        parseLinePattern(infile, outfile, 0, "Outline", level, PRINT_TO_FILE);
+    } else {
+        parseLinePattern(infile, outfile, 0, "Filling Line", level, PRINT_TO_FILE);
+    }
+
     parseColorPattern(infile, outfile, "Filling Color", level, PRINT_TO_FILE);
 
     return 0;
@@ -158,8 +172,8 @@ int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool
         std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
         return -1;
     }
-
     moveBytes(infile, 18);
+
     parseLinePattern(infile, outfile, 0, "Filling Line", level, printToFile);
     parseLinePattern(infile, outfile, 0, "Outline", level, printToFile);
     parseDouble(infile, outfile, "angle", level, printToFile);
@@ -170,6 +184,30 @@ int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool
 }
 
 int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    std::cout << "---------------------------" << std::endl;
+    std::cout << "Filling type: Marker Fill" << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "fillingType", "\"Marker Fill\",", level);
+    }
+
+    // Validate if the header is there.
+    if (0 != hexValidation(infile, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+        std::cout << "ERROR: Fail to validate Simple Fill pattern header..." << std::endl;
+        return -1;
+    }
+    moveBytes(infile, 2);
+
+    parseMarkerTypes(infile, outfile, level, printToFile);
+    parseDouble(infile, outfile, "fillPropertiesOffsetX", level, printToFile);
+    parseDouble(infile, outfile, "fillPropertiesOffsetY", level, printToFile);
+    parseDouble(infile, outfile, "fillPropertiesSeparationX", level, printToFile);
+    parseDouble(infile, outfile, "fillPropertiesSeparationY", level, printToFile);
+    moveBytes(infile, 16);
+
+    parseCharacterMarker(infile, outfile, level, printToFile); // TODO...
+
+    parseLinePattern(infile, outfile, 0, "Outline", level, printToFile);
+
     return 0;
 }
 
@@ -185,7 +223,6 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, st
         std::cout << "START parsing line symbol" << std::endl;
         if (printToFile) {
             write_to_json(outfile, "lineSymbol", "{", level);
-            write_to_json(outfile, "name", "\"" + property + "\",", level + 1);
         }
     }
 
@@ -281,6 +318,61 @@ int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool
 }
 
 int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    std::cout << "Type: Hash Line..." << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "type", "\"Marker Line\",", level);
+    }
+
+    moveBytes(infile, 1);
+    parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
+    parseCharacterMarker(infile, outfile, level, printToFile); // TODO...
+    parseTemplate(infile, outfile, level, printToFile);
+    parseLineCaps(infile, outfile, level, printToFile);
+    parseLineJoins(infile, outfile, level, printToFile);
+    parseDouble(infile, outfile, "cartographicLineWidth", level, printToFile);
+
+    return 0;
+}
+
+int parseCharacterMarker(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    std::cout << "Type: Character Marker..." << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "type", "\"Character Marker\",", level);
+    }
+
+    moveBytes(infile, 18);
+    moveBytes(infile, 8);
+    parseDouble(infile, outfile, "markerSize", level, printToFile);
+    moveBytes(infile, 24);
+    parseColorPattern(infile, outfile, "Marker Color", level, printToFile);
+    parseMaskTypes(infile, outfile, level, printToFile);
+    parseDouble(infile, outfile, "Mask Size", level, printToFile);
+    parseLayer(infile, outfile, 1, level, 0, printToFile); // TODO
+
+    // Validate if the header is there.
+    if (0 != hexValidation(infile, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+        std::cout << "ERROR: Fail to validate Simple Fill pattern header..." << std::endl;
+        return -1;
+    }
+    moveBytes(infile, 2);
+
+    parseColorPattern(infile, outfile, "Marker Color", level, !PRINT_TO_FILE);
+    parseInt(infile, outfile, "unicode", level, printToFile);
+    parseDouble(infile, outfile, "markerAngle", level, printToFile);
+    parseDouble(infile, outfile, "markerSize", level, printToFile);
+    parseDouble(infile, outfile, "markerOffsetX", level, printToFile);
+    parseDouble(infile, outfile, "markerOffsetY", level, printToFile);
+    moveBytes(infile, 16);
+
+    if (getChar(infile) == 13) {
+        moveBytes(infile, 13);
+    } else {
+        goRewind(infile, 1);
+    }
+
+    parseString(infile, outfile, "font", level, printToFile);
+
+
     return 0;
 }
 
@@ -290,7 +382,86 @@ double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string ta
     if (printToFile) {
         write_to_json(outfile, tag, std::to_string(val) + ",", level);
     }
+
     return val;
+}
+
+int parseInt(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile) {
+    int val = getInt(infile);
+    std::cout << tag + " is: " + std::to_string(val) << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, tag, std::to_string(val) + ",", level);
+    }
+
+    return val;
+}
+
+int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile) {
+    std::cout << "-------------------------" << std::endl;
+    std::cout << "START parsing string..." << std::endl;
+
+    bool charsTerm = true;
+    bool going = true;
+    std::string str = "";
+
+    while (going) {
+        unsigned char reader = 'a';
+        infile.read((char *)&reader, sizeof(unsigned char));
+
+        /**
+         * Since the first representation contains a space after each character,
+         *  I do `zigzagging` for identifying valid chars.
+         */
+        if (charsTerm) {
+            // `reader == 32` includes the case of the font name with a space (unicode: 32).
+            if (('a' <= reader && reader <= 'z') || ('A' <= reader && reader <= 'Z') || reader == 32) {
+                str += reader;
+            } else {
+                going = false;
+            }
+        }
+        charsTerm = !charsTerm;
+    }
+
+    std::cout << "The string gotten is: " << str << std::endl;
+
+    int id = getChar(infile);
+    if (id == 0) {
+        moveBytes(infile, 55);
+    } else if (id == 3) {
+        moveBytes(infile, 25);
+    } else {
+        std::cout << "ERROR: Failed to validate string format..." << std::endl;
+    }
+
+    going = true;
+    std::string str2 = "";
+
+    while (going) {
+        unsigned char reader = 'a';
+        infile.read((char *)&reader, sizeof(unsigned char));
+
+        // `reader == 32` includes the case of the font name with a space (unicode: 32).
+        if (('a' <= reader && reader <= 'z') || ('A' <= reader && reader <= 'Z') || reader == 32) {
+            str2 += reader;
+        } else {
+            going = false;
+        }
+    }
+
+    std::cout << "The 2nd string gotten is: " << str2 << std::endl;
+
+    if (str == str2) {
+        if (printToFile) {
+            write_to_json(outfile, "fontName", "\"" + str + "\",", level);
+        }
+    } else {
+        std::cout << "ERROR: Failed to validate string format..." << std::endl;
+    }
+
+    moveBytes(infile, 29);
+
+    return 0;
 }
 
 int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
@@ -388,6 +559,52 @@ int parseLineJoins(std::ifstream &infile, std::ofstream &outfile, int level, boo
     moveBytes(infile, 3);
 
     return line_joins_code;
+}
+
+int parseMaskTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    int mask_type_code = getChar(infile);
+    std::string mask_type_name = "";
+
+    if (mask_type_code == 0) {
+        mask_type_name = "None";
+    } else if (mask_type_code == 1) {
+        mask_type_name = "Halo";
+    } else {
+        std::cout << "ERROR: Mask type code " << mask_type_code << " not found." << std::endl;
+        return -1;
+    }
+
+    std::cout << "The mask type is " << mask_type_name << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "style", "\"" + mask_type_name + "\",", level);
+    }
+
+    moveBytes(infile, 3);
+
+    return mask_type_code;
+}
+
+int parseMarkerTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    int marker_type_code = getChar(infile);
+    std::string marker_type_name = "";
+
+    if (marker_type_code == 0) {
+        marker_type_name = "Grid";
+    } else if (marker_type_code == 1) {
+        marker_type_name = "Random";
+    } else {
+        std::cout << "ERROR: Marker type code " << marker_type_code << " not found." << std::endl;
+        return -1;
+    }
+
+    std::cout << "The marker type is " << marker_type_name << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "style", "\"" + marker_type_name + "\",", level);
+    }
+
+    moveBytes(infile, 3);
+
+    return marker_type_code;
 }
 
 int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {

@@ -1,0 +1,60 @@
+{
+	"color": {
+		"name": "Unknown",
+		"space": "RGB",
+		"firstField": 0.000000,
+		"secondField": 0.000000,
+		"thirdField": 0.000000
+	},
+	"numberOfLayers": 1,
+	"layer": {
+		"number": 1,
+		"fillingType": "Marker Fill",
+		"style": "Grid",
+		"fillPropertiesOffsetX": 0.000000,
+		"fillPropertiesOffsetY": 0.000000,
+		"fillPropertiesSeparationX": 12.000000,
+		"fillPropertiesSeparationY": 12.000000,
+		"type": "Character Marker",
+		"markerSize": 8.000000,
+		"color": {
+			"name": "Marker Color",
+			"space": "RGB",
+			"firstField": 0.000000,
+			"secondField": 0.000000,
+			"thirdField": 0.000000
+		},
+		"style": "None",
+		"Mask Size": 2.000000,
+		"fillSymbol": {
+			"fillingType": "Simple Fill",
+			"lineProperties": {
+				"name": "Filling Line",
+				"type": "Simple Line",
+				"color": {
+					"name": "Simple Line Color",
+					"space": "RGB",
+					"firstField": 54.043767,
+					"secondField": 0.000000,
+					"thirdField": 0.000000
+				},
+				"width": 0.000000,
+				"style": "Solid",
+			},
+			"color": {
+				"name": "Filling Color",
+				"space": "RGB",
+				"firstField": 100.000000,
+				"secondField": 0.000000,
+				"thirdField": 0.000000
+			},
+		},
+		"unicode": 65509,
+		"markerAngle": 3.000000,
+		"markerSize": 8.000000,
+		"markerOffsetX": 4.000000,
+		"markerOffsetY": 2.000000,
+		"lineProperties": {
+			"name": "Outline",
+	},
+}

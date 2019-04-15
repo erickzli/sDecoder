@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
 
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
-            parseLayer(infile, outfile, 1, 1, PRINT_TO_FILE);
+            parseLayer(infile, outfile, 0, 1, 1, PRINT_TO_FILE);
         }
 
         write_to_json(outfile, "", "}", 0);
