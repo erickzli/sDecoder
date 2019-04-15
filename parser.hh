@@ -68,7 +68,7 @@ int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
  */
 double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
 
-int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, std::string property, int level, bool printToFile);
+int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, std::string property, int level, bool printToFile);
 
 int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 

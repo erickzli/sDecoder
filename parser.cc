@@ -139,7 +139,7 @@ int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
         return -1;
     }
     moveBytes(infile, 2);
-    parseLinePattern(infile, outfile, "Outline", level, PRINT_TO_FILE);
+    parseLinePattern(infile, outfile, 0, "Outline", level, PRINT_TO_FILE);
     parseColorPattern(infile, outfile, "Filling Color", level, PRINT_TO_FILE);
 
     return 0;
@@ -160,8 +160,8 @@ int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool
     }
 
     moveBytes(infile, 18);
-    parseLinePattern(infile, outfile, "Filling Line", level, printToFile);
-    parseLinePattern(infile, outfile, "Outline", level, printToFile);
+    parseLinePattern(infile, outfile, 0, "Filling Line", level, printToFile);
+    parseLinePattern(infile, outfile, 0, "Outline", level, printToFile);
     parseDouble(infile, outfile, "angle", level, printToFile);
     parseDouble(infile, outfile, "Offset", level, printToFile);
     parseDouble(infile, outfile, "separation", level, printToFile);
@@ -173,13 +173,22 @@ int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
     return 0;
 }
 
-int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, std::string property, int level, bool printToFile) {
+int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, std::string property, int level, bool printToFile) {
     std::cout << "-----------------------------" << std::endl;
-    std::cout << "START parsing line" << std::endl;
-    if (printToFile) {
-        write_to_json(outfile, "lineProperties", "{", level);
-        write_to_json(outfile, "name", "\"" + property + "\",", level + 1);
+    if (type == 0) {
+        std::cout << "START parsing line" << std::endl;
+        if (printToFile) {
+            write_to_json(outfile, "lineProperties", "{", level);
+            write_to_json(outfile, "name", "\"" + property + "\",", level + 1);
+        }
+    } else {
+        std::cout << "START parsing line symbol" << std::endl;
+        if (printToFile) {
+            write_to_json(outfile, "lineSymbol", "{", level);
+            write_to_json(outfile, "name", "\"" + property + "\",", level + 1);
+        }
     }
+
     int line_type = getChar(infile);
 
     if (250 == line_type) {
@@ -228,7 +237,7 @@ int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bo
     if (printToFile) {
         write_to_json(outfile, "type", "\"Simple Line\",", level);
     }
-    parseColorPattern(infile, outfile, "Line Color", level, printToFile);
+    parseColorPattern(infile, outfile, "Simple Line Color", level, printToFile);
     parseDouble(infile, outfile, "width", level, printToFile);
     parseLineStyle(infile, outfile, level, printToFile);
 
@@ -243,18 +252,31 @@ int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, boo
 
     parseLineCaps(infile, outfile, level, printToFile);
     parseLineJoins(infile, outfile, level, printToFile);
-    parseDouble(infile, outfile, "width", level, printToFile);
+    parseDouble(infile, outfile, "cartographicLineWidth", level, printToFile);
     moveBytes(infile, 1);
     parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
-    parseColorPattern(infile, outfile, "Line Color", level, printToFile);
+    parseColorPattern(infile, outfile, "Cartographic Line Color", level, printToFile);
     parseTemplate(infile, outfile, level, printToFile);
-    // Tail pattern for carto line.
-    moveBytes(infile, 14);
 
     return 0;
 }
 
 int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    std::cout << "Type: Hash Line..." << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "type", "\"Hash Line\",", level);
+    }
+
+    parseDouble(infile, outfile, "hashLineAngle", level, printToFile);
+    parseLineCaps(infile, outfile, level, printToFile);
+    parseLineJoins(infile, outfile, level, printToFile);
+    parseDouble(infile, outfile, "cartographicLineWidth", level, printToFile);
+    moveBytes(infile, 1);
+    parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
+    parseLinePattern(infile, outfile, 1, "Outline", level, printToFile);
+    parseColorPattern(infile, outfile, "Cartographic Line Color", level, printToFile);
+    parseTemplate(infile, outfile, level, printToFile);
+
     return 0;
 }
 
@@ -292,7 +314,7 @@ int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool
 
     for (int i = 0; i < num_of_patterns; i++) {
         if (printToFile) {
-            write_to_json(outfile, "cartoLine", "{", level + 1);
+            write_to_json(outfile, "linePatternFeature", "{", level + 1);
         }
         parseDouble(infile, outfile, "patternLength", level + 2, printToFile);
         parseDouble(infile, outfile, "gapLength", level + 2, printToFile);
@@ -405,6 +427,7 @@ int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, boo
 
     return line_style_code;
 }
+
 
 int parseTailPattern(std::ifstream &infile, int type) {
     // OUTLINE

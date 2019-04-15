@@ -1,0 +1,57 @@
+{
+	"color": {
+		"name": "Unknown",
+		"space": "RGB",
+		"firstField": 0.000000,
+		"secondField": 0.000000,
+		"thirdField": 0.000000
+	},
+	"numberOfLayers": 1,
+	"layer": {
+		"number": 1,
+		"fillingType": "Simple Fill",
+		"lineProperties": {
+			"name": "Outline",
+			"type": "Hash Line",
+			"hashLineAngle": 77.000000,
+			"lineCaps": "Square",
+			"lineJoins": "Round",
+			"cartographicLineWidth": 4.900000,
+			"propertiesOffset": 4.700000,
+			"lineSymbol": {
+				"name": "Outline",
+				"type": "Simple Line",
+				"color": {
+					"name": "Simple Line Color",
+					"space": "RGB",
+					"firstField": 0.000000,
+					"secondField": 0.000000,
+					"thirdField": 0.000000
+				},
+				"width": 6.000000,
+				"style": "Dash-Dot",
+			},
+			"color": {
+				"name": "Cartographic Line Color",
+				"space": "RGB",
+				"firstField": 0.000000,
+				"secondField": 0.000000,
+				"thirdField": 0.000000
+			},
+			"template": {
+				"interval": 1.800000,
+				"cartoLine": {
+					"patternLength": 1.000000,
+					"gapLength": 14.000000,
+				},
+			}
+		},
+		"color": {
+			"name": "Filling Color",
+			"space": "RGB",
+			"firstField": 0.000000,
+			"secondField": 0.000000,
+			"thirdField": 0.000000
+		},
+	},
+}
