@@ -26,10 +26,14 @@ int parseLayer(std::ifstream &infile, std::ofstream &outfile, int type, int leve
         return -1;
     }
 
-    if (type == 0) {
-        moveBytes(infile, 12);
-    } else {
-        moveBytes(infile, 17);
+    // Inter-layer pattern is defined in main()
+    // This part is for Symbol...
+    if (type == 1) {
+        int b = 0;
+        do {
+            b = getChar(infile);
+        } while (b != 230);
+        moveBytes(infile, -1);
     }
 
     write_to_json(outfile, "", "},", level);

@@ -37,7 +37,7 @@ BFiles
 Outfiles
 
 # Testing scripts
-test*
+*test*
 
 # macOS Automatic Files
 .DS_Store

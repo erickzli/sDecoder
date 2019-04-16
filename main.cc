@@ -44,6 +44,14 @@ int main(int argc, char **argv) {
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
             parseLayer(infile, outfile, 0, 1, i + 1, PRINT_TO_FILE);
+            // Inter-layer pattern...
+            if (i < num_of_layers - 1) {
+                int b = 0;
+                do {
+                    b = getChar(infile);
+                } while (b != 3 && b != 6 && b != 8 && b != 9);
+                moveBytes(infile, -1);
+            }
         }
 
         write_to_json(outfile, "", "}", 0);
