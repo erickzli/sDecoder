@@ -41,6 +41,28 @@ int parseCharacterMarker(std::ifstream &infile, std::ofstream &outfile, int leve
     return 0;
 }
 
+int parseMarkerTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+    int marker_type_code = getChar(infile);
+    std::string marker_type_name = "";
+
+    if (marker_type_code == 0) {
+        marker_type_name = "Grid";
+    } else if (marker_type_code == 1) {
+        marker_type_name = "Random";
+    } else {
+        std::cout << "ERROR: Marker type code " << marker_type_code << " not found." << std::endl;
+        return -1;
+    }
+
+    std::cout << "The marker type is " << marker_type_name << std::endl;
+    if (printToFile) {
+        write_to_json(outfile, "style", "\"" + marker_type_name + "\",", level);
+    }
+
+    moveBytes(infile, 3);
+
+    return marker_type_code;
+}
 
 int parseMaskTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
     int mask_type_code = getChar(infile);
@@ -63,27 +85,4 @@ int parseMaskTypes(std::ifstream &infile, std::ofstream &outfile, int level, boo
     moveBytes(infile, 3);
 
     return mask_type_code;
-}
-
-int parseMarkerTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
-    int marker_type_code = getChar(infile);
-    std::string marker_type_name = "";
-
-    if (marker_type_code == 0) {
-        marker_type_name = "Grid";
-    } else if (marker_type_code == 1) {
-        marker_type_name = "Random";
-    } else {
-        std::cout << "ERROR: Marker type code " << marker_type_code << " not found." << std::endl;
-        return -1;
-    }
-
-    std::cout << "The marker type is " << marker_type_name << std::endl;
-    if (printToFile) {
-        write_to_json(outfile, "style", "\"" + marker_type_name + "\",", level);
-    }
-
-    moveBytes(infile, 3);
-
-    return marker_type_code;
 }

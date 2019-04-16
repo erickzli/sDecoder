@@ -43,11 +43,16 @@ int main(int argc, char **argv) {
 
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
-            parseLayer(infile, outfile, 0, 1, 1, PRINT_TO_FILE);
+            parseLayer(infile, outfile, 0, 1, i + 1, PRINT_TO_FILE);
+            if (i != num_of_layers - 1) {
+                goRewind(infile, 28);
+            }
         }
 
         write_to_json(outfile, "", "}", 0);
         std::cout << "DONE :-)" << std::endl;
+    } else {
+        std::cout << "ERROR: Cannot open this file." << std::endl;
     }
 
     infile.close();

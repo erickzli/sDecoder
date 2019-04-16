@@ -1,0 +1,67 @@
+{
+	"color": {
+		"name": "Unknown",
+		"space": "RGB",
+		"firstField": 0.000000,
+		"secondField": 0.000000,
+		"thirdField": 0.000000
+	},
+	"numberOfLayers": 2,
+	"layer": {
+		"number": 1,
+		"fillingType": "Simple Fill",
+		"lineProperties": {
+			"name": "Outline",
+			"type": "Simple Line",
+			"color": {
+				"name": "Simple Line Color",
+				"space": "RGB",
+				"firstField": 95.005232,
+				"secondField": -1.910411,
+				"thirdField": -4.932042
+			},
+			"width": 1.000000,
+			"style": "Solid",
+		},
+		"color": {
+			"name": "Filling Color",
+			"space": "RGB",
+			"firstField": -80733390555887109777379033088.000000,
+			"secondField": 0.000000,
+			"thirdField": 0.000000
+		},
+	},
+	"layer": {
+		"number": 2,
+		"fillingType": "Line Fill",
+		"lineProperties": {
+			"name": "Filling Line",
+			"type": "Simple Line",
+			"color": {
+				"name": "Simple Line Color",
+				"space": "RGB",
+				"firstField": 61.428330,
+				"secondField": 0.000000,
+				"thirdField": 0.000000
+			},
+			"width": 0.010000,
+			"style": "Solid",
+		},
+		"lineProperties": {
+			"name": "Outline",
+			"type": "Simple Line",
+			"color": {
+				"name": "Simple Line Color",
+				"space": "RGB",
+				"firstField": 61.428330,
+				"secondField": 0.000000,
+				"thirdField": 0.000000
+			},
+			"width": 0.100000,
+			"style": "Solid",
+		},
+		"angle": 0.000000,
+		"Offset": 0.000000,
+		"separation": 0.000000,
+	},
+}

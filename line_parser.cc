@@ -47,9 +47,9 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, st
 
     // Ignore the tail pattern.
     if (property == "Outline") {
-        parseTailPattern(infile, 1);
+        moveBytes(infile, 22);
     } else if (property == "Filling Line") {
-        parseTailPattern(infile, 2);
+        moveBytes(infile, 8);
     } else {
         std::cout << "ERROR: Invalid line property..." << std::endl;
         return -1;

@@ -14,6 +14,9 @@ const bool DO_REWIND = true;
  *   the model.
  * \param the input file stream.
  * \param the output file stream.
+ * \param type of parser:
+ *     0: Normal parser;
+ *     1: Symbol parser.
  * \param the level(indention).
  * \param option for print to output file.
  */
@@ -46,37 +49,70 @@ int parseLayerNumber(std::ifstream &infile, std::ofstream &outfile, int level, b
 /**
  * Parser the binary block where it defines a simple fill pattern
  * \param the input file stream.
+ * \param the output file stream.
+ * \param type:
+ *     0: Normal process;
+ *     1: Symbol process.
  * \param the level(indention)
+ * \param whether print to JSON file.
  */
 int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a line fill pattern
  * \param the input file stream.
+ * \param the output file stream.
  * \param the level(indention)
+ * \param whether print to JSON file.
  */
 int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a marker fill pattern
  * \param the input file stream.
+ * \param the output file stream.
  * \param the level(indention)
+ * \param whether print to JSON file.
  */
 int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a double value
  * \param the input file stream.
+ * \param the output file stream.
+ * \param the name of the double value.
  * \param the level(indention)
+ * \param whether print to JSON file.
  */
 double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
 
+/**
+ * Parser the binary block where it defines an integer value
+ * \param the input file stream.
+ * \param the output file stream.
+ * \param the name of the double value.
+ * \param the level(indention)
+ * \param whether print to JSON file.
+ */
 int parseInt(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
 
+/**
+ * Parser the binary block where it defines a string (font name)
+ * \param the input file stream.
+ * \param the output file stream.
+ * \param the name of the double value.
+ * \param the level(indention)
+ * \param whether print to JSON file.
+ */
 int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
 
+/**
+ * Parser the TEMPLATE (check the diagram)
+ * \param the input file stream.
+ * \param the output file stream.
+ * \param the level(indention)
+ * \param whether print to JSON file.
+ */
 int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseTailPattern(std::ifstream &infile, int type);
 
 #endif

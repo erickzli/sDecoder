@@ -22,13 +22,13 @@ int parseLayer(std::ifstream &infile, std::ofstream &outfile, int type, int leve
     } else if (8 == filling_type) {
         parseMarkerFill(infile, outfile, level + 1, PRINT_TO_FILE);
     } else {
-        std::cout << "ERROR: Filling type not support or the file has problems." << std::endl;
+        std::cout << "ERROR: Filling type " << filling_type << " not support" << std::endl;
         return -1;
     }
 
     if (type == 0) {
         // Parse the tail pattern of the layer...
-        parseTailPattern(infile, 3);
+        moveBytes(infile, 26);
     } else {
         moveBytes(infile, 17);
     }
@@ -191,7 +191,7 @@ int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
 
     // Validate if the header is there.
     if (0 != hexValidation(infile, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-        std::cout << "ERROR: Fail to validate Simple Fill pattern header..." << std::endl;
+        std::cout << "ERROR: Fail to validate Marker Fill pattern header..." << std::endl;
         return -1;
     }
     moveBytes(infile, 2);
@@ -333,24 +333,6 @@ int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool
     }
 
     moveBytes(infile, 33);
-
-    return 0;
-}
-
-
-int parseTailPattern(std::ifstream &infile, int type) {
-    // OUTLINE
-    if (1 == type) {
-        moveBytes(infile, 22);
-    // LINE FILL
-    } else if (2 == type) {
-        moveBytes(infile, 8);
-    // FILL TAIL
-    } else if (3 == type) {
-        moveBytes(infile, 26);
-    } else {
-        std::cout << "ERROR: Not support this tail code..." << std::endl;
-    }
 
     return 0;
 }
