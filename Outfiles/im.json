@@ -14,7 +14,7 @@
 			"name": "Outline",
 			"type": "Simple Line",
 			"color": {
-				"name": "Line Color",
+				"name": "Simple Line Color",
 				"space": "RGB",
 				"firstField": 44.615726,
 				"secondField": 68.063277,

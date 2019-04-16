@@ -2,6 +2,9 @@
 #define __PARSER__
 
 #include "parser_helper.hh"
+#include "line_parser.hh"
+#include "marker_parser.hh"
+#include "json_writer.hh"
 
 const bool PRINT_TO_FILE = true;
 const bool DO_REWIND = true;
@@ -72,29 +75,7 @@ int parseInt(std::ifstream &infile, std::ofstream &outfile, std::string tag, int
 
 int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
 
-int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, std::string property, int level, bool printToFile);
-
-int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseCharacterMarker(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
 int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseLineCaps(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseLineJoins(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseMaskTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseMarkerTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
-
-int parseLineStyle(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 
 int parseTailPattern(std::ifstream &infile, int type);
 
