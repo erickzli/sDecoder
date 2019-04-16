@@ -15,10 +15,10 @@
 			"type": "Cartographic Line",
 			"lineCaps": "Square",
 			"lineJoins": "Round",
-			"width": 3.000000,
+			"cartographicLineWidth": 3.000000,
 			"propertiesOffset": 3.000000,
 			"color": {
-				"name": "Line Color",
+				"name": "Cartographic Line Color",
 				"space": "CMYK",
 				"C": 4,
 				"M": 34,

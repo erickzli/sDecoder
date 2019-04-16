@@ -25,7 +25,7 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, st
     moveBytes(infile, 17);
     switch(line_type) {
         case 249:
-            parseSimpleLine(infile, outfile, level + 1, printToFile);
+            parseSimpleLine(infile, outfile, type, level + 1, printToFile);
             break;
         case 251:
             parseCartoLine(infile, outfile, level + 1, printToFile);
@@ -45,20 +45,10 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, st
         write_to_json(outfile, "", "},", level);
     }
 
-    // Ignore the tail pattern.
-    if (property == "Outline") {
-        moveBytes(infile, 22);
-    } else if (property == "Filling Line") {
-        moveBytes(infile, 8);
-    } else {
-        std::cout << "ERROR: Invalid line property..." << std::endl;
-        return -1;
-    }
-
     return 0;
 }
 
-int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile) {
     std::cout << "Type: Simple Line..." << std::endl;
     if (printToFile) {
         write_to_json(outfile, "type", "\"Simple Line\",", level);
@@ -66,6 +56,10 @@ int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bo
     parseColorPattern(infile, outfile, "Simple Line Color", level, printToFile);
     parseDouble(infile, outfile, "width", level, printToFile);
     parseLineStyle(infile, outfile, level, printToFile);
+
+    // Parse the TAIL pattern of simple line.
+    while (getChar(infile) < 20) {}
+    goRewind(infile, 1);
 
     return 0;
 }
@@ -82,7 +76,9 @@ int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, boo
     moveBytes(infile, 1);
     parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
     parseColorPattern(infile, outfile, "Cartographic Line Color", level, printToFile);
-    parseTemplate(infile, outfile, level, printToFile);
+    parseTemplate(infile, outfile, 0, level, printToFile);
+
+    moveBytes(infile, 14);
 
     return 0;
 }
@@ -101,7 +97,9 @@ int parseHashLine(std::ifstream &infile, std::ofstream &outfile, int level, bool
     parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
     parseLinePattern(infile, outfile, 1, "Outline", level, printToFile);
     parseColorPattern(infile, outfile, "Cartographic Line Color", level, printToFile);
-    parseTemplate(infile, outfile, level, printToFile);
+    parseTemplate(infile, outfile, 0, level, printToFile);
+
+    moveBytes(infile, 14);
 
     return 0;
 }
@@ -115,10 +113,12 @@ int parseMarkerLine(std::ifstream &infile, std::ofstream &outfile, int level, bo
     moveBytes(infile, 1);
     parseDouble(infile, outfile, "propertiesOffset", level, printToFile);
     parseCharacterMarker(infile, outfile, level, printToFile); // TODO...
-    parseTemplate(infile, outfile, level, printToFile);
+    parseTemplate(infile, outfile, 1, level, printToFile);
     parseLineCaps(infile, outfile, level, printToFile);
     parseLineJoins(infile, outfile, level, printToFile);
     parseDouble(infile, outfile, "cartographicLineWidth", level, printToFile);
+
+    moveBytes(infile, 14);
 
     return 0;
 }

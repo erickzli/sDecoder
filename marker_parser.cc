@@ -17,7 +17,7 @@ int parseCharacterMarker(std::ifstream &infile, std::ofstream &outfile, int leve
 
     // Validate if the header is there.
     if (0 != hexValidation(infile, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-        std::cout << "ERROR: Fail to validate Simple Fill pattern header..." << std::endl;
+        std::cout << "ERROR: Fail to validate Char Marker pattern header..." << std::endl;
         return -1;
     }
     moveBytes(infile, 2);

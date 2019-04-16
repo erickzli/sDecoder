@@ -28,8 +28,7 @@
 		"Mask Size": 2.000000,
 		"fillSymbol": {
 			"fillingType": "Simple Fill",
-			"lineProperties": {
-				"name": "Filling Line",
+			"lineSymbol": {
 				"type": "Simple Line",
 				"color": {
 					"name": "Simple Line Color",

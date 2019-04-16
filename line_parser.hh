@@ -7,9 +7,10 @@
 
 #include "parser.hh"
 
+// 0: normal; 1: symbol
 int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, std::string property, int level, bool printToFile);
 
-int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile);
 
 int parseCartoLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
 

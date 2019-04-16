@@ -113,6 +113,6 @@ int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, 
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile);
 
 #endif

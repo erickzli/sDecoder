@@ -32,6 +32,10 @@
 *.app
 main
 
+# Folders
+BFiles
+Outfiles
+
 # Testing scripts
 test*
 

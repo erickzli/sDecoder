@@ -27,8 +27,7 @@ int parseLayer(std::ifstream &infile, std::ofstream &outfile, int type, int leve
     }
 
     if (type == 0) {
-        // Parse the tail pattern of the layer...
-        moveBytes(infile, 26);
+        moveBytes(infile, 12);
     } else {
         moveBytes(infile, 17);
     }
@@ -150,7 +149,7 @@ int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int type, int
     if (type == 0) {
         parseLinePattern(infile, outfile, 0, "Outline", level, PRINT_TO_FILE);
     } else {
-        parseLinePattern(infile, outfile, 0, "Filling Line", level, PRINT_TO_FILE);
+        parseLinePattern(infile, outfile, 1, "Filling Line", level, PRINT_TO_FILE);
     }
 
     parseColorPattern(infile, outfile, "Filling Color", level, PRINT_TO_FILE);
@@ -298,7 +297,8 @@ int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, 
     return 0;
 }
 
-int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
+// 0: others, 1: char marker.
+int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile) {
     std::cout << "-------------------------" << std::endl;
     std::cout << "START parsing template..." << std::endl;
 
@@ -332,7 +332,11 @@ int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int level, bool
         write_to_json(outfile, "", "}", level);
     }
 
-    moveBytes(infile, 33);
+    if (type == 0) {
+        moveBytes(infile, 41);
+    } else {
+        moveBytes(infile, 33);
+    }
 
     return 0;
 }

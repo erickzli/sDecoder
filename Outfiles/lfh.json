@@ -19,7 +19,6 @@
 			"cartographicLineWidth": 4.900000,
 			"propertiesOffset": 4.700000,
 			"lineSymbol": {
-				"name": "Outline",
 				"type": "Simple Line",
 				"color": {
 					"name": "Simple Line Color",
@@ -40,7 +39,7 @@
 			},
 			"template": {
 				"interval": 1.800000,
-				"cartoLine": {
+				"linePatternFeature": {
 					"patternLength": 1.000000,
 					"gapLength": 14.000000,
 				},
