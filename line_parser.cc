@@ -25,7 +25,7 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, st
     moveBytes(infile, 17);
     switch(line_type) {
         case 249:
-            parseSimpleLine(infile, outfile, type, level + 1, printToFile);
+            parseSimpleLine(infile, outfile, level + 1, printToFile);
             break;
         case 251:
             parseCartoLine(infile, outfile, level + 1, printToFile);
@@ -48,7 +48,7 @@ int parseLinePattern(std::ifstream &infile, std::ofstream &outfile, int type, st
     return 0;
 }
 
-int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile) {
+int parseSimpleLine(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile) {
     std::cout << "Type: Simple Line..." << std::endl;
     if (printToFile) {
         write_to_json(outfile, "type", "\"Simple Line\",", level);
