@@ -11,9 +11,12 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool pr
     parseDouble(cursor, jstring, "markerSize", level, printToFile);
     moveBytes(cursor, 24);
     parseColorPattern(cursor, jstring, "Marker Color", level, printToFile);
-    parseMaskTypes(cursor, jstring, level, printToFile);
-    parseDouble(cursor, jstring, "maskSize", level, printToFile);
-    parseLayer(cursor, jstring, 1, level, 0, printToFile); // TODO
+
+    write_to_json(jstring, "mask", "{", level);
+    parseMaskTypes(cursor, jstring, level + 1, printToFile);
+    parseDouble(cursor, jstring, "size", level + 1, printToFile);
+    parseLayer(cursor, jstring, 1, level + 1, 0, printToFile);
+    write_to_json(jstring, "", "}", level);
 
     // Validate if the header is there.
     if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
