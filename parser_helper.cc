@@ -1,6 +1,6 @@
 #include "parser_helper.hh"
 
-int hexValidation(std::ifstream &infile, std::string hexStr, bool rewind) {
+int hexValidation(char **cursor, std::string hexStr, bool rewind) {
     int size = hexStr.length();
     // If the length of the hex string is not even, something is wrong...
     if (0 != size % 2)
@@ -10,46 +10,51 @@ int hexValidation(std::ifstream &infile, std::string hexStr, bool rewind) {
 
     while (remain > 0) {
         int num1 = stoi(hexStr.substr(currIdx, 2), 0, 16);
-        int num2 = getChar(infile);
+        int num2 = getChar(cursor);
+
+        // std::cout << "num1: " << num1 << std::endl;
+        // std::cout << "num2: " << num2 << std::endl;
         currIdx += 2;
         remain -= 2;
 
         if (num1 != num2) {
             if (rewind)
-                goRewind(infile, currIdx);
+                goRewind(cursor, currIdx);
             return 1;
         }
     }
 
     if (rewind)
-        goRewind(infile, currIdx / 2);
+        goRewind(cursor, currIdx / 2);
 
     return 0;
 }
 
-void goRewind(std::ifstream &infile, int bytesRewinded) {
-    infile.seekg(-bytesRewinded, std::ios::cur);
+void goRewind(char **cursor, int bytesRewinded) {
+    *cursor -= bytesRewinded;
 }
 
-void moveBytes(std::ifstream &infile, int bytesMoved) {
-    infile.seekg(bytesMoved, std::ios::cur);
+void moveBytes(char **cursor, int bytesMoved) {
+    *cursor += bytesMoved;
 }
 
-int getChar(std::ifstream &infile) {
-    unsigned char reader = 'a';
-    infile.read((char *)&reader, sizeof(unsigned char));
-    return (int)reader;
+int getChar(char **cursor) {
+    unsigned char ret = **cursor;
+    moveBytes(cursor, 1);
+
+    return (int)ret;
 }
 
-int getInt(std::ifstream &infile) {
-    int ret = 0;
-    infile.read((char *)&ret, sizeof(int));
-    return ret;
+int getInt(char **cursor) {
+    uint32_t *ret = (uint32_t *)*cursor;
+    moveBytes(cursor, 4);
+
+    return *ret;
 }
 
-double getDouble(std::ifstream &infile) {
-    double ret = 0.0;
-    infile.read((char *)&ret, sizeof(double));
+double getDouble(char **cursor) {
+    double *ret = (double *)*cursor;
+    moveBytes(cursor, 8);
 
-    return ret;
+    return *ret;
 }

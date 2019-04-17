@@ -9,6 +9,9 @@
 const bool PRINT_TO_FILE = true;
 const bool DO_REWIND = true;
 
+
+std::string grandParser(char **input);
+
 /**
  * Parses the symbol flow, which is the largest and most essential pipeline in
  *   the model.
@@ -20,7 +23,7 @@ const bool DO_REWIND = true;
  * \param the level(indention).
  * \param option for print to output file.
  */
-int parseLayer(std::ifstream &infile, std::ofstream &outfile, int type, int level, int layer_no, bool printToFile);
+int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no, bool printToFile);
 
 /**
  * Parses the binary block where it defines a color pattern
@@ -30,7 +33,7 @@ int parseLayer(std::ifstream &infile, std::ofstream &outfile, int type, int leve
  * \param the level(indention).
  * \param option for print to output file.
  */
-int parseColorPattern(std::ifstream &infile, std::ofstream &outfile, std::string color_type,
+int parseColorPattern(char **cursor, std::string &jstring, std::string color_type,
                 int level, bool printToFile);
 
 /**
@@ -43,7 +46,7 @@ int parseColorPattern(std::ifstream &infile, std::ofstream &outfile, std::string
  *    val > 0: the number of layers
  *    val == -1: something wrong...
  */
-int parseLayerNumber(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printToFile);
 
 
 /**
@@ -56,7 +59,7 @@ int parseLayerNumber(std::ifstream &infile, std::ofstream &outfile, int level, b
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile);
+int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a line fill pattern
@@ -65,7 +68,7 @@ int parseSimpleFill(std::ifstream &infile, std::ofstream &outfile, int type, int
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a marker fill pattern
@@ -74,7 +77,7 @@ int parseLineFill(std::ifstream &infile, std::ofstream &outfile, int level, bool
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a double value
@@ -84,7 +87,7 @@ int parseMarkerFill(std::ifstream &infile, std::ofstream &outfile, int level, bo
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
+double parseDouble(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines an integer value
@@ -94,7 +97,7 @@ double parseDouble(std::ifstream &infile, std::ofstream &outfile, std::string ta
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseInt(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
+int parseInt(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile);
 
 /**
  * Parser the binary block where it defines a string (font name)
@@ -104,7 +107,7 @@ int parseInt(std::ifstream &infile, std::ofstream &outfile, std::string tag, int
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, int level, bool printToFile);
+int parseString(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile);
 
 /**
  * Parser the TEMPLATE (check the diagram)
@@ -113,6 +116,6 @@ int parseString(std::ifstream &infile, std::ofstream &outfile, std::string tag, 
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseTemplate(std::ifstream &infile, std::ofstream &outfile, int type, int level, bool printToFile);
+int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool printToFile);
 
 #endif

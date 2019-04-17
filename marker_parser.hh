@@ -14,7 +14,7 @@
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseCharacterMarker(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile);
 
 /**
  * Parser the type of markers (Grid or random)
@@ -23,7 +23,7 @@ int parseCharacterMarker(std::ifstream &infile, std::ofstream &outfile, int leve
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMarkerTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseMarkerTypes(char **cursor, std::string &jstring, int level, bool printToFile);
 
 /**
  * Parser the type of masks (None or Halo)
@@ -32,6 +32,6 @@ int parseMarkerTypes(std::ifstream &infile, std::ofstream &outfile, int level, b
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMaskTypes(std::ifstream &infile, std::ofstream &outfile, int level, bool printToFile);
+int parseMaskTypes(char **cursor, std::string &jstring, int level, bool printToFile);
 
 #endif

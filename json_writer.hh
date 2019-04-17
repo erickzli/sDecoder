@@ -13,7 +13,7 @@
  * \param the value after the tag. ("tag": "value")
  * \param the level(indention)
  */
- void write_to_json(std::ofstream &jsonfile, std::string tag, std::string buf, int level);
+ void write_to_json(std::string &jstring, std::string tag, std::string buf, int level);
 
 
 #endif

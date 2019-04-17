@@ -1,6 +1,6 @@
 #include "json_writer.hh"
 
-void write_to_json(std::ofstream &jsonfile, std::string tag, std::string buf, int level) {
+void write_to_json(std::string &jstring, std::string tag, std::string buf, int level) {
     std::string output = "";
 
     // Insert indention for the line.
@@ -15,6 +15,5 @@ void write_to_json(std::ofstream &jsonfile, std::string tag, std::string buf, in
 
     output +=  buf + "\n";
 
-    // flush output to json.
-    jsonfile << output;
+    jstring += output;
 }

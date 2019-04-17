@@ -13,42 +13,42 @@
  *        function is called.
  * @return 0 if validated; 1 if not validated; -1 check errno.
  */
-int hexValidation(std::ifstream &infile, std::string hexStr, bool rewind);
+int hexValidation(char **cursor, std::string hexStr, bool rewind);
 
 /**
  * Rewind file pointer by rewindBytes.
  * @param the input file stream.
  * @param Bytes need to be rewinded (Number in POSITIVE)
  */
-void goRewind(std::ifstream &infile, int rewindBytes);
+void goRewind(char **cursor, int rewindBytes);
 
 /**
  * Move the file pointer bytesMoved bytes.
  * @param the input file stream.
  * @param the amount of bytes the pointer moves.
  */
-void moveBytes(std::ifstream &infile, int bytesMoved);
+void moveBytes(char **cursor, int bytesMoved);
 
 /**
  * Get the character integer value (8-bit) from the current position.
  * @param the input file stream.
  * @return the integer-type value of the character gotten.
  */
-int getChar(std::ifstream &infile);
+int getChar(char **cursor);
 
 /**
  * Get the integer value (32-bit) from the current position.
  * @param the input file stream.
  * @return the integer.
  */
-int getInt(std::ifstream &infile);
+int getInt(char **cursor);
 
 /**
  * Get the double value from the current position.
  * @param the input file stream.
  * @return the double value.
  */
-double getDouble(std::ifstream &infile);
+double getDouble(char **cursor);
 
 
 #endif
