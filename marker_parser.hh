@@ -7,6 +7,10 @@
 
 #include "parser.hh"
 
+int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool printToFile);
+
+int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool printToFile);
+
 /**
  * Parser the character marker pattern
  * \param the input file stream.
@@ -15,6 +19,7 @@
  * \param whether print to JSON file.
  */
 int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile);
+
 
 /**
  * Parser the type of markers (Grid or random)
@@ -33,5 +38,7 @@ int parseMarkerTypes(char **cursor, std::string &jstring, int level, bool printT
  * \param whether print to JSON file.
  */
 int parseMaskTypes(char **cursor, std::string &jstring, int level, bool printToFile);
+
+int parseMarkerStyle(char **cursor, std::string &jstring, int level, bool printToFile);
 
 #endif

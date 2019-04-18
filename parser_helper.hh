@@ -36,6 +36,8 @@ void moveBytes(char **cursor, int bytesMoved);
  */
 int getChar(char **cursor);
 
+int get16Bit(char **cursor);
+
 /**
  * Get the integer value (32-bit) from the current position.
  * @param the input file stream.

@@ -45,6 +45,13 @@ int getChar(char **cursor) {
     return (int)ret;
 }
 
+int get16Bit(char **cursor) {
+    uint16_t *ret = (uint16_t *)*cursor;
+    moveBytes(cursor, 2);
+
+    return *ret;
+}
+
 int getInt(char **cursor) {
     uint32_t *ret = (uint32_t *)*cursor;
     moveBytes(cursor, 4);

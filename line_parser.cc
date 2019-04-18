@@ -112,7 +112,7 @@ int parseMarkerLine(char **cursor, std::string &jstring, int level, bool printTo
 
     moveBytes(cursor, 1);
     parseDouble(cursor, jstring, "propertiesOffset", level, printToFile);
-    parseCharacterMarker(cursor, jstring, level, printToFile); // TODO...
+    parseMarkerPattern(cursor, jstring, level, printToFile); // TODO...
     parseTemplate(cursor, jstring, 1, level, printToFile);
     parseLineCaps(cursor, jstring, level, printToFile);
     parseLineJoins(cursor, jstring, level, printToFile);

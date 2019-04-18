@@ -52,7 +52,6 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
         write_to_json(jstring, "fillSymbol", "{", level);
     }
 
-
     int filling_type = getChar(cursor);
     std::string filling_type_name = "";
 
@@ -73,8 +72,9 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
         int b = 0;
         do {
             b = getChar(cursor);
-        } while (b != 230);
-        goRewind(cursor, 1);
+        } while (b != 20);
+
+        goRewind(cursor, 3);
     }
 
     write_to_json(jstring, "", "},", level);
@@ -247,7 +247,7 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printTo
     parseDouble(cursor, jstring, "fillPropertiesSeparationY", level, printToFile);
     moveBytes(cursor, 16);
 
-    parseCharacterMarker(cursor, jstring, level, printToFile); // TODO...
+    parseMarkerPattern(cursor, jstring, level, printToFile);
 
     parseLinePattern(cursor, jstring, 0, "Outline", level, printToFile);
 
