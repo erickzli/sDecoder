@@ -369,7 +369,7 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool
     }
 
     if (printToFile) {
-        write_to_json(jstring, "", "}", level);
+        write_to_json(jstring, "", "},", level);
     }
 
     if (type == 0) {

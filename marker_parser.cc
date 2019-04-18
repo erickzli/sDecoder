@@ -16,15 +16,15 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
     moveBytes(cursor, 2);
 
     moveBytes(cursor, 8);
-    parseDouble(cursor, jstring, "markerSize", level, printToFile);
+    parseDouble(cursor, jstring, "markerSize", level + 1, printToFile);
     moveBytes(cursor, 24);
-    parseColorPattern(cursor, jstring, "Marker Color", level, printToFile);
+    parseColorPattern(cursor, jstring, "Marker Color", level + 1, printToFile);
 
-    write_to_json(jstring, "mask", "{", level);
-    parseMaskTypes(cursor, jstring, level + 1, printToFile);
-    parseDouble(cursor, jstring, "size", level + 1, printToFile);
-    parseLayer(cursor, jstring, 1, level + 1, 0, printToFile);
-    write_to_json(jstring, "", "}", level);
+    write_to_json(jstring, "mask", "{", level + 1);
+    parseMaskTypes(cursor, jstring, level + 2, printToFile);
+    parseDouble(cursor, jstring, "size", level + 2, printToFile);
+    parseLayer(cursor, jstring, 1, level + 2, 0, printToFile);
+    write_to_json(jstring, "", "},", level + 1);
 
     int marker_type = get16Bit(cursor);
 
