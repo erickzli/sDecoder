@@ -1,8 +1,10 @@
 #include "parser.hh"
 
 std::string grandParser(char **input) {
+    // Initialize a jstring (for JSON string)
     std::string jstring = "";
 
+    // validate the header of the file.
     int s = hexValidation(input, "04E6147992C8D011", true);
     if (s == 1) {
         std::cout << "ERROR: Check style file version." << std::endl;
@@ -45,9 +47,11 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
     std::cout << "-------------------------------" << std::endl;
     std::cout << "START parsing a symbol/layer..." << std::endl;
 
+    // Type 0: A normal layer
     if (type == 0) {
         write_to_json(jstring, "layer", "{", level);
         write_to_json(jstring, "number", std::to_string(layer_no) + ",", level + 1);
+    // A Symbol
     } else {
         write_to_json(jstring, "fillSymbol", "{", level);
     }
