@@ -19,49 +19,49 @@ int hexValidation(char **cursor, std::string hexStr, bool rewind) {
 
         if (num1 != num2) {
             if (rewind)
-                goRewind(cursor, currIdx);
+                bytesRewinder(cursor, currIdx);
             return 1;
         }
     }
 
     if (rewind)
-        goRewind(cursor, currIdx / 2);
+        bytesRewinder(cursor, currIdx / 2);
 
     return 0;
 }
 
-void goRewind(char **cursor, int bytesRewinded) {
+void bytesRewinder(char **cursor, int bytesRewinded) {
     *cursor -= bytesRewinded;
 }
 
-void moveBytes(char **cursor, int bytesMoved) {
-    *cursor += bytesMoved;
+void bytesHopper(char **cursor, int bytesHopped) {
+    *cursor += bytesHopped;
 }
 
 int getChar(char **cursor) {
     unsigned char ret = **cursor;
-    moveBytes(cursor, 1);
+    bytesHopper(cursor, 1);
 
     return (int)ret;
 }
 
 int get16Bit(char **cursor) {
     uint16_t *ret = (uint16_t *)*cursor;
-    moveBytes(cursor, 2);
+    bytesHopper(cursor, 2);
 
     return *ret;
 }
 
 int getInt(char **cursor) {
     uint32_t *ret = (uint32_t *)*cursor;
-    moveBytes(cursor, 4);
+    bytesHopper(cursor, 4);
 
     return *ret;
 }
 
 double getDouble(char **cursor) {
     double *ret = (double *)*cursor;
-    moveBytes(cursor, 8);
+    bytesHopper(cursor, 8);
 
     return *ret;
 }

@@ -16,18 +16,18 @@
 int hexValidation(char **cursor, std::string hexStr, bool rewind);
 
 /**
- * Rewind file pointer by rewindBytes.
+ * Rewind file pointer by bytesRewinded.
  * @param the input file stream.
  * @param Bytes need to be rewinded (Number in POSITIVE)
  */
-void goRewind(char **cursor, int rewindBytes);
+void bytesRewinder(char **cursor, int bytesRewinded);
 
 /**
- * Move the file pointer bytesMoved bytes.
+ * Move the file pointer bytesHopped bytes.
  * @param the input file stream.
  * @param the amount of bytes the pointer moves.
  */
-void moveBytes(char **cursor, int bytesMoved);
+void bytesHopper(char **cursor, int bytesHopped);
 
 /**
  * Get the character integer value (8-bit) from the current position.
@@ -36,6 +36,11 @@ void moveBytes(char **cursor, int bytesMoved);
  */
 int getChar(char **cursor);
 
+/**
+ * Get the character integer value (16-bit) from the current position.
+ * @param the input file stream.
+ * @return the integer-type value of the character gotten.
+ */
 int get16Bit(char **cursor);
 
 /**

@@ -110,7 +110,9 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level, bo
 int parseString(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile);
 
 /**
- * Parser the TEMPLATE (check the diagram)
+ * Parser the TEMPLATE pattern.
+ *     TEMPLATE is for line feature which defines dot repeats.
+ *     interval length -> line length -> gap length.
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
