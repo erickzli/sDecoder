@@ -42,6 +42,9 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
         case 58880:
             parseCharacterMarker(cursor, jstring, level + 1, printToFile);
             break;
+        case 37937:
+            parseArrowMarker(cursor, jstring, level + 1, printToFile);
+            break;
         default:
             std::cout << "ERROR: Line type " << std::to_string(marker_type) << " not found." << std::endl;
             return -1;
@@ -105,6 +108,27 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool pr
     }
 
     parseString(cursor, jstring, "font", level, printToFile);
+
+    return 0;
+}
+
+int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printToFile) {
+    std::cout << "Type: Arrow Marker..." << std::endl;
+    if (printToFile) {
+        write_to_json(jstring, "type", "\"Arrow Marker\",", level);
+    }
+
+    parseColorPattern(cursor, jstring, "Marker Color", level, printToFile);
+    parseDouble(cursor, jstring, "size", level, printToFile);
+    parseDouble(cursor, jstring, "width", level, printToFile);
+    parseDouble(cursor, jstring, "angle", level, printToFile);
+
+    bytesHopper(cursor, 12);
+
+    parseDouble(cursor, jstring, "XOffset", level, printToFile);
+    parseDouble(cursor, jstring, "YOffset", level, printToFile);
+
+    bytesHopper(cursor, 32);
 
     return 0;
 }

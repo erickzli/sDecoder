@@ -7,7 +7,12 @@
 
 #include "parser.hh"
 
+
+
+
+
 int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool printToFile);
+
 
 int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool printToFile);
 
@@ -20,6 +25,7 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool print
  */
 int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile);
 
+int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printToFile);
 
 /**
  * Parser the type of markers (Grid or random)

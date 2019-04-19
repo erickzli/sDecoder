@@ -79,7 +79,7 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
         int b = 0;
         do {
             b = getChar(cursor);
-        } while (b != 20); // While b is not 0x14.
+        } while (b != 20 && b != 83); // While b is not 0x14.
 
         // trace back to the front of the header
         bytesRewinder(cursor, 3);
