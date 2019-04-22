@@ -7,13 +7,22 @@
 
 #include "parser.hh"
 
-
-
-
-
+/**
+ * Parser the marker pattern
+ * \param the input file stream.
+ * \param the output file stream.
+ * \param the level(indention)
+ * \param whether print to JSON file.
+ */
 int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool printToFile);
 
-
+/**
+ * Parser the simple marker pattern
+ * \param the input file stream.
+ * \param the output file stream.
+ * \param the level(indention)
+ * \param whether print to JSON file.
+ */
 int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool printToFile);
 
 /**
@@ -25,6 +34,13 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool print
  */
 int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile);
 
+/**
+ * Parser the arrow marker pattern
+ * \param the input file stream.
+ * \param the output file stream.
+ * \param the level(indention)
+ * \param whether print to JSON file.
+ */
 int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printToFile);
 
 /**
