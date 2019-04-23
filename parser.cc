@@ -3,26 +3,34 @@
 std::string grandParser(char **input) {
     // Initialize a jstring (for JSON string)
     std::string jstring = "";
-
-    // validate the header of the file.
-    int s = hexValidation(input, "04E6147992C8D011", true);
-    if (s == 1) {
-        std::cout << "ERROR: Check style file version." << std::endl;
-        return "";
-    } else {
-        std::cout << "File version is validated." << std::endl;
-    }
-
+    bool skipHead = false;
+    int num_of_layers = 0;
     write_to_json(jstring, "", "{", 0);
-    // Move infile pointer 26 bytes to skip the header metadata.
-    bytesHopper(input, 26);
-    // Parse the first color pattern. Usage so far is unknown...
-    parseColorPattern(input, jstring, "Unknown", 1, PRINT_TO_FILE);
-    // Parse out the number of layers...
-    int num_of_layers = parseLayerNumber(input, jstring, 1, PRINT_TO_FILE);
-    // Test if the number of layers behaves weird...
-    if (-1 == num_of_layers)
-        exit(1);
+
+    if (getChar(input) != 4) {
+        skipHead = true;
+        num_of_layers = 1;
+        bytesRewinder(input, 1);
+    } else {
+        // validate the header of the file.
+        int s = hexValidation(input, "E6147992C8D011", DO_REWIND);
+        if (s == 1) {
+            std::cout << "ERROR: Header cannot be parsed." << std::endl;
+            return "";
+        } else {
+            std::cout << "File is validated." << std::endl;
+        }
+
+        // Move infile pointer 26 bytes to skip the header metadata.
+        bytesHopper(input, 25);
+        // Parse the first color pattern. Usage so far is unknown...
+        parseColorPattern(input, jstring, "Unknown", 1, PRINT_TO_FILE);
+        // Parse out the number of layers...
+        num_of_layers = parseLayerNumber(input, jstring, 1, PRINT_TO_FILE);
+        // Test if the number of layers behaves weird...
+        if (-1 == num_of_layers)
+            exit(1);
+    }
 
     // Start parsing each layer.
     for (int i = 0; i < num_of_layers; i++) {
