@@ -143,7 +143,7 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         } else {
             // If the color space code is not 92, 96, or 97, then an error mesg will be printed out.
             std::cout << "ERROR: Color Space " << std::to_string(color_space) << " not found." << std::endl;
-            return -1;
+            exit(1);
         }
         bytesHopper(cursor, 20);
 

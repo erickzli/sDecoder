@@ -41,7 +41,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
             break;
         default:
             std::cout << "ERROR: Line type " << std::to_string(line_type) << " not found." << std::endl;
-            return -1;
+            exit(1);
     }
 
     if (printToFile) {
