@@ -31,15 +31,18 @@ int hexValidation(char **cursor, std::string hexStr, bool rewind) {
 }
 
 void bytesRewinder(char **cursor, int bytesRewinded) {
+    // Move the cursor backwwards
     *cursor -= bytesRewinded;
 }
 
 void bytesHopper(char **cursor, int bytesHopped) {
+    // Move the cursor forwards
     *cursor += bytesHopped;
 }
 
 int getChar(char **cursor) {
     unsigned char ret = **cursor;
+    // After getting the current character, move to the next character.
     bytesHopper(cursor, 1);
 
     return (int)ret;
@@ -47,6 +50,7 @@ int getChar(char **cursor) {
 
 int get16Bit(char **cursor) {
     uint16_t *ret = (uint16_t *)*cursor;
+    // After getting the current character, move to the second next character.
     bytesHopper(cursor, 2);
 
     return *ret;
@@ -54,6 +58,7 @@ int get16Bit(char **cursor) {
 
 int getInt(char **cursor) {
     uint32_t *ret = (uint32_t *)*cursor;
+    // After getting the current character, move to the next integer.
     bytesHopper(cursor, 4);
 
     return *ret;
@@ -61,6 +66,7 @@ int getInt(char **cursor) {
 
 double getDouble(char **cursor) {
     double *ret = (double *)*cursor;
+    // After getting the current character, move to the next double.
     bytesHopper(cursor, 8);
 
     return *ret;

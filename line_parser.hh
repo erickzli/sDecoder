@@ -5,8 +5,6 @@
 #include <string>
 #include <iostream>
 
-#include "parser.hh"
-
 /**
  * Parser the line patterns.
  * \param the input file stream.

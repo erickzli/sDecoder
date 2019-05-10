@@ -1,4 +1,5 @@
 #include "marker_parser.hh"
+#include "parser.hh"
 
 int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool printToFile) {
     std::cout << "-----------------------------" << std::endl;

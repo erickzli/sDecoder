@@ -1,4 +1,5 @@
 #include "line_parser.hh"
+#include "parser.hh"
 
 int parseLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level, bool printToFile) {
     std::cout << "-----------------------------" << std::endl;
