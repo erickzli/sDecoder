@@ -91,7 +91,10 @@ int parseCartoLine(char **cursor, std::string &jstring, int level, bool printToF
     // Parse the TEMPLATE
     parseTemplate(cursor, jstring, 0, level, printToFile);
 
-    bytesHopper(cursor, 14);
+    //bytesHopper(cursor, 14);
+    // Parse the TAIL pattern of carto line.
+    while (getChar(cursor) < 20) {}
+    bytesRewinder(cursor, 1);
 
     return 0;
 }
@@ -140,6 +143,7 @@ int parseLineCaps(char **cursor, std::string &jstring, int level, bool printToFi
     int line_caps_code = getChar(cursor);
     std::string line_caps_name = "";
 
+    // Select different line caps.
     switch(line_caps_code) {
         case 0:
             line_caps_name = "Butt";
@@ -169,6 +173,7 @@ int parseLineJoins(char **cursor, std::string &jstring, int level, bool printToF
     int line_joins_code = getChar(cursor);
     std::string line_joins_name = "";
 
+    // Select different line joins.
     switch(line_joins_code) {
         case 0:
             line_joins_name = "Miter";
@@ -199,6 +204,7 @@ int parseLineStyle(char **cursor, std::string &jstring, int level, bool printToF
     int line_style_code = getChar(cursor);
     std::string line_style_name = "";
 
+    // Select different line styles.
     switch(line_style_code) {
         case 0:
             line_style_name = "Solid";
