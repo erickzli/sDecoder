@@ -19,7 +19,7 @@ std::string grandParser(char **input);
  * \param the output file stream.
  * \param type of parser:
  *     0: Normal parser;
- *     1: Symbol parser.
+ *     1: Mask symbol parser.
  * \param the level(indention).
  * \param option for print to output file.
  */

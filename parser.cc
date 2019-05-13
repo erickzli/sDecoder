@@ -37,6 +37,7 @@ std::string grandParser(char **input) {
         parseLayer(input, jstring, 0, 1, i + 1, PRINT_TO_FILE);
         // Inter-layer pattern...
         if (i < num_of_layers - 1) {
+            bytesRewinder(input, 1);
             int b = 0;
             do {
                 b = getChar(input);
@@ -54,6 +55,7 @@ std::string grandParser(char **input) {
 int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no, bool printToFile) {
     std::cout << "-------------------------------" << std::endl;
     std::cout << "START parsing a symbol/layer..." << std::endl;
+
 
     // Type 0: A normal layer
     if (type == 0) {
@@ -84,14 +86,31 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
     // Inter-layer pattern is defined in main()
     // This part is for Symbol...
     if (type == 1) {
+        int num_of_marker_layers = 0;
         int b = 0;
         do {
             b = getChar(cursor);
+            if (0 < b && b < 5) {
+                num_of_marker_layers = b;
+                std::cout << "Number of marker layers is: " << num_of_marker_layers << std::endl;
+            }
         } while (b != 20 && b != 83); // While b is not 0x14 and 0x53.
 
         // trace back to the front of the header
         bytesRewinder(cursor, 3);
+        write_to_json(jstring, "", "},", level);
+
+        return num_of_marker_layers;
     }
+
+    // std::cout << "++++++++++++++++++++++++++++++++++++++" << std::endl;
+    // std::cout << std::to_string(getChar(cursor)) << std::endl;
+    // std::cout << std::to_string(getChar(cursor)) << std::endl;
+    // std::cout << std::to_string(getChar(cursor)) << std::endl;
+    // std::cout << std::to_string(getChar(cursor)) << std::endl;
+    // std::cout << std::to_string(getChar(cursor)) << std::endl;
+    // std::cout << std::to_string(getChar(cursor)) << std::endl;
+
 
     write_to_json(jstring, "", "},", level);
 
@@ -378,8 +397,6 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
     } else {
         std::cout << "ERROR: Failed to validate string format..." << std::endl;
     }
-
-    bytesHopper(cursor, 29);
 
     return 0;
 }

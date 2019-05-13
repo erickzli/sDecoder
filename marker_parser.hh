@@ -22,7 +22,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail);
 
 /**
  * Parser the character marker pattern
@@ -31,7 +31,7 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool print
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail);
 
 /**
  * Parser the arrow marker pattern
@@ -40,7 +40,7 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool pr
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail);
 
 /**
  * Parser the type of markers (Grid or random)
