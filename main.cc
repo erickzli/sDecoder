@@ -13,13 +13,13 @@ int main(int argc, char *argv[]) {
     // When there are too few arguments.
     if (argc <= 1) {
         printFormat();
-        exit(1);
+        return -1;
     }
 
     // When the number of arguments is not odd (including ./main)
     if (argc % 2 != 1) {
         printFormat();
-        exit(1);
+        return -1;
     }
 
     // The name of the input file.
@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
         // If the argument flag is not shown above, then the format has some problems.
         } else {
             printFormat();
-            exit(1);
+            return -1;
         }
         i += 1;
     }
@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     // The case that the file is not existed or cannot be opened.
     if (infile == NULL) {
         std::cout << "ERROR: Cannot find file \"" << filename << "\"." << std::endl;
-        exit(1);
+        return -1;
     }
 
     // Get the size of the file to reserve enough memory.
