@@ -27,22 +27,26 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
 
     bytesHopper(cursor, 17);
 
-    switch(line_type) {
-        case 249:
-            parseSimpleLine(cursor, jstring, level + 1, printToFile);
-            break;
-        case 251:
-            parseCartoLine(cursor, jstring, level + 1, printToFile);
-            break;
-        case 252:
-            parseHashLine(cursor, jstring, level + 1, printToFile);
-            break;
-        case 253:
-            parseMarkerLine(cursor, jstring, level + 1, printToFile);
-            break;
-        default:
-            std::cout << "ERROR: Line type " << std::to_string(line_type) << " not found." << std::endl;
-            exit(1);
+    try {
+        switch(line_type) {
+            case 249:
+                parseSimpleLine(cursor, jstring, level + 1, printToFile);
+                break;
+            case 251:
+                parseCartoLine(cursor, jstring, level + 1, printToFile);
+                break;
+            case 252:
+                parseHashLine(cursor, jstring, level + 1, printToFile);
+                break;
+            case 253:
+                parseMarkerLine(cursor, jstring, level + 1, printToFile);
+                break;
+            default:
+                std::cout << "ERROR: Line type " << std::to_string(line_type) << " not found." << std::endl;
+                throw std::string("Line type.");
+        }
+    } catch (std::string err) {
+        throw err;
     }
 
     if (printToFile) {
@@ -58,16 +62,21 @@ int parseSimpleLine(char **cursor, std::string &jstring, int level, bool printTo
         write_to_json(jstring, "type", "\"Simple Line\",", level);
     }
 
-    // Parse the color for the line.
-    parseColorPattern(cursor, jstring, "Simple Line Color", level, printToFile);
-    // Parse the width of the line.
-    parseDouble(cursor, jstring, "width", level, printToFile);
-    // Parse the line style of the line. (Solid, dashed, dotted, dash-dot, dash-dot-dot, null)
-    parseLineStyle(cursor, jstring, level, printToFile);
+    try {
+        // Parse the color for the line.
+        parseColorPattern(cursor, jstring, "Simple Line Color", level, printToFile);
+        // Parse the width of the line.
+        parseDouble(cursor, jstring, "width", level, printToFile);
+        // Parse the line style of the line. (Solid, dashed, dotted, dash-dot, dash-dot-dot, null)
+        parseLineStyle(cursor, jstring, level, printToFile);
 
-    // Parse the TAIL pattern of simple line.
-    while (getChar(cursor) < 20) {}
-    bytesRewinder(cursor, 1);
+        // Parse the TAIL pattern of simple line.
+        while (getChar(cursor) < 20) {}
+        bytesRewinder(cursor, 1);
+    } catch (std::string err) {
+        throw err;
+    }
+
 
     return 0;
 }
@@ -78,23 +87,28 @@ int parseCartoLine(char **cursor, std::string &jstring, int level, bool printToF
         write_to_json(jstring, "type", "\"Cartographic Line\",", level);
     }
 
-    // Parse line caps (butt, round, square)
-    parseLineCaps(cursor, jstring, level, printToFile);
-    // Parse line joins (miter, round, bevel)
-    parseLineJoins(cursor, jstring, level, printToFile);
-    // Parse the cartographic line width
-    parseDouble(cursor, jstring, "cartographicLineWidth", level, printToFile);
-    bytesHopper(cursor, 1);
-    // Parse the offset in the line properties section.
-    parseDouble(cursor, jstring, "propertiesOffset", level, printToFile);
-    // Parse the color of the cartographic line.
-    parseColorPattern(cursor, jstring, "Cartographic Line Color", level, printToFile);
-    // Parse the TEMPLATE
-    parseTemplate(cursor, jstring, 0, level, printToFile);
+    try {
+        // Parse line caps (butt, round, square)
+        parseLineCaps(cursor, jstring, level, printToFile);
+        // Parse line joins (miter, round, bevel)
+        parseLineJoins(cursor, jstring, level, printToFile);
+        // Parse the cartographic line width
+        parseDouble(cursor, jstring, "cartographicLineWidth", level, printToFile);
+        bytesHopper(cursor, 1);
+        // Parse the offset in the line properties section.
+        parseDouble(cursor, jstring, "propertiesOffset", level, printToFile);
+        // Parse the color of the cartographic line.
+        parseColorPattern(cursor, jstring, "Cartographic Line Color", level, printToFile);
+        // Parse the TEMPLATE
+        parseTemplate(cursor, jstring, 0, level, printToFile);
 
-    // Parse the TAIL pattern of carto line.
-    while (getChar(cursor) < 20) {}
-    bytesRewinder(cursor, 1);
+        // Parse the TAIL pattern of carto line.
+        while (getChar(cursor) < 20) {}
+        bytesRewinder(cursor, 1);
+    } catch (std::string err) {
+        throw err;
+    }
+
 
     return 0;
 }
@@ -105,17 +119,21 @@ int parseHashLine(char **cursor, std::string &jstring, int level, bool printToFi
         write_to_json(jstring, "type", "\"Hash Line\",", level);
     }
 
-    parseDouble(cursor, jstring, "hashLineAngle", level, printToFile);
-    parseLineCaps(cursor, jstring, level, printToFile);
-    parseLineJoins(cursor, jstring, level, printToFile);
-    parseDouble(cursor, jstring, "cartographicLineWidth", level, printToFile);
-    bytesHopper(cursor, 1);
-    parseDouble(cursor, jstring, "propertiesOffset", level, printToFile);
-    parseLinePattern(cursor, jstring, 1, "Outline", level, printToFile);
-    parseColorPattern(cursor, jstring, "Cartographic Line Color", level, printToFile);
-    parseTemplate(cursor, jstring, 0, level, printToFile);
+    try {
+        parseDouble(cursor, jstring, "hashLineAngle", level, printToFile);
+        parseLineCaps(cursor, jstring, level, printToFile);
+        parseLineJoins(cursor, jstring, level, printToFile);
+        parseDouble(cursor, jstring, "cartographicLineWidth", level, printToFile);
+        bytesHopper(cursor, 1);
+        parseDouble(cursor, jstring, "propertiesOffset", level, printToFile);
+        parseLinePattern(cursor, jstring, 1, "Outline", level, printToFile);
+        parseColorPattern(cursor, jstring, "Cartographic Line Color", level, printToFile);
+        parseTemplate(cursor, jstring, 0, level, printToFile);
+        bytesHopper(cursor, 14);
+    } catch (std::string err) {
+        throw err;
+    }
 
-    bytesHopper(cursor, 14);
 
     return 0;
 }
@@ -126,15 +144,20 @@ int parseMarkerLine(char **cursor, std::string &jstring, int level, bool printTo
         write_to_json(jstring, "type", "\"Marker Line\",", level);
     }
 
-    bytesHopper(cursor, 1);
-    parseDouble(cursor, jstring, "propertiesOffset", level, printToFile);
-    parseMarkerPattern(cursor, jstring, level, printToFile);
-    parseTemplate(cursor, jstring, 1, level, printToFile);
-    parseLineCaps(cursor, jstring, level, printToFile);
-    parseLineJoins(cursor, jstring, level, printToFile);
-    parseDouble(cursor, jstring, "cartographicLineWidth", level, printToFile);
+    try {
+        bytesHopper(cursor, 1);
+        parseDouble(cursor, jstring, "propertiesOffset", level, printToFile);
+        parseMarkerPattern(cursor, jstring, level, printToFile);
+        parseTemplate(cursor, jstring, 1, level, printToFile);
+        parseLineCaps(cursor, jstring, level, printToFile);
+        parseLineJoins(cursor, jstring, level, printToFile);
+        parseDouble(cursor, jstring, "cartographicLineWidth", level, printToFile);
 
-    bytesHopper(cursor, 14);
+        bytesHopper(cursor, 14);
+    } catch (std::string err) {
+        throw err;
+    }
+
 
     return 0;
 }
@@ -156,7 +179,7 @@ int parseLineCaps(char **cursor, std::string &jstring, int level, bool printToFi
             break;
         default:
             std::cout << "ERROR: Line caps code " << line_caps_code << " not found."  << std::endl;
-            return -1;
+            throw std::string("Line caps code.");
     }
 
     std::cout << "The line cap is " << line_caps_name << std::endl;
@@ -186,7 +209,7 @@ int parseLineJoins(char **cursor, std::string &jstring, int level, bool printToF
             break;
         default:
             std::cout << "ERROR: Line joins code " << line_joins_code << " not found."  << std::endl;
-            return -1;
+            throw std::string("Line join code.");
     }
 
     std::cout << "The line join is " << line_joins_name << std::endl;
@@ -226,7 +249,7 @@ int parseLineStyle(char **cursor, std::string &jstring, int level, bool printToF
             break;
         default:
             std::cout << "ERROR: Line style code " << line_style_code << " not found."  << std::endl;
-            return -1;
+            throw std::string("Line style code.");
     }
 
     std::cout << "The line style is " << line_style_name << std::endl;

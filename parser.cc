@@ -7,43 +7,49 @@ std::string grandParser(char **input) {
     int num_of_layers = 0;
     write_to_json(jstring, "", "{", 0);
 
-    if (getChar(input) != 4) {
-        skipHead = true;
-        num_of_layers = 1;
-        bytesRewinder(input, 1);
-    } else {
-        // validate the header of the file.
-        int s = hexValidation(input, "E6147992C8D011", DO_REWIND);
-        if (s == 1) {
-            std::cout << "ERROR: Header cannot be parsed." << std::endl;
-            return "";
+    try {
+        if (getChar(input) != 4) {
+            skipHead = true;
+            num_of_layers = 1;
+            bytesRewinder(input, 1);
         } else {
-            std::cout << "File is validated." << std::endl;
+            // validate the header of the file.
+            int s = hexValidation(input, "E6147992C8D011", DO_REWIND);
+            if (s == 1) {
+                std::cout << "ERROR: Header cannot be parsed." << std::endl;
+                throw std::string("Header.\n");
+            } else {
+                std::cout << "File is validated." << std::endl;
+            }
+            // Move infile pointer 26 bytes to skip the header metadata.
+            bytesHopper(input, 25);
+            // Parse the first color pattern. Usage so far is unknown...
+            parseColorPattern(input, jstring, "Unknown", 1, PRINT_TO_FILE);
+            // Parse out the number of layers...
+            num_of_layers = parseLayerNumber(input, jstring, 1, PRINT_TO_FILE);
+            // Test if the number of layers behaves weird...
+            if (-1 == num_of_layers) {
+                std::cout << "ERROR: Number of Layers is abnormal." << std::endl;
+                throw std::string("Number of layers.\n");
+            }
         }
 
-        // Move infile pointer 26 bytes to skip the header metadata.
-        bytesHopper(input, 25);
-        // Parse the first color pattern. Usage so far is unknown...
-        parseColorPattern(input, jstring, "Unknown", 1, PRINT_TO_FILE);
-        // Parse out the number of layers...
-        num_of_layers = parseLayerNumber(input, jstring, 1, PRINT_TO_FILE);
-        // Test if the number of layers behaves weird...
-        if (-1 == num_of_layers)
-            exit(1);
-    }
-
-    // Start parsing each layer.
-    for (int i = 0; i < num_of_layers; i++) {
-        parseLayer(input, jstring, 0, 1, i + 1, PRINT_TO_FILE);
-        // Inter-layer pattern...
-        if (i < num_of_layers - 1) {
-            bytesRewinder(input, 1);
-            int b = 0;
-            do {
-                b = getChar(input);
-            } while (b != 3 && b != 6 && b != 8 && b != 9);
-            bytesRewinder(input, 1);
+        // Start parsing each layer.
+        for (int i = 0; i < num_of_layers; i++) {
+            parseLayer(input, jstring, 0, 1, i + 1, PRINT_TO_FILE);
+            // Inter-layer pattern...
+            if (i < num_of_layers - 1) {
+                bytesRewinder(input, 1);
+                int b = 0;
+                do {
+                    b = getChar(input);
+                } while (b != 3 && b != 6 && b != 8 && b != 9);
+                bytesRewinder(input, 1);
+            }
         }
+    } catch (std::string err) {
+        std::cout << "ERROR occurred. Stopped..." << std::endl;
+        return std::string("\"error\": \"" + err + "\"\n");
     }
 
     write_to_json(jstring, "", "}", 0);
@@ -56,10 +62,9 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
     std::cout << "-------------------------------" << std::endl;
     std::cout << "START parsing a symbol/layer..." << std::endl;
 
-
     // Type 0: A normal layer
     if (type == 0) {
-        write_to_json(jstring, "layer", "{", level);
+        write_to_json(jstring, "layer" + std::to_string(layer_no), "{", level);
         write_to_json(jstring, "number", std::to_string(layer_no) + ",", level + 1);
     // A Symbol
     } else {
@@ -80,7 +85,7 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
         parseMarkerFill(cursor, jstring, level + 1, PRINT_TO_FILE);
     } else {
         std::cout << "ERROR: Filling type " << filling_type << " not support" << std::endl;
-        return -1;
+        throw std::string("Filling type.");
     }
 
     // Inter-layer pattern is defined in main()
@@ -102,14 +107,6 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
 
         return num_of_marker_layers;
     }
-
-    // std::cout << "++++++++++++++++++++++++++++++++++++++" << std::endl;
-    // std::cout << std::to_string(getChar(cursor)) << std::endl;
-    // std::cout << std::to_string(getChar(cursor)) << std::endl;
-    // std::cout << std::to_string(getChar(cursor)) << std::endl;
-    // std::cout << std::to_string(getChar(cursor)) << std::endl;
-    // std::cout << std::to_string(getChar(cursor)) << std::endl;
-    // std::cout << std::to_string(getChar(cursor)) << std::endl;
 
 
     write_to_json(jstring, "", "},", level);
@@ -157,12 +154,12 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         if (146 == color_space) {
             std::cout << "Color Space: HSV." << std::endl;
         // RGB color space...
-    } else if (150 == color_space) {
+        } else if (150 == color_space) {
             std::cout << "Color Space: RGB." << std::endl;
         } else {
             // If the color space code is not 92, 96, or 97, then an error mesg will be printed out.
             std::cout << "ERROR: Color Space " << std::to_string(color_space) << " not found." << std::endl;
-            exit(1);
+            throw std::string("Color Space.");
         }
         bytesHopper(cursor, 20);
 
@@ -209,7 +206,6 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printT
     // Check whether the layer number is normal...
     if (0 > num_of_layers || 5 < num_of_layers) {
         std::cout << "WARNING: Layer number is abnormal." << std::endl;
-        return -1;
     }
 
     if (printToFile) {
@@ -230,21 +226,25 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bo
         write_to_json(jstring, "fillingType", "\"Simple Fill\",", level);
     }
 
-    // Validate if the header is there.
-    if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-        std::cout << "ERROR: Fail to validate Simple Fill pattern header..." << std::endl;
-        return -1;
-    }
-    bytesHopper(cursor, 2);
+    try {
+        // Validate if the header is there.
+        if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+            std::cout << "ERROR: Fail to validate Simple Fill pattern header..." << std::endl;
+            throw std::string("Validation.");
+        }
+        bytesHopper(cursor, 2);
 
-    // Type of the process (0 for normal process; 1 for the symbol process)
-    if (type == 0) {
-        parseLinePattern(cursor, jstring, 0, "Outline", level, PRINT_TO_FILE);
-    } else {
-        parseLinePattern(cursor, jstring, 1, "Filling Line", level, PRINT_TO_FILE);
-    }
+        // Type of the process (0 for normal process; 1 for the symbol process)
+        if (type == 0) {
+            parseLinePattern(cursor, jstring, 0, "Outline", level, PRINT_TO_FILE);
+        } else {
+            parseLinePattern(cursor, jstring, 1, "Filling Line", level, PRINT_TO_FILE);
+        }
 
-    parseColorPattern(cursor, jstring, "Filling Color", level, PRINT_TO_FILE);
+        parseColorPattern(cursor, jstring, "Filling Color", level, PRINT_TO_FILE);
+    } catch (std::string err) {
+        throw err;
+    }
 
     return 0;
 }
@@ -258,17 +258,22 @@ int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFi
         write_to_json(jstring, "fillingType", "\"Line Fill\",", level);
     }
 
-    // Validate if the header is there.
-    if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-        std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
-        return -1;
-    }
-    bytesHopper(cursor, 18);
+    try {
+        // Validate if the header is there.
+        if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+            std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
+            throw std::string("Validation.");
+        }
+        bytesHopper(cursor, 18);
 
-    // Parse the line pattern for the filling lines.
-    parseLinePattern(cursor, jstring, 0, "Filling Line", level, printToFile);
-    // parse the line pattern for the outline.
-    parseLinePattern(cursor, jstring, 0, "Outline", level, printToFile);
+        // Parse the line pattern for the filling lines.
+        parseLinePattern(cursor, jstring, 0, "Filling Line", level, printToFile);
+        // parse the line pattern for the outline.
+        parseLinePattern(cursor, jstring, 0, "Outline", level, printToFile);
+    } catch (std::string err) {
+        throw err;
+    }
+
     // Parse the line fill angle. (the angle of the line inclination)
     parseDouble(cursor, jstring, "angle", level, printToFile);
     // Parse the line fill offset. (the horizontal displacement of the lines)
@@ -287,28 +292,32 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printTo
         write_to_json(jstring, "fillingType", "\"Marker Fill\",", level);
     }
 
-    // Validate if the header is there.
-    if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-        std::cout << "ERROR: Fail to validate Marker Fill pattern header..." << std::endl;
-        return -1;
+    try {
+        // Validate if the header is there.
+        if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+            std::cout << "ERROR: Fail to validate Marker Fill pattern header..." << std::endl;
+            throw std::string("validation");
+        }
+        bytesHopper(cursor, 2);
+
+        // Parse the marker types (Grid(uniform) or random distribution)
+        parseMarkerTypes(cursor, jstring, level, printToFile);
+        // Parse the X and Y-axial offset (horizontal displacement of the markers)
+        parseDouble(cursor, jstring, "fillPropertiesOffsetX", level, printToFile);
+        parseDouble(cursor, jstring, "fillPropertiesOffsetY", level, printToFile);
+        // Parse the X and Y-axial separation of the markers
+        parseDouble(cursor, jstring, "fillPropertiesSeparationX", level, printToFile);
+        parseDouble(cursor, jstring, "fillPropertiesSeparationY", level, printToFile);
+        bytesHopper(cursor, 16);
+
+        // Parse the Marker in detail
+        parseMarkerPattern(cursor, jstring, level, printToFile);
+
+        // Parse the outline.
+        parseLinePattern(cursor, jstring, 0, "Outline", level, printToFile);
+    } catch (std::string err) {
+        throw err;
     }
-    bytesHopper(cursor, 2);
-
-    // Parse the marker types (Grid(uniform) or random distribution)
-    parseMarkerTypes(cursor, jstring, level, printToFile);
-    // Parse the X and Y-axial offset (horizontal displacement of the markers)
-    parseDouble(cursor, jstring, "fillPropertiesOffsetX", level, printToFile);
-    parseDouble(cursor, jstring, "fillPropertiesOffsetY", level, printToFile);
-    // Parse the X and Y-axial separation of the markers
-    parseDouble(cursor, jstring, "fillPropertiesSeparationX", level, printToFile);
-    parseDouble(cursor, jstring, "fillPropertiesSeparationY", level, printToFile);
-    bytesHopper(cursor, 16);
-
-    // Parse the Marker in detail
-    parseMarkerPattern(cursor, jstring, level, printToFile);
-
-    // Parse the outline.
-    parseLinePattern(cursor, jstring, 0, "Outline", level, printToFile);
 
     return 0;
 }
@@ -369,6 +378,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
         bytesHopper(cursor, 24);
     } else {
         std::cout << "ERROR: Failed to validate string format..." << std::endl;
+        throw std::string("validation.");
     }
 
     going = true;
@@ -396,6 +406,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
         }
     } else {
         std::cout << "ERROR: Failed to validate string format..." << std::endl;
+        throw std::string("validation.");
     }
 
     return 0;
@@ -409,7 +420,7 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool
     // Validate if the header is there.
     if (0 != hexValidation(cursor, "713A0941E1CCD011BFAA0080C7E24280", !DO_REWIND)) {
         std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
-        return -1;
+        throw std::string("validation.");
     }
     bytesHopper(cursor, 2);
 
