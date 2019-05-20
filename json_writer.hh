@@ -1,3 +1,10 @@
+//
+//  json_writer.hh
+//
+//  Created by Erick Li on 04/11/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #ifndef __JSON_WRITER__
 #define __JSON_WRITER__
 

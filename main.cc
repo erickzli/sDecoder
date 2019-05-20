@@ -1,3 +1,11 @@
+//
+//  main.cc
+//
+//  Created by Erick Li on 04/10/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
+
 #include <iostream>
 #include "parser.hh"
 #include "json_writer.hh"

@@ -1,3 +1,10 @@
+//
+//  marker_parser.cc
+//
+//  Created by Erick Li on 04/16/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #include "marker_parser.hh"
 #include "parser.hh"
 
@@ -20,9 +27,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
                 std::cout << "ERROR: Fail to validate marker pattern header..." << std::endl;
                 throw std::string("validation.");
             }
-            bytesHopper(cursor, 2);
-
-            bytesHopper(cursor, 8);
+            bytesHopper(cursor, 10);
             parseDouble(cursor, jstring, "markerSize", level + 1, printToFile);
             bytesHopper(cursor, 24);
             parseColorPattern(cursor, jstring, "Marker Color", level + 1, printToFile);

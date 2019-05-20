@@ -1,3 +1,10 @@
+//
+//  marker_parser.hh
+//
+//  Created by Erick Li on 04/16/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #ifndef __MARKER_PARSER__
 #define __MARKER_PARSER__
 

@@ -1,3 +1,10 @@
+//
+//  json_writer.cc
+//
+//  Created by Erick Li on 04/11/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #include "json_writer.hh"
 
 void write_to_json(std::string &jstring, std::string tag, std::string buf, int level) {

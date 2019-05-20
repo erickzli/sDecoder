@@ -1,3 +1,10 @@
+//
+//  parser.cc
+//
+//  Created by Erick Li on 04/11/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #include "parser.hh"
 
 std::string grandParser(char **input) {

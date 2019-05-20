@@ -1,3 +1,10 @@
+//
+//  parser_helper.cc
+//
+//  Created by Erick Li on 04/10/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #include "parser_helper.hh"
 
 int hexValidation(char **cursor, std::string hexStr, bool rewind) {
