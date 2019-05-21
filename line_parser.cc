@@ -23,34 +23,49 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
         }
     }
 
+
     // Get the line type
     int line_type = getChar(cursor);
+    bytesRewinder(cursor, 1);
+    // Set the default number of line layers to 1
+    int num_of_line_layers = 1;
 
-    // When the line type code is 0xFA, then extra hops are needed.
-    if (250 == line_type) {
-        bytesHopper(cursor, 29);
-        line_type = getChar(cursor);
+    // When the line type code is 0xFA, we need to find the info like layer number from it.
+    if (0xFA == line_type) {
+        bytesHopper(cursor, 26);
+        num_of_line_layers = getInt(cursor);
     }
 
-    bytesHopper(cursor, 17);
+    write_to_json(jstring, "numberOfLineLayers", std::to_string(num_of_line_layers) + ",", level + 1);
 
     try {
-        switch(line_type) {
-            case 249:
-                parseSimpleLine(cursor, jstring, level + 1, printToFile);
-                break;
-            case 251:
-                parseCartoLine(cursor, jstring, level + 1, printToFile);
-                break;
-            case 252:
-                parseHashLine(cursor, jstring, level + 1, printToFile);
-                break;
-            case 253:
-                parseMarkerLine(cursor, jstring, level + 1, printToFile);
-                break;
-            default:
-                std::cout << "ERROR: Line type " << std::to_string(line_type) << " not found." << std::endl;
-                throw std::string("Line type.");
+        // Go through each line layer.
+        for (int i = 0; i < num_of_line_layers; i++) {
+            std::cout << " --- START parsing line layer NO. " + std::to_string(i + 1) << std::endl;
+            line_type = getChar(cursor);
+            bytesHopper(cursor, 17);
+
+            write_to_json(jstring, "lineLayer" + std::to_string(i + 1), "{", level + 1);
+
+            switch(line_type) {
+                case 0xF9:
+                    parseSimpleLine(cursor, jstring, level + 2, printToFile);
+                    break;
+                case 0xFB:
+                    parseCartoLine(cursor, jstring, level + 2, printToFile);
+                    break;
+                case 0xFC:
+                    parseHashLine(cursor, jstring, level + 2, printToFile);
+                    break;
+                case 0xFD:
+                    parseMarkerLine(cursor, jstring, level + 2, printToFile);
+                    break;
+                default:
+                    std::cout << "ERROR: Line type " << std::to_string(line_type) << " not found." << std::endl;
+                    throw std::string("Line type.");
+            }
+
+            write_to_json(jstring, "", "},", level + 1);
         }
     } catch (std::string err) {
         throw err;
@@ -76,14 +91,13 @@ int parseSimpleLine(char **cursor, std::string &jstring, int level, bool printTo
         parseDouble(cursor, jstring, "width", level, printToFile);
         // Parse the line style of the line. (Solid, dashed, dotted, dash-dot, dash-dot-dot, null)
         parseLineStyle(cursor, jstring, level, printToFile);
-
-        // Parse the TAIL pattern of simple line.
-        while (getChar(cursor) < 20) {}
-        bytesRewinder(cursor, 1);
     } catch (std::string err) {
         throw err;
     }
 
+    // Parse the TAIL pattern of simple line.
+    while (getChar(cursor) < 20) {}
+    bytesRewinder(cursor, 1);
 
     return 0;
 }
@@ -108,14 +122,23 @@ int parseCartoLine(char **cursor, std::string &jstring, int level, bool printToF
         parseColorPattern(cursor, jstring, "Cartographic Line Color", level, printToFile);
         // Parse the TEMPLATE
         parseTemplate(cursor, jstring, 0, level, printToFile);
-
-        // Parse the TAIL pattern of carto line.
-        while (getChar(cursor) < 20) {}
-        bytesRewinder(cursor, 1);
     } catch (std::string err) {
         throw err;
     }
 
+    // Parse the TAIL pattern of carto line.
+    bool exit_cond = false;
+    while (!exit_cond) {
+        int sentinel = getChar(cursor);
+        if (1 == sentinel) {
+            bytesHopper(cursor, 7);
+        } else if (2 == sentinel) {
+            bytesHopper(cursor, 5);
+        } else {
+            bytesRewinder(cursor, 1);
+            exit_cond = true;
+        }
+    }
 
     return 0;
 }
@@ -136,11 +159,23 @@ int parseHashLine(char **cursor, std::string &jstring, int level, bool printToFi
         parseLinePattern(cursor, jstring, 1, "Outline", level, printToFile);
         parseColorPattern(cursor, jstring, "Cartographic Line Color", level, printToFile);
         parseTemplate(cursor, jstring, 0, level, printToFile);
-        bytesHopper(cursor, 14);
     } catch (std::string err) {
         throw err;
     }
 
+    // Parse the TAIL pattern of carto line.
+    bool exit_cond = false;
+    while (!exit_cond) {
+        int sentinel = getChar(cursor);
+        if (1 == sentinel) {
+            bytesHopper(cursor, 7);
+        } else if (2 == sentinel) {
+            bytesHopper(cursor, 5);
+        } else {
+            bytesRewinder(cursor, 1);
+            exit_cond = true;
+        }
+    }
 
     return 0;
 }
@@ -164,7 +199,6 @@ int parseMarkerLine(char **cursor, std::string &jstring, int level, bool printTo
     } catch (std::string err) {
         throw err;
     }
-
 
     return 0;
 }

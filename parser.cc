@@ -43,6 +43,7 @@ std::string grandParser(char **input) {
 
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
+            std::cout << "++++ START parsing layer NO. " + std::to_string(i + 1) << std::endl;
             parseLayer(input, jstring, 0, 1, i + 1, PRINT_TO_FILE);
             // Inter-layer pattern...
             if (i < num_of_layers - 1) {
@@ -424,45 +425,65 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool
     std::cout << "-------------------------" << std::endl;
     std::cout << "START parsing template..." << std::endl;
 
-    // Validate if the header is there.
-    if (0 != hexValidation(cursor, "713A0941E1CCD011BFAA0080C7E24280", !DO_REWIND)) {
-        std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
-        throw std::string("validation.");
-    }
-    bytesHopper(cursor, 2);
+    // It is possible that the template is not defined.
+    double preq = getDouble(cursor);
+    bytesRewinder(cursor, 8);
 
-    if (printToFile) {
-        write_to_json(jstring, "template", "{", level);
-    }
-
-    // Distance between two patterns.
-    parseDouble(cursor, jstring, "interval", level + 1, printToFile);
-    int num_of_patterns = getChar(cursor);
-    std::cout << "There is(are) " + std::to_string(num_of_patterns) + " patterns." << std::endl;
-    bytesHopper(cursor, 3);
-
-    for (int i = 0; i < num_of_patterns; i++) {
-        if (printToFile) {
-            write_to_json(jstring, "linePatternFeature", "{", level + 1);
+    // If the template is defined, we can go through it.
+    if (0.0 != preq) {
+        // Validate if the header is there.
+        if (0 != hexValidation(cursor, "713A0941E1CCD011BFAA0080C7E24280", !DO_REWIND)) {
+            std::cout << "ERROR: Fail to validate template pattern header..." << std::endl;
+            throw std::string("Template validation.");
         }
-        parseDouble(cursor, jstring, "patternLength", level + 2, printToFile);
-        parseDouble(cursor, jstring, "gapLength", level + 2, printToFile);
+        bytesHopper(cursor, 2);
+
         if (printToFile) {
-            write_to_json(jstring, "", "},", level + 1);
+            write_to_json(jstring, "template", "{", level);
         }
-    }
 
-    if (printToFile) {
-        write_to_json(jstring, "", "},", level);
-    }
+        // Distance between two patterns.
+        parseDouble(cursor, jstring, "interval", level + 1, printToFile);
+        int num_of_patterns = getChar(cursor);
+        std::cout << "There is(are) " + std::to_string(num_of_patterns) + " patterns." << std::endl;
+        bytesHopper(cursor, 3);
 
-    // The type of the template: 0: others, 1: char marker.
-    // The number of meaningless bytes varies based on the type.
-    if (type == 0) {
-        bytesHopper(cursor, 41);
+        for (int i = 0; i < num_of_patterns; i++) {
+            if (printToFile) {
+                write_to_json(jstring, "linePatternFeature", "{", level + 1);
+            }
+            parseDouble(cursor, jstring, "patternLength", level + 2, printToFile);
+            parseDouble(cursor, jstring, "gapLength", level + 2, printToFile);
+            if (printToFile) {
+                write_to_json(jstring, "", "},", level + 1);
+            }
+        }
+
+        if (printToFile) {
+            write_to_json(jstring, "", "},", level);
+        }
     } else {
-        bytesHopper(cursor, 33);
+        // Null bytes for null template.
+        bytesHopper(cursor, 16);
     }
+
+
+    bytesHopper(cursor, 33);
+    double sentinel = getDouble(cursor);
+    if (10.0 != sentinel) {
+        std::cout << "ERROR: Fail to validate template tail..." << std::endl;
+        throw std::string("Template tail validation.");
+    }
+
+    // // The type of the template: 0: others, 1: char marker.
+    // // The number of meaningless bytes varies based on the type.
+    // if (type == 0) {
+    //     // TEMP
+    //     // bytesHopper(cursor, 41);
+    //     bytesHopper(cursor, 33);
+    // } else {
+    //     bytesHopper(cursor, 33);
+    // }
 
     return 0;
 }

@@ -13,19 +13,17 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
     std::cout << "START parsing marker" << std::endl;
     if (printToFile) {
         write_to_json(jstring, "markerProperties", "{", level);
-        // write_to_json(jstring, "name", "\"" + property + "\",", level + 1);
     }
 
     int num_of_marker_layers = 1;
-
     int marker_type_precheck = get16Bit(cursor);
 
     try {
-        if (58879 == marker_type_precheck) { // FFE5
+        if (0xE5FF == marker_type_precheck) { // 58879
             // Validate if the header is there.
             if (0 != hexValidation(cursor, "147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
                 std::cout << "ERROR: Fail to validate marker pattern header..." << std::endl;
-                throw std::string("validation.");
+                throw std::string("Marker type validation.");
             }
             bytesHopper(cursor, 10);
             parseDouble(cursor, jstring, "markerSize", level + 1, printToFile);
@@ -38,8 +36,9 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
             num_of_marker_layers = parseLayer(cursor, jstring, 1, level + 2, 0, printToFile);
             write_to_json(jstring, "", "},", level + 1);
 
-            write_to_json(jstring, "numberOfMarkerLayers", std::to_string(num_of_marker_layers), level + 1);
+            write_to_json(jstring, "numberOfMarkerLayers", std::to_string(num_of_marker_layers) + ",", level + 1);
         } else {
+            std::cout << "WARNING: Marker type abnormal.\n";
             bytesRewinder(cursor, 2); // Move back to the front
         }
 
@@ -50,7 +49,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
             write_to_json(jstring, "number", std::to_string(i + 1), level + 2);
             int marker_type = get16Bit(cursor);
             // this part can be deleted in the future...
-            if (58876 == marker_type) {
+            if (0xE5FC == marker_type) {
                 bytesHopper(cursor, 29);
                 marker_type = getChar(cursor);
             }
@@ -59,33 +58,33 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
 
             if (num_of_marker_layers - 1 == i) {
                 switch(marker_type) {
-                    case 58878:
+                    case 0xE5FE: // 58878
                         parseSimpleMarker(cursor, jstring, level + 2, printToFile, true);
                         break;
-                    case 58880:
+                    case 0xE600: // 58880
                         parseCharacterMarker(cursor, jstring, level + 2, printToFile, true);
                         break;
-                    case 37937:
+                    case 0x9431: // 37937
                         parseArrowMarker(cursor, jstring, level + 2, printToFile, true);
                         break;
                     default:
-                        std::cout << "ERROR: Line type " << std::to_string(marker_type) << " not found." << std::endl;
-                        throw std::string("Line type.");
+                        std::cout << "ERROR: Marker type " << std::to_string(marker_type) << " not found." << std::endl;
+                        throw std::string("Marker type.");
                 }
             } else {
                 switch(marker_type) {
-                    case 58878:
+                    case 0xE5FE:
                         parseSimpleMarker(cursor, jstring, level + 2, printToFile, false);
                         break;
-                    case 58880:
+                    case 0xE600:
                         parseCharacterMarker(cursor, jstring, level + 2, printToFile, false);
                         break;
-                    case 37937:
+                    case 0x9431:
                         parseArrowMarker(cursor, jstring, level + 2, printToFile, false);
                         break;
                     default:
-                        std::cout << "ERROR: Line type " << std::to_string(marker_type) << " not found." << std::endl;
-                        throw std::string("Line type.");
+                        std::cout << "ERROR: Marker type " << std::to_string(marker_type) << " not found." << std::endl;
+                        throw std::string("Marker type.");
                 }
             }
             write_to_json(jstring, "", "},", level + 1);
