@@ -20,7 +20,7 @@
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseMarkerPattern(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the simple marker pattern
@@ -29,7 +29,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail);
+int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool withTail);
 
 /**
  * Parser the character marker pattern
@@ -38,7 +38,7 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool print
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail);
+int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool withTail);
 
 /**
  * Parser the arrow marker pattern
@@ -47,7 +47,7 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool pr
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail);
+int parseArrowMarker(char **cursor, std::string &jstring, int level, bool withTail);
 
 /**
  * Parser the type of markers (Grid or random)
@@ -56,7 +56,7 @@ int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printT
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMarkerTypes(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseMarkerTypes(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the type of masks (None or Halo)
@@ -65,8 +65,8 @@ int parseMarkerTypes(char **cursor, std::string &jstring, int level, bool printT
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMaskTypes(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseMaskTypes(char **cursor, std::string &jstring, int level);
 
-int parseMarkerStyle(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseMarkerStyle(char **cursor, std::string &jstring, int level);
 
 #endif

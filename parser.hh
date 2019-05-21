@@ -30,7 +30,7 @@ std::string grandParser(char **input);
  * \param the level(indention).
  * \param option for print to output file.
  */
-int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no, bool printToFile);
+int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no);
 
 /**
  * Parses the binary block where it defines a color pattern
@@ -41,7 +41,7 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
  * \param option for print to output file.
  */
 int parseColorPattern(char **cursor, std::string &jstring, std::string color_type,
-                int level, bool printToFile);
+                int level);
 
 /**
  * Parses out layer number.
@@ -53,7 +53,7 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
  *    val > 0: the number of layers
  *    val == -1: something wrong...
  */
-int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseLayerNumber(char **cursor, std::string &jstring, int level);
 
 
 /**
@@ -66,7 +66,7 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printT
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bool printToFile);
+int parseSimpleFill(char **cursor, std::string &jstring, int type, int level);
 
 /**
  * Parser the binary block where it defines a line fill pattern
@@ -75,7 +75,7 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bo
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseLineFill(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the binary block where it defines a marker fill pattern
@@ -84,7 +84,7 @@ int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFi
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseMarkerFill(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the binary block where it defines a double value
@@ -94,7 +94,7 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printTo
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-double parseDouble(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile);
+double parseDouble(char **cursor, std::string &jstring, std::string tag, int level);
 
 /**
  * Parser the binary block where it defines an integer value
@@ -104,7 +104,7 @@ double parseDouble(char **cursor, std::string &jstring, std::string tag, int lev
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseInt(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile);
+int parseInt(char **cursor, std::string &jstring, std::string tag, int level);
 
 /**
  * Parser the binary block where it defines a string (font name)
@@ -114,7 +114,7 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level, bo
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseString(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile);
+int parseString(char **cursor, std::string &jstring, std::string tag, int level);
 
 /**
  * Parser the TEMPLATE pattern.
@@ -125,6 +125,6 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool printToFile);
+int parseTemplate(char **cursor, std::string &jstring, int type, int level);
 
 #endif

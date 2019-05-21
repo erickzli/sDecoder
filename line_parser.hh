@@ -23,7 +23,7 @@
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level, bool printToFile);
+int parseLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level);
 
 /**
  * Parser the Simple Line pattern.
@@ -32,7 +32,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseSimpleLine(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseSimpleLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the Cartographic Line pattern.
@@ -41,7 +41,7 @@ int parseSimpleLine(char **cursor, std::string &jstring, int level, bool printTo
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseCartoLine(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseCartoLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the Hash Line pattern.
@@ -50,7 +50,7 @@ int parseCartoLine(char **cursor, std::string &jstring, int level, bool printToF
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseHashLine(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseHashLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the Marker Line pattern.
@@ -59,7 +59,7 @@ int parseHashLine(char **cursor, std::string &jstring, int level, bool printToFi
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseMarkerLine(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseMarkerLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the Line Cap pattern.
@@ -68,7 +68,7 @@ int parseMarkerLine(char **cursor, std::string &jstring, int level, bool printTo
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseLineCaps(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseLineCaps(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the Line Join pattern.
@@ -77,7 +77,7 @@ int parseLineCaps(char **cursor, std::string &jstring, int level, bool printToFi
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseLineJoins(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseLineJoins(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the line style pattern.
@@ -86,6 +86,6 @@ int parseLineJoins(char **cursor, std::string &jstring, int level, bool printToF
  * \param the level(indention)
  * \param whether print to JSON file.
  */
-int parseLineStyle(char **cursor, std::string &jstring, int level, bool printToFile);
+int parseLineStyle(char **cursor, std::string &jstring, int level);
 
 #endif

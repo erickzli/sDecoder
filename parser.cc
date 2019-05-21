@@ -31,9 +31,9 @@ std::string grandParser(char **input) {
             // Move infile pointer 26 bytes to skip the header metadata.
             bytesHopper(input, 25);
             // Parse the first color pattern. Usage so far is unknown...
-            parseColorPattern(input, jstring, "Unknown", 1, PRINT_TO_FILE);
+            parseColorPattern(input, jstring, "Unknown", 1);
             // Parse out the number of layers...
-            num_of_layers = parseLayerNumber(input, jstring, 1, PRINT_TO_FILE);
+            num_of_layers = parseLayerNumber(input, jstring, 1);
             // Test if the number of layers behaves weird...
             if (-1 == num_of_layers) {
                 LOG("ERROR: Number of Layers is abnormal.");
@@ -44,7 +44,7 @@ std::string grandParser(char **input) {
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
             LOG("++++ START parsing layer NO. " + std::to_string(i + 1));
-            parseLayer(input, jstring, 0, 1, i + 1, PRINT_TO_FILE);
+            parseLayer(input, jstring, 0, 1, i + 1);
             // Inter-layer pattern...
             if (i < num_of_layers - 1) {
                 bytesRewinder(input, 1);
@@ -66,7 +66,7 @@ std::string grandParser(char **input) {
     return jstring;
 }
 
-int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no, bool printToFile) {
+int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no) {
     LOG("-------------------------------");
     LOG("START parsing a symbol/layer...");
 
@@ -86,11 +86,11 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
 
     // For each filling type, enter into the corresponding field.
     if (3 == filling_type) {
-        parseSimpleFill(cursor, jstring, type, level + 1, PRINT_TO_FILE);
+        parseSimpleFill(cursor, jstring, type, level + 1);
     } else if (6 == filling_type) {
-        parseLineFill(cursor, jstring, level + 1, PRINT_TO_FILE);
+        parseLineFill(cursor, jstring, level + 1);
     } else if (8 == filling_type) {
-        parseMarkerFill(cursor, jstring, level + 1, PRINT_TO_FILE);
+        parseMarkerFill(cursor, jstring, level + 1);
     } else {
         LOG("ERROR: Filling type " + std::to_string(filling_type) + " not support");
         throw std::string("Filling type.");
@@ -122,17 +122,15 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
     return 0;
 }
 
-int parseColorPattern(char **cursor, std::string &jstring, std::string color_type, int level, bool printToFile) {
+int parseColorPattern(char **cursor, std::string &jstring, std::string color_type, int level) {
     LOG("----------------------");
     LOG("START parsing color...");
 
     // Get the color space (0x92 for HSV; 0x96 for RGB; 0x97 for CMYK)
     int color_space = getChar(cursor);
 
-    if (printToFile) {
-        write_to_json(jstring, "color", "{", level);
-        write_to_json(jstring, "name", "\"" + color_type + "\",", level + 1);
-    }
+    write_to_json(jstring, "color", "{", level);
+    write_to_json(jstring, "name", "\"" + color_type + "\",", level + 1);
 
     // CMYK color space...
     if (151 == color_space) {
@@ -150,13 +148,11 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         LOG("Y: " + std::to_string(y));
         LOG("K: " + std::to_string(k));
 
-        if (printToFile) {
-            write_to_json(jstring, "space", "\"CMYK\",", level + 1);
-            write_to_json(jstring, "C", std::to_string(c) + ",", level + 1);
-            write_to_json(jstring, "M", std::to_string(m) + ",", level + 1);
-            write_to_json(jstring, "Y", std::to_string(y) + ",", level + 1);
-            write_to_json(jstring, "K", std::to_string(k), level + 1);
-        }
+        write_to_json(jstring, "space", "\"CMYK\",", level + 1);
+        write_to_json(jstring, "C", std::to_string(c) + ",", level + 1);
+        write_to_json(jstring, "M", std::to_string(m) + ",", level + 1);
+        write_to_json(jstring, "Y", std::to_string(y) + ",", level + 1);
+        write_to_json(jstring, "K", std::to_string(k), level + 1);
     } else {
         // HSV color space...
         if (146 == color_space) {
@@ -182,28 +178,24 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         LOG("2nd field: " + std::to_string(second));
         LOG("3rd field: " + std::to_string(third));
 
-        if (printToFile) {
-            if (146 == color_space) {
-                write_to_json(jstring, "space", "\"HSV\",", level + 1);
-            } else if (150 == color_space) {
-                write_to_json(jstring, "space", "\"RGB\",", level + 1);
-            }
-            write_to_json(jstring, "firstField", std::to_string(first) + ",", level + 1);
-            write_to_json(jstring, "secondField", std::to_string(second) + ",", level + 1);
-            write_to_json(jstring, "thirdField", std::to_string(third), level + 1);
+        if (146 == color_space) {
+            write_to_json(jstring, "space", "\"HSV\",", level + 1);
+        } else if (150 == color_space) {
+            write_to_json(jstring, "space", "\"RGB\",", level + 1);
         }
+        write_to_json(jstring, "firstField", std::to_string(first) + ",", level + 1);
+        write_to_json(jstring, "secondField", std::to_string(second) + ",", level + 1);
+        write_to_json(jstring, "thirdField", std::to_string(third), level + 1);
     }
 
-    if (printToFile) {
-        write_to_json(jstring, "", "},", level);
-    }
+    write_to_json(jstring, "", "},", level);
 
     bytesHopper(cursor, 2);
 
     return 0;
 }
 
-int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printToFile) {
+int parseLayerNumber(char **cursor, std::string &jstring, int level) {
     LOG("-----------------------------");
     LOG("START parsing layer number");
 
@@ -216,9 +208,7 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printT
         LOG("WARNING: Layer number is abnormal.");
     }
 
-    if (printToFile) {
-        write_to_json(jstring, "numberOfLayers", std::to_string(num_of_layers) + ",", level);
-    }
+    write_to_json(jstring, "numberOfLayers", std::to_string(num_of_layers) + ",", level);
 
     bytesHopper(cursor, 3);
 
@@ -226,13 +216,11 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printT
 }
 
 
-int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bool printToFile) {
+int parseSimpleFill(char **cursor, std::string &jstring, int type, int level) {
     LOG("---------------------------");
     LOG("Filling type: Simple Fill");
 
-    if (printToFile) {
-        write_to_json(jstring, "fillingType", "\"Simple Fill\",", level);
-    }
+    write_to_json(jstring, "fillingType", "\"Simple Fill\",", level);
 
     try {
         // Validate if the header is there.
@@ -244,12 +232,12 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bo
 
         // Type of the process (0 for normal process; 1 for the symbol process)
         if (type == 0) {
-            parseLinePattern(cursor, jstring, 0, "Outline", level, PRINT_TO_FILE);
+            parseLinePattern(cursor, jstring, 0, "Outline", level);
         } else {
-            parseLinePattern(cursor, jstring, 1, "Filling Line", level, PRINT_TO_FILE);
+            parseLinePattern(cursor, jstring, 1, "Filling Line", level);
         }
 
-        parseColorPattern(cursor, jstring, "Filling Color", level, PRINT_TO_FILE);
+        parseColorPattern(cursor, jstring, "Filling Color", level);
     } catch (std::string err) {
         throw err;
     }
@@ -258,13 +246,11 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bo
 }
 
 
-int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFile) {
+int parseLineFill(char **cursor, std::string &jstring, int level) {
     LOG("---------------------------");
     LOG("Filling type: Line Fill");
 
-    if (printToFile) {
-        write_to_json(jstring, "fillingType", "\"Line Fill\",", level);
-    }
+    write_to_json(jstring, "fillingType", "\"Line Fill\",", level);
 
     try {
         // Validate if the header is there.
@@ -275,30 +261,28 @@ int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFi
         bytesHopper(cursor, 18);
 
         // Parse the line pattern for the filling lines.
-        parseLinePattern(cursor, jstring, 0, "Filling Line", level, printToFile);
+        parseLinePattern(cursor, jstring, 0, "Filling Line", level);
         // parse the line pattern for the outline.
-        parseLinePattern(cursor, jstring, 0, "Outline", level, printToFile);
+        parseLinePattern(cursor, jstring, 0, "Outline", level);
     } catch (std::string err) {
         throw err;
     }
 
     // Parse the line fill angle. (the angle of the line inclination)
-    parseDouble(cursor, jstring, "angle", level, printToFile);
+    parseDouble(cursor, jstring, "angle", level);
     // Parse the line fill offset. (the horizontal displacement of the lines)
-    parseDouble(cursor, jstring, "offset", level, printToFile);
+    parseDouble(cursor, jstring, "offset", level);
     // Parse the line fill separation (the distance between each line)
-    parseDouble(cursor, jstring, "separation", level, printToFile);
+    parseDouble(cursor, jstring, "separation", level);
 
     return 0;
 }
 
-int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printToFile) {
+int parseMarkerFill(char **cursor, std::string &jstring, int level) {
     LOG("---------------------------");
     LOG("Filling type: Marker Fill");
 
-    if (printToFile) {
-        write_to_json(jstring, "fillingType", "\"Marker Fill\",", level);
-    }
+    write_to_json(jstring, "fillingType", "\"Marker Fill\",", level);
 
     try {
         // Validate if the header is there.
@@ -309,20 +293,20 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printTo
         bytesHopper(cursor, 2);
 
         // Parse the marker types (Grid(uniform) or random distribution)
-        parseMarkerTypes(cursor, jstring, level, printToFile);
+        parseMarkerTypes(cursor, jstring, level);
         // Parse the X and Y-axial offset (horizontal displacement of the markers)
-        parseDouble(cursor, jstring, "fillPropertiesOffsetX", level, printToFile);
-        parseDouble(cursor, jstring, "fillPropertiesOffsetY", level, printToFile);
+        parseDouble(cursor, jstring, "fillPropertiesOffsetX", level);
+        parseDouble(cursor, jstring, "fillPropertiesOffsetY", level);
         // Parse the X and Y-axial separation of the markers
-        parseDouble(cursor, jstring, "fillPropertiesSeparationX", level, printToFile);
-        parseDouble(cursor, jstring, "fillPropertiesSeparationY", level, printToFile);
+        parseDouble(cursor, jstring, "fillPropertiesSeparationX", level);
+        parseDouble(cursor, jstring, "fillPropertiesSeparationY", level);
         bytesHopper(cursor, 16);
 
         // Parse the Marker in detail
-        parseMarkerPattern(cursor, jstring, level, printToFile);
+        parseMarkerPattern(cursor, jstring, level);
 
         // Parse the outline.
-        parseLinePattern(cursor, jstring, 0, "Outline", level, printToFile);
+        parseLinePattern(cursor, jstring, 0, "Outline", level);
     } catch (std::string err) {
         throw err;
     }
@@ -330,31 +314,27 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printTo
     return 0;
 }
 
-double parseDouble(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile) {
+double parseDouble(char **cursor, std::string &jstring, std::string tag, int level) {
     double val = getDouble(cursor);
 
     // Put the name and the value of the double value into the JSON string.
     LOG(tag + " is: " + std::to_string(val));
-    if (printToFile) {
-        write_to_json(jstring, tag, std::to_string(val) + ",", level);
-    }
+    write_to_json(jstring, tag, std::to_string(val) + ",", level);
 
     return val;
 }
 
-int parseInt(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile) {
+int parseInt(char **cursor, std::string &jstring, std::string tag, int level) {
     int val = getInt(cursor);
 
     // Put the name and value of the integer value into the JSON string.
     LOG(tag + " is: " + std::to_string(val));
-    if (printToFile) {
-        write_to_json(jstring, tag, std::to_string(val) + ",", level);
-    }
+    write_to_json(jstring, tag, std::to_string(val) + ",", level);
 
     return val;
 }
 
-int parseString(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile) {
+int parseString(char **cursor, std::string &jstring, std::string tag, int level) {
     LOG("-------------------------");
     LOG("START parsing string...");
 
@@ -409,9 +389,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
 
     // Validate if the two string is matching.
     if (str == str2) {
-        if (printToFile) {
-            write_to_json(jstring, "fontName", "\"" + str + "\",", level);
-        }
+        write_to_json(jstring, "fontName", "\"" + str + "\",", level);
     } else {
         LOG("ERROR: Failed to validate string format...");
         throw std::string("validation.");
@@ -421,7 +399,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
 }
 
 
-int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool printToFile) {
+int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
     LOG("-------------------------");
     LOG("START parsing template...");
 
@@ -438,30 +416,22 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool
         }
         bytesHopper(cursor, 2);
 
-        if (printToFile) {
-            write_to_json(jstring, "template", "{", level);
-        }
+        write_to_json(jstring, "template", "{", level);
 
         // Distance between two patterns.
-        parseDouble(cursor, jstring, "interval", level + 1, printToFile);
+        parseDouble(cursor, jstring, "interval", level + 1);
         int num_of_patterns = getChar(cursor);
         LOG("There is(are) " + std::to_string(num_of_patterns) + " patterns.");
         bytesHopper(cursor, 3);
 
         for (int i = 0; i < num_of_patterns; i++) {
-            if (printToFile) {
-                write_to_json(jstring, "linePatternFeature", "{", level + 1);
-            }
-            parseDouble(cursor, jstring, "patternLength", level + 2, printToFile);
-            parseDouble(cursor, jstring, "gapLength", level + 2, printToFile);
-            if (printToFile) {
-                write_to_json(jstring, "", "},", level + 1);
-            }
+            write_to_json(jstring, "linePatternFeature", "{", level + 1);
+            parseDouble(cursor, jstring, "patternLength", level + 2);
+            parseDouble(cursor, jstring, "gapLength", level + 2);
+            write_to_json(jstring, "", "},", level + 1);
         }
 
-        if (printToFile) {
-            write_to_json(jstring, "", "},", level);
-        }
+        write_to_json(jstring, "", "},", level);
     } else {
         // Null bytes for null template.
         bytesHopper(cursor, 16);
