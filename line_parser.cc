@@ -9,15 +9,15 @@
 #include "parser.hh"
 
 int parseLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level, bool printToFile) {
-    std::cout << "-----------------------------" << std::endl;
+    LOG("-----------------------------");
     if (type == 0) {
-        std::cout << "START parsing line" << std::endl;
+        LOG("START parsing line");
         if (printToFile) {
             write_to_json(jstring, "lineProperties", "{", level);
             write_to_json(jstring, "name", "\"" + property + "\",", level + 1);
         }
     } else {
-        std::cout << "START parsing line symbol" << std::endl;
+        LOG("START parsing line symbol");
         if (printToFile) {
             write_to_json(jstring, "lineSymbol", "{", level);
         }
@@ -41,7 +41,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
     try {
         // Go through each line layer.
         for (int i = 0; i < num_of_line_layers; i++) {
-            std::cout << " --- START parsing line layer NO. " + std::to_string(i + 1) << std::endl;
+            LOG(" --- START parsing line layer NO. " + std::to_string(i + 1));
             line_type = getChar(cursor);
             bytesHopper(cursor, 17);
 
@@ -61,7 +61,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
                     parseMarkerLine(cursor, jstring, level + 2, printToFile);
                     break;
                 default:
-                    std::cout << "ERROR: Line type " << std::to_string(line_type) << " not found." << std::endl;
+                    LOG("ERROR: Line type " + std::to_string(line_type) + " not found.");
                     throw std::string("Line type.");
             }
 
@@ -79,7 +79,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
 }
 
 int parseSimpleLine(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "Type: Simple Line..." << std::endl;
+    LOG("Type: Simple Line...");
     if (printToFile) {
         write_to_json(jstring, "type", "\"Simple Line\",", level);
     }
@@ -103,7 +103,7 @@ int parseSimpleLine(char **cursor, std::string &jstring, int level, bool printTo
 }
 
 int parseCartoLine(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "Type: Cartographic Line..." << std::endl;
+    LOG("Type: Cartographic Line...");
     if (printToFile) {
         write_to_json(jstring, "type", "\"Cartographic Line\",", level);
     }
@@ -144,7 +144,7 @@ int parseCartoLine(char **cursor, std::string &jstring, int level, bool printToF
 }
 
 int parseHashLine(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "Type: Hash Line..." << std::endl;
+    LOG("Type: Hash Line...");
     if (printToFile) {
         write_to_json(jstring, "type", "\"Hash Line\",", level);
     }
@@ -181,7 +181,7 @@ int parseHashLine(char **cursor, std::string &jstring, int level, bool printToFi
 }
 
 int parseMarkerLine(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "Type: Hash Line..." << std::endl;
+    LOG("Type: Hash Line...");
     if (printToFile) {
         write_to_json(jstring, "type", "\"Marker Line\",", level);
     }
@@ -219,11 +219,11 @@ int parseLineCaps(char **cursor, std::string &jstring, int level, bool printToFi
             line_caps_name = "Square";
             break;
         default:
-            std::cout << "ERROR: Line caps code " << line_caps_code << " not found."  << std::endl;
+            LOG("ERROR: Line caps code " + std::to_string(line_caps_code) + " not found." );
             throw std::string("Line caps code.");
     }
 
-    std::cout << "The line cap is " << line_caps_name << std::endl;
+    LOG("The line cap is " + line_caps_name);
     if (printToFile) {
         write_to_json(jstring, "lineCaps", "\"" + line_caps_name + "\",", level);
     }
@@ -249,11 +249,11 @@ int parseLineJoins(char **cursor, std::string &jstring, int level, bool printToF
             line_joins_name = "Bevel";
             break;
         default:
-            std::cout << "ERROR: Line joins code " << line_joins_code << " not found."  << std::endl;
+            LOG("ERROR: Line joins code " + std::to_string(line_joins_code) + " not found." );
             throw std::string("Line join code.");
     }
 
-    std::cout << "The line join is " << line_joins_name << std::endl;
+    LOG("The line join is " + line_joins_name);
     if (printToFile) {
         write_to_json(jstring, "lineJoins", "\"" + line_joins_name + "\",", level);
     }
@@ -289,11 +289,11 @@ int parseLineStyle(char **cursor, std::string &jstring, int level, bool printToF
             line_style_name = "Null";
             break;
         default:
-            std::cout << "ERROR: Line style code " << line_style_code << " not found."  << std::endl;
+            LOG("ERROR: Line style code " + std::to_string(line_style_code) + " not found." );
             throw std::string("Line style code.");
     }
 
-    std::cout << "The line style is " << line_style_name << std::endl;
+    LOG("The line style is " + line_style_name);
     if (printToFile) {
         write_to_json(jstring, "style", "\"" + line_style_name + "\",", level);
     }

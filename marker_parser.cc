@@ -9,8 +9,8 @@
 #include "parser.hh"
 
 int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "-----------------------------" << std::endl;
-    std::cout << "START parsing marker" << std::endl;
+    LOG("-----------------------------");
+    LOG("START parsing marker");
     if (printToFile) {
         write_to_json(jstring, "markerProperties", "{", level);
     }
@@ -22,7 +22,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
         if (0xE5FF == marker_type_precheck) { // 58879
             // Validate if the header is there.
             if (0 != hexValidation(cursor, "147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-                std::cout << "ERROR: Fail to validate marker pattern header..." << std::endl;
+                LOG("ERROR: Fail to validate marker pattern header...");
                 throw std::string("Marker type validation.");
             }
             bytesHopper(cursor, 10);
@@ -38,7 +38,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
 
             write_to_json(jstring, "numberOfMarkerLayers", std::to_string(num_of_marker_layers) + ",", level + 1);
         } else {
-            std::cout << "WARNING: Marker type abnormal.\n";
+            LOG("WARNING: Marker type abnormal.");
             bytesRewinder(cursor, 2); // Move back to the front
         }
 
@@ -68,7 +68,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
                         parseArrowMarker(cursor, jstring, level + 2, printToFile, true);
                         break;
                     default:
-                        std::cout << "ERROR: Marker type " << std::to_string(marker_type) << " not found." << std::endl;
+                        LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
                         throw std::string("Marker type.");
                 }
             } else {
@@ -83,7 +83,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
                         parseArrowMarker(cursor, jstring, level + 2, printToFile, false);
                         break;
                     default:
-                        std::cout << "ERROR: Marker type " << std::to_string(marker_type) << " not found." << std::endl;
+                        LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
                         throw std::string("Marker type.");
                 }
             }
@@ -102,7 +102,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level, bool prin
 }
 
 int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail) {
-    std::cout << "Type: Simple Marker..." << std::endl;
+    LOG("Type: Simple Marker...");
     if (printToFile) {
         write_to_json(jstring, "type", "\"Simple Marker\",", level);
     }
@@ -139,7 +139,7 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool print
 }
 
 int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail) {
-    std::cout << "Type: Character Marker..." << std::endl;
+    LOG("Type: Character Marker...");
     if (printToFile) {
         write_to_json(jstring, "type", "\"Character Marker\",", level);
     }
@@ -178,7 +178,7 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool pr
 }
 
 int parseArrowMarker(char **cursor, std::string &jstring, int level, bool printToFile, bool withTail) {
-    std::cout << "Type: Arrow Marker..." << std::endl;
+    LOG("Type: Arrow Marker...");
     if (printToFile) {
         write_to_json(jstring, "type", "\"Arrow Marker\",", level);
     }
@@ -215,11 +215,11 @@ int parseMarkerTypes(char **cursor, std::string &jstring, int level, bool printT
     } else if (marker_type_code == 1) {
         marker_type_name = "Random";
     } else {
-        std::cout << "ERROR: Marker type code " << marker_type_code << " not found." << std::endl;
+        LOG("ERROR: Marker type code " + std::to_string(marker_type_code) + " not found.");
         throw std::string("Marker type.");
     }
 
-    std::cout << "The marker type is " << marker_type_name << std::endl;
+    LOG("The marker type is " + marker_type_name);
     if (printToFile) {
         write_to_json(jstring, "style", "\"" + marker_type_name + "\",", level);
     }
@@ -238,11 +238,11 @@ int parseMaskTypes(char **cursor, std::string &jstring, int level, bool printToF
     } else if (mask_type_code == 1) {
         mask_type_name = "Halo";
     } else {
-        std::cout << "ERROR: Mask type code " << mask_type_code << " not found." << std::endl;
+        LOG("ERROR: Mask type code " + std::to_string(mask_type_code) + " not found.");
         throw std::string("Mask type.");
     }
 
-    std::cout << "The mask type is " << mask_type_name << std::endl;
+    LOG("The mask type is " + mask_type_name);
     if (printToFile) {
         write_to_json(jstring, "style", "\"" + mask_type_name + "\",", level);
     }
@@ -274,11 +274,11 @@ int parseMarkerStyle(char **cursor, std::string &jstring, int level, bool printT
             marker_style_name = "Diamond";
             break;
         default:
-            std::cout << "ERROR: Marker style code " << marker_style_code << " not found."  << std::endl;
+            LOG("ERROR: Marker style code " + std::to_string(marker_style_code) + " not found." );
             throw std::string("Marker style.");
     }
 
-    std::cout << "The marker style is " << marker_style_name << std::endl;
+    LOG("The marker style is " + marker_style_name);
     if (printToFile) {
         write_to_json(jstring, "style", "\"" + marker_style_name + "\",", level);
     }

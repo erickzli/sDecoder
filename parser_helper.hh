@@ -64,5 +64,11 @@ int getInt(char **cursor);
  */
 double getDouble(char **cursor);
 
+/**
+ * cout the mseg.
+ * @param the logging message.
+ */
+void LOG(std::string mseg);
+
 
 #endif

@@ -23,10 +23,10 @@ std::string grandParser(char **input) {
             // validate the header of the file.
             int s = hexValidation(input, "E6147992C8D011", DO_REWIND);
             if (s == 1) {
-                std::cout << "ERROR: Header cannot be parsed." << std::endl;
+                LOG("ERROR: Header cannot be parsed.");
                 throw std::string("Header.\n");
             } else {
-                std::cout << "File is validated." << std::endl;
+                LOG("File is validated.");
             }
             // Move infile pointer 26 bytes to skip the header metadata.
             bytesHopper(input, 25);
@@ -36,14 +36,14 @@ std::string grandParser(char **input) {
             num_of_layers = parseLayerNumber(input, jstring, 1, PRINT_TO_FILE);
             // Test if the number of layers behaves weird...
             if (-1 == num_of_layers) {
-                std::cout << "ERROR: Number of Layers is abnormal." << std::endl;
+                LOG("ERROR: Number of Layers is abnormal.");
                 throw std::string("Number of layers.\n");
             }
         }
 
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
-            std::cout << "++++ START parsing layer NO. " + std::to_string(i + 1) << std::endl;
+            LOG("++++ START parsing layer NO. " + std::to_string(i + 1));
             parseLayer(input, jstring, 0, 1, i + 1, PRINT_TO_FILE);
             // Inter-layer pattern...
             if (i < num_of_layers - 1) {
@@ -56,19 +56,19 @@ std::string grandParser(char **input) {
             }
         }
     } catch (std::string err) {
-        std::cout << "ERROR occurred. Stopped..." << std::endl;
+        LOG("ERROR occurred. Stopped...");
         return std::string("\"error\": \"" + err + "\"\n");
     }
 
     write_to_json(jstring, "", "}", 0);
-    std::cout << "DONE :-)" << std::endl;
+    LOG("DONE :-)");
 
     return jstring;
 }
 
 int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no, bool printToFile) {
-    std::cout << "-------------------------------" << std::endl;
-    std::cout << "START parsing a symbol/layer..." << std::endl;
+    LOG("-------------------------------");
+    LOG("START parsing a symbol/layer...");
 
     // Type 0: A normal layer
     if (type == 0) {
@@ -92,7 +92,7 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
     } else if (8 == filling_type) {
         parseMarkerFill(cursor, jstring, level + 1, PRINT_TO_FILE);
     } else {
-        std::cout << "ERROR: Filling type " << filling_type << " not support" << std::endl;
+        LOG("ERROR: Filling type " + std::to_string(filling_type) + " not support");
         throw std::string("Filling type.");
     }
 
@@ -105,7 +105,7 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
             b = getChar(cursor);
             if (0 < b && b < 5) {
                 num_of_marker_layers = b;
-                std::cout << "Number of marker layers is: " << num_of_marker_layers << std::endl;
+                LOG("Number of marker layers is: " + std::to_string(num_of_marker_layers));
             }
         } while (b != 20 && b != 83); // While b is not 0x14 and 0x53.
 
@@ -123,8 +123,8 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
 }
 
 int parseColorPattern(char **cursor, std::string &jstring, std::string color_type, int level, bool printToFile) {
-    std::cout << "----------------------" << std::endl;
-    std::cout << "START parsing color..." << std::endl;
+    LOG("----------------------");
+    LOG("START parsing color...");
 
     // Get the color space (0x92 for HSV; 0x96 for RGB; 0x97 for CMYK)
     int color_space = getChar(cursor);
@@ -136,7 +136,7 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
 
     // CMYK color space...
     if (151 == color_space) {
-        std::cout << "Color Space: CMYK." << std::endl;
+        LOG("Color Space: CMYK.");
 
         // Skip the metadata of the color space.
         bytesHopper(cursor, 19);
@@ -145,10 +145,10 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         int y = getChar(cursor);
         int k = getChar(cursor);
 
-        std::cout << "C: " << c << std::endl;
-        std::cout << "M: " << m << std::endl;
-        std::cout << "Y: " << y << std::endl;
-        std::cout << "K: " << k << std::endl;
+        LOG("C: " + std::to_string(c));
+        LOG("M: " + std::to_string(m));
+        LOG("Y: " + std::to_string(y));
+        LOG("K: " + std::to_string(k));
 
         if (printToFile) {
             write_to_json(jstring, "space", "\"CMYK\",", level + 1);
@@ -160,13 +160,13 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
     } else {
         // HSV color space...
         if (146 == color_space) {
-            std::cout << "Color Space: HSV." << std::endl;
+            LOG("Color Space: HSV.");
         // RGB color space...
         } else if (150 == color_space) {
-            std::cout << "Color Space: RGB." << std::endl;
+            LOG("Color Space: RGB.");
         } else {
             // If the color space code is not 92, 96, or 97, then an error mesg will be printed out.
-            std::cout << "ERROR: Color Space " << std::to_string(color_space) << " not found." << std::endl;
+            LOG("ERROR: Color Space " + std::to_string(color_space) + " not found.");
             throw std::string("Color Space.");
         }
         bytesHopper(cursor, 20);
@@ -178,9 +178,9 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         double second = getDouble(cursor);
         double third = getDouble(cursor);
 
-        std::cout << "1st field: " << first << std::endl;
-        std::cout << "2nd field: " << second << std::endl;
-        std::cout << "3rd field: " << third << std::endl;
+        LOG("1st field: " + std::to_string(first));
+        LOG("2nd field: " + std::to_string(second));
+        LOG("3rd field: " + std::to_string(third));
 
         if (printToFile) {
             if (146 == color_space) {
@@ -204,16 +204,16 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
 }
 
 int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "-----------------------------" << std::endl;
-    std::cout << "START parsing layer number" << std::endl;
+    LOG("-----------------------------");
+    LOG("START parsing layer number");
 
     // Number of layers.
     int num_of_layers = getChar(cursor);
-    std::cout << "The number of layer is: " << num_of_layers << std::endl;
+    LOG("The number of layer is: " + std::to_string(num_of_layers));
 
     // Check whether the layer number is normal...
     if (0 > num_of_layers || 5 < num_of_layers) {
-        std::cout << "WARNING: Layer number is abnormal." << std::endl;
+        LOG("WARNING: Layer number is abnormal.");
     }
 
     if (printToFile) {
@@ -227,8 +227,8 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level, bool printT
 
 
 int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bool printToFile) {
-    std::cout << "---------------------------" << std::endl;
-    std::cout << "Filling type: Simple Fill" << std::endl;
+    LOG("---------------------------");
+    LOG("Filling type: Simple Fill");
 
     if (printToFile) {
         write_to_json(jstring, "fillingType", "\"Simple Fill\",", level);
@@ -237,7 +237,7 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bo
     try {
         // Validate if the header is there.
         if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-            std::cout << "ERROR: Fail to validate Simple Fill pattern header..." << std::endl;
+            LOG("ERROR: Fail to validate Simple Fill pattern header...");
             throw std::string("Validation.");
         }
         bytesHopper(cursor, 2);
@@ -259,8 +259,8 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level, bo
 
 
 int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "---------------------------" << std::endl;
-    std::cout << "Filling type: Line Fill" << std::endl;
+    LOG("---------------------------");
+    LOG("Filling type: Line Fill");
 
     if (printToFile) {
         write_to_json(jstring, "fillingType", "\"Line Fill\",", level);
@@ -269,7 +269,7 @@ int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFi
     try {
         // Validate if the header is there.
         if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-            std::cout << "ERROR: Fail to validate Line Fill pattern header..." << std::endl;
+            LOG("ERROR: Fail to validate Line Fill pattern header...");
             throw std::string("Validation.");
         }
         bytesHopper(cursor, 18);
@@ -293,8 +293,8 @@ int parseLineFill(char **cursor, std::string &jstring, int level, bool printToFi
 }
 
 int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printToFile) {
-    std::cout << "---------------------------" << std::endl;
-    std::cout << "Filling type: Marker Fill" << std::endl;
+    LOG("---------------------------");
+    LOG("Filling type: Marker Fill");
 
     if (printToFile) {
         write_to_json(jstring, "fillingType", "\"Marker Fill\",", level);
@@ -303,7 +303,7 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level, bool printTo
     try {
         // Validate if the header is there.
         if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
-            std::cout << "ERROR: Fail to validate Marker Fill pattern header..." << std::endl;
+            LOG("ERROR: Fail to validate Marker Fill pattern header...");
             throw std::string("validation");
         }
         bytesHopper(cursor, 2);
@@ -334,7 +334,7 @@ double parseDouble(char **cursor, std::string &jstring, std::string tag, int lev
     double val = getDouble(cursor);
 
     // Put the name and the value of the double value into the JSON string.
-    std::cout << tag + " is: " + std::to_string(val) << std::endl;
+    LOG(tag + " is: " + std::to_string(val));
     if (printToFile) {
         write_to_json(jstring, tag, std::to_string(val) + ",", level);
     }
@@ -346,7 +346,7 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level, bo
     int val = getInt(cursor);
 
     // Put the name and value of the integer value into the JSON string.
-    std::cout << tag + " is: " + std::to_string(val) << std::endl;
+    LOG(tag + " is: " + std::to_string(val));
     if (printToFile) {
         write_to_json(jstring, tag, std::to_string(val) + ",", level);
     }
@@ -355,8 +355,8 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level, bo
 }
 
 int parseString(char **cursor, std::string &jstring, std::string tag, int level, bool printToFile) {
-    std::cout << "-------------------------" << std::endl;
-    std::cout << "START parsing string..." << std::endl;
+    LOG("-------------------------");
+    LOG("START parsing string...");
 
     bool going = true; // When "going" is true, the while loop will keep going.
     std::string str = "";
@@ -376,7 +376,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
         }
     }
 
-    std::cout << "The string gotten is: " << str << std::endl;
+    LOG("The string gotten is: " + str);
 
     // The length of the null pattern can be varied.
     int id = getChar(cursor);
@@ -385,7 +385,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
     } else if (id == 3) {
         bytesHopper(cursor, 24);
     } else {
-        std::cout << "ERROR: Failed to validate string format..." << std::endl;
+        LOG("ERROR: Failed to validate string format...");
         throw std::string("validation.");
     }
 
@@ -405,7 +405,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
         }
     }
 
-    std::cout << "The 2nd string gotten is: " << str2 << std::endl;
+    LOG("The 2nd string gotten is: " + str2);
 
     // Validate if the two string is matching.
     if (str == str2) {
@@ -413,7 +413,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
             write_to_json(jstring, "fontName", "\"" + str + "\",", level);
         }
     } else {
-        std::cout << "ERROR: Failed to validate string format..." << std::endl;
+        LOG("ERROR: Failed to validate string format...");
         throw std::string("validation.");
     }
 
@@ -422,8 +422,8 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level,
 
 
 int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool printToFile) {
-    std::cout << "-------------------------" << std::endl;
-    std::cout << "START parsing template..." << std::endl;
+    LOG("-------------------------");
+    LOG("START parsing template...");
 
     // It is possible that the template is not defined.
     double preq = getDouble(cursor);
@@ -433,7 +433,7 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool
     if (0.0 != preq) {
         // Validate if the header is there.
         if (0 != hexValidation(cursor, "713A0941E1CCD011BFAA0080C7E24280", !DO_REWIND)) {
-            std::cout << "ERROR: Fail to validate template pattern header..." << std::endl;
+            LOG("ERROR: Fail to validate template pattern header...");
             throw std::string("Template validation.");
         }
         bytesHopper(cursor, 2);
@@ -445,7 +445,7 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool
         // Distance between two patterns.
         parseDouble(cursor, jstring, "interval", level + 1, printToFile);
         int num_of_patterns = getChar(cursor);
-        std::cout << "There is(are) " + std::to_string(num_of_patterns) + " patterns." << std::endl;
+        LOG("There is(are) " + std::to_string(num_of_patterns) + " patterns.");
         bytesHopper(cursor, 3);
 
         for (int i = 0; i < num_of_patterns; i++) {
@@ -471,7 +471,7 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level, bool
     bytesHopper(cursor, 33);
     double sentinel = getDouble(cursor);
     if (10.0 != sentinel) {
-        std::cout << "ERROR: Fail to validate template tail..." << std::endl;
+        LOG("ERROR: Fail to validate template tail...");
         throw std::string("Template tail validation.");
     }
 

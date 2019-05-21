@@ -78,3 +78,7 @@ double getDouble(char **cursor) {
 
     return *ret;
 }
+
+void LOG(std::string mseg) {
+    std::cout << mseg << std::endl;
+}
