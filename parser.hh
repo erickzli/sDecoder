@@ -28,7 +28,6 @@ std::string grandParser(char **input);
  *     0: Normal parser;
  *     1: Mask symbol parser.
  * \param the level(indention).
- * \param option for print to output file.
  */
 int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no);
 
@@ -38,7 +37,6 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
  * \param the output file stream.
  * \param color type, such as, "outline color", etc.
  * \param the level(indention).
- * \param option for print to output file.
  */
 int parseColorPattern(char **cursor, std::string &jstring, std::string color_type,
                 int level);
@@ -48,7 +46,6 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention).
- * \param option for print to output file.
  * \return:
  *    val > 0: the number of layers
  *    val == -1: something wrong...
@@ -64,7 +61,6 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level);
  *     0: Normal process;
  *     1: Symbol process.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseSimpleFill(char **cursor, std::string &jstring, int type, int level);
 
@@ -73,7 +69,6 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseLineFill(char **cursor, std::string &jstring, int level);
 
@@ -82,7 +77,6 @@ int parseLineFill(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseMarkerFill(char **cursor, std::string &jstring, int level);
 
@@ -92,7 +86,6 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level);
  * \param the output file stream.
  * \param the name of the double value.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 double parseDouble(char **cursor, std::string &jstring, std::string tag, int level);
 
@@ -102,7 +95,6 @@ double parseDouble(char **cursor, std::string &jstring, std::string tag, int lev
  * \param the output file stream.
  * \param the name of the double value.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseInt(char **cursor, std::string &jstring, std::string tag, int level);
 
@@ -112,7 +104,6 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level);
  * \param the output file stream.
  * \param the name of the double value.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseString(char **cursor, std::string &jstring, std::string tag, int level);
 
@@ -123,7 +114,6 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseTemplate(char **cursor, std::string &jstring, int type, int level);
 

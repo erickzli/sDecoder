@@ -18,7 +18,6 @@
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseMarkerPattern(char **cursor, std::string &jstring, int level);
 
@@ -27,7 +26,6 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool withTail);
 
@@ -36,7 +34,6 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool withT
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool withTail);
 
@@ -45,7 +42,6 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool wi
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseArrowMarker(char **cursor, std::string &jstring, int level, bool withTail);
 
@@ -54,7 +50,6 @@ int parseArrowMarker(char **cursor, std::string &jstring, int level, bool withTa
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseMarkerTypes(char **cursor, std::string &jstring, int level);
 
@@ -63,10 +58,15 @@ int parseMarkerTypes(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseMaskTypes(char **cursor, std::string &jstring, int level);
 
+/**
+ * Parser the type of marker
+ * \param the input file stream.
+ * \param the output file stream.
+ * \param the level(indention)
+ */
 int parseMarkerStyle(char **cursor, std::string &jstring, int level);
 
 #endif

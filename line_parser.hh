@@ -21,7 +21,6 @@
  *     1: Symbol.
  * \param the property, which can be `outline` etc.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level);
 
@@ -30,7 +29,6 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseSimpleLine(char **cursor, std::string &jstring, int level);
 
@@ -39,7 +37,6 @@ int parseSimpleLine(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseCartoLine(char **cursor, std::string &jstring, int level);
 
@@ -48,7 +45,6 @@ int parseCartoLine(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseHashLine(char **cursor, std::string &jstring, int level);
 
@@ -57,7 +53,6 @@ int parseHashLine(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseMarkerLine(char **cursor, std::string &jstring, int level);
 
@@ -66,7 +61,6 @@ int parseMarkerLine(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseLineCaps(char **cursor, std::string &jstring, int level);
 
@@ -75,7 +69,6 @@ int parseLineCaps(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseLineJoins(char **cursor, std::string &jstring, int level);
 
@@ -84,7 +77,6 @@ int parseLineJoins(char **cursor, std::string &jstring, int level);
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
- * \param whether print to JSON file.
  */
 int parseLineStyle(char **cursor, std::string &jstring, int level);
 
