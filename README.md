@@ -1,12 +1,16 @@
-# ArcGIS Style File Parser 📇
-Used for parsing an ArcGIS binary file which defines symbols.
+# sParser: A Parser for ArcGIS Binary Symbol Files 📇
+sParser, s for symbol or style, is a parser dedicated for ArcGIS Symbol Files which are encoded in such a way that a parser is required to be understood.
 
 ## What does it do?
 This tool can be used to parse a binary file which defines an ArcGIS symbol, and output the information in JSON format.
 
-## What about the the input file?
-The input file should be correctly read by ArcMap under the extension ".style". It contains many information about the symbol
-defined in ArcGIS. It is not guaranteed that all the "correct" .style file can be successfully parsed by this parser.
+## What is the the input file?
+The input file defines an ArcGIS symbol in a binary way. It is not guaranteed that all the "correct" .style file can be successfully parsed by this parser. (See known scenarios)
+
+## How to get the input file?
+After downloading the ArcGIS bundle, you may open the application called ArcMap. From the toolbar: Customize > Style Manager > Styles > Create New Style, you may create an Esri style file.
+
+> this part has not yet finished...
 
 ## Any known scenarios that this tool cannot handle?
 Yes. Due to the encoding method of the ArcGIS style file, some features are not supported so far. Including but not limited to:
