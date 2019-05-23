@@ -42,7 +42,6 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
             b = getChar(cursor);
             if (0 < b && b < 10) {
                 num_of_marker_layers = b;
-                LOG("Number of marker layers is: " + std::to_string(num_of_marker_layers));
             }
         } while (b != 0x14 && b != 0x53); // While b is not 0x14 and 0x53.
 
@@ -52,7 +51,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
 
         write_to_json(jstring, "numberOfMarkerLayers", std::to_string(num_of_marker_layers) + ",", level + 1);
     } else {
-        LOG(" ###################### WARNING: Marker type abnormal.");
+        LOG(" ##### WARNING: Marker type abnormal. Marker code: " + std::to_string(marker_type_precheck));
         bytesRewinder(cursor, 2); // Move back to the front
     }
 
@@ -145,7 +144,8 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool withT
     if (withTail) {
         bytesHopper(cursor, 32);
     } else {
-        bytesRewinder(cursor, 1);
+        // NOTE
+        bytesHopper(cursor, 2);
     }
 
     return 0;
@@ -215,7 +215,7 @@ int parseArrowMarker(char **cursor, std::string &jstring, int level, bool withTa
     if (withTail) {
         bytesHopper(cursor, 32);
     } else {
-        bytesRewinder(cursor, 1);
+        bytesHopper(cursor, 2);
     }
 
     return 0;
