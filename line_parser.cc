@@ -19,7 +19,6 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
         write_to_json(jstring, "lineSymbol", "{", level);
     }
 
-
     // Get the line type
     int line_type = getChar(cursor);
     bytesRewinder(cursor, 1);
@@ -33,16 +32,17 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
     }
 
     write_to_json(jstring, "numberOfLineLayers", std::to_string(num_of_line_layers) + ",", level + 1);
+    LOG("Number of line layers: " + std::to_string(num_of_line_layers));
 
-    try {
-        // Go through each line layer.
-        for (int i = 0; i < num_of_line_layers; i++) {
-            LOG(" --- START parsing line layer NO. " + std::to_string(i + 1));
-            line_type = getChar(cursor);
-            bytesHopper(cursor, 17);
+    // Go through each line layer.
+    for (int i = 0; i < num_of_line_layers; i++) {
+        LOG(" --- START parsing line layer NO. " + std::to_string(i + 1));
+        line_type = getChar(cursor);
+        bytesHopper(cursor, 17);
 
-            write_to_json(jstring, "lineLayer" + std::to_string(i + 1), "{", level + 1);
+        write_to_json(jstring, "lineLayer" + std::to_string(i + 1), "{", level + 1);
 
+        try {
             switch(line_type) {
                 case 0xF9:
                     parseSimpleLine(cursor, jstring, level + 2);
@@ -60,11 +60,37 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
                     LOG("ERROR: Line type " + std::to_string(line_type) + " not found.");
                     throw std::string("Line type.");
             }
-
-            write_to_json(jstring, "", "},", level + 1);
+        } catch (std::string err) {
+            throw err;
         }
-    } catch (std::string err) {
-        throw err;
+
+        write_to_json(jstring, "", "},", level + 1);
+    }
+
+    // TODO: IMPORTANT
+    // Parse the activeness of layers.
+    int check_active = getChar(cursor);
+    bytesRewinder(cursor, 1);
+    if (check_active == 0 || check_active == 1) {
+        LOG("Checking activeness...");
+        write_to_json(jstring, "lineActiveness", "{", level + 1);
+        for (size_t i = 0; i < num_of_line_layers; i++) {
+            int activeness = getInt(cursor); // 0: deactivated; 1: activated
+            LOG("Activeness: " + std::to_string(activeness));
+            write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
+        }
+        write_to_json(jstring, "", "}", level + 1);
+
+        for (size_t i = 0; i < num_of_line_layers; i++) {
+            bytesHopper(cursor, 4); // Hop for (01 00 00 00) or (00 00 00 00)
+        }
+        for (size_t i = 0; i < num_of_line_layers; i++) {
+            if (0x02 == getChar(cursor)) {
+                bytesHopper(cursor, 5); // Hop for (02 00 00 00 00 00)
+            } else {
+                bytesRewinder(cursor, 1);
+            }
+        }
     }
 
     write_to_json(jstring, "", "},", level);
@@ -88,8 +114,11 @@ int parseSimpleLine(char **cursor, std::string &jstring, int level) {
     }
 
     // Parse the TAIL pattern of simple line.
-    while (getChar(cursor) < 20) {}
-    bytesRewinder(cursor, 1);
+    // while (getChar(cursor) < 20) {}
+    // bytesRewinder(cursor, 1);
+
+    while (0x0D != getChar(cursor)) {}
+    bytesHopper(cursor, 7);
 
     return 0;
 }
@@ -116,20 +145,6 @@ int parseCartoLine(char **cursor, std::string &jstring, int level) {
         throw err;
     }
 
-    // Parse the TAIL pattern of carto line.
-    bool exit_cond = false;
-    while (!exit_cond) {
-        int sentinel = getChar(cursor);
-        if (1 == sentinel) {
-            bytesHopper(cursor, 7);
-        } else if (2 == sentinel) {
-            bytesHopper(cursor, 5);
-        } else {
-            bytesRewinder(cursor, 1);
-            exit_cond = true;
-        }
-    }
-
     return 0;
 }
 
@@ -151,40 +166,28 @@ int parseHashLine(char **cursor, std::string &jstring, int level) {
         throw err;
     }
 
-    // Parse the TAIL pattern of carto line.
-    bool exit_cond = false;
-    while (!exit_cond) {
-        int sentinel = getChar(cursor);
-        if (1 == sentinel) {
-            bytesHopper(cursor, 7);
-        } else if (2 == sentinel) {
-            bytesHopper(cursor, 5);
-        } else {
-            bytesRewinder(cursor, 1);
-            exit_cond = true;
-        }
-    }
-
     return 0;
 }
 
 int parseMarkerLine(char **cursor, std::string &jstring, int level) {
-    LOG("Type: Hash Line...");
+    LOG("Type: Marker Line...");
     write_to_json(jstring, "type", "\"Marker Line\",", level);
 
+    bytesHopper(cursor, 1);
+    parseDouble(cursor, jstring, "propertiesOffset", level);
+
     try {
-        bytesHopper(cursor, 1);
-        parseDouble(cursor, jstring, "propertiesOffset", level);
         parseMarkerPattern(cursor, jstring, level);
         parseTemplate(cursor, jstring, 1, level);
         parseLineCaps(cursor, jstring, level);
         parseLineJoins(cursor, jstring, level);
-        parseDouble(cursor, jstring, "cartographicLineWidth", level);
-
-        bytesHopper(cursor, 14);
     } catch (std::string err) {
         throw err;
     }
+
+    // parseDouble(cursor, jstring, "cartographicLine-MarkerWidth", level);
+    bytesHopper(cursor, 8);
+    // TODO bytesHopper(cursor, 14);
 
     return 0;
 }

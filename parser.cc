@@ -68,14 +68,15 @@ std::string grandParser(char **input) {
 
 int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no) {
     LOG("-------------------------------");
-    LOG("START parsing a symbol/layer...");
 
     // Type 0: A normal layer
     if (type == 0) {
+        LOG("START parsing a layer...");
         write_to_json(jstring, "layer" + std::to_string(layer_no), "{", level);
         write_to_json(jstring, "number", std::to_string(layer_no) + ",", level + 1);
     // A Symbol
     } else {
+        LOG("START parsing a symbol...");
         write_to_json(jstring, "fillSymbol", "{", level);
     }
 
@@ -96,27 +97,6 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
         throw std::string("Filling type.");
     }
 
-    // Inter-layer pattern is defined in main()
-    // This part is for Symbol...
-    if (type == 1) {
-        int num_of_marker_layers = 0;
-        int b = 0;
-        do {
-            b = getChar(cursor);
-            if (0 < b && b < 5) {
-                num_of_marker_layers = b;
-                LOG("Number of marker layers is: " + std::to_string(num_of_marker_layers));
-            }
-        } while (b != 20 && b != 83); // While b is not 0x14 and 0x53.
-
-        // trace back to the front of the header
-        bytesRewinder(cursor, 3);
-        write_to_json(jstring, "", "},", level);
-
-        return num_of_marker_layers;
-    }
-
-
     write_to_json(jstring, "", "},", level);
 
     return 0;
@@ -127,17 +107,17 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
     LOG("START parsing color...");
 
     // Get the color space (0x92 for HSV; 0x96 for RGB; 0x97 for CMYK)
-    int color_space = getChar(cursor);
+    int color_space = get16Bit(cursor);
 
     write_to_json(jstring, "color", "{", level);
     write_to_json(jstring, "name", "\"" + color_type + "\",", level + 1);
 
     // CMYK color space...
-    if (151 == color_space) {
+    if (0xC497 == color_space) {
         LOG("Color Space: CMYK.");
 
         // Skip the metadata of the color space.
-        bytesHopper(cursor, 19);
+        bytesHopper(cursor, 18);
         int c = getChar(cursor);
         int m = getChar(cursor);
         int y = getChar(cursor);
@@ -155,17 +135,17 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         write_to_json(jstring, "K", std::to_string(k), level + 1);
     } else {
         // HSV color space...
-        if (146 == color_space) {
+        if (0xC492 == color_space) {
             LOG("Color Space: HSV.");
         // RGB color space...
-        } else if (150 == color_space) {
+    } else if (0xC496 == color_space) {
             LOG("Color Space: RGB.");
         } else {
             // If the color space code is not 92, 96, or 97, then an error mesg will be printed out.
             LOG("ERROR: Color Space " + std::to_string(color_space) + " not found.");
             throw std::string("Color Space.");
         }
-        bytesHopper(cursor, 20);
+        bytesHopper(cursor, 19);
 
         // There are three fields for both HSV and RGB.
         // Type and the definition are unknown so far.
@@ -178,9 +158,9 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         LOG("2nd field: " + std::to_string(second));
         LOG("3rd field: " + std::to_string(third));
 
-        if (146 == color_space) {
+        if (0xC492 == color_space) {
             write_to_json(jstring, "space", "\"HSV\",", level + 1);
-        } else if (150 == color_space) {
+        } else if (0xC496 == color_space) {
             write_to_json(jstring, "space", "\"RGB\",", level + 1);
         }
         write_to_json(jstring, "firstField", std::to_string(first) + ",", level + 1);
@@ -404,7 +384,7 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
     LOG("START parsing template...");
 
     // It is possible that the template is not defined.
-    double preq = getDouble(cursor);
+    double preq = getDouble(cursor);// WARNING should be 0 in the case i am working on
     bytesRewinder(cursor, 8);
 
     // If the template is defined, we can go through it.
@@ -432,28 +412,23 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
         }
 
         write_to_json(jstring, "", "},", level);
+        // bytesHopper(cursor, 16);
     } else {
         // Null bytes for null template.
         bytesHopper(cursor, 16);
     }
 
-
-    bytesHopper(cursor, 33);
-    double sentinel = getDouble(cursor);
-    if (10.0 != sentinel) {
-        LOG("ERROR: Fail to validate template tail...");
-        throw std::string("Template tail validation.");
+    if (type == 1) {
+        while (0x0D != getChar(cursor)) {}
+        bytesHopper(cursor, 16);
+    } else {
+        while (0x24 != getChar(cursor)) {}
+        if (0x40 != getChar(cursor)) {
+            LOG("ERROR: Fail to validate template tail...");
+            throw std::string("Template tail validation.");
+        }
     }
 
-    // // The type of the template: 0: others, 1: char marker.
-    // // The number of meaningless bytes varies based on the type.
-    // if (type == 0) {
-    //     // TEMP
-    //     // bytesHopper(cursor, 41);
-    //     bytesHopper(cursor, 33);
-    // } else {
-    //     bytesHopper(cursor, 33);
-    // }
 
     return 0;
 }

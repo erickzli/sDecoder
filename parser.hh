@@ -113,6 +113,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
  *     interval length -> line length -> gap length.
  * \param the input file stream.
  * \param the output file stream.
+ * \param type type of template feed (0: hash/carto line; 1: marker line)
  * \param the level(indention)
  */
 int parseTemplate(char **cursor, std::string &jstring, int type, int level);
