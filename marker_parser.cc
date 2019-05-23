@@ -50,7 +50,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
 
         write_to_json(jstring, "numberOfMarkerLayers", std::to_string(num_of_marker_layers) + ",", level + 1);
     } else {
-        LOG(" ##### WARNING: Marker type abnormal. Marker code: " + std::to_string(marker_type_precheck));
+        LOG("Before rewinding, marker code: " + std::to_string(marker_type_precheck));
         bytesRewinder(cursor, 2); // Move back to the front
     }
 
@@ -76,13 +76,13 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
             if (num_of_marker_layers - 1 == i) {
                 switch(marker_type) {
                     case 0xE5FE: // 58878
-                        parseSimpleMarker(cursor, jstring, level + 2, true);
+                        parseSimpleMarker(cursor, jstring, level + 2);
                         break;
                     case 0xE600: // 58880
-                        parseCharacterMarker(cursor, jstring, level + 2, true);
+                        parseCharacterMarker(cursor, jstring, level + 2);
                         break;
                     case 0x9431: // 37937
-                        parseArrowMarker(cursor, jstring, level + 2, true);
+                        parseArrowMarker(cursor, jstring, level + 2);
                         break;
                     default:
                         LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
@@ -91,13 +91,13 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
             } else {
                 switch(marker_type) {
                     case 0xE5FE:
-                        parseSimpleMarker(cursor, jstring, level + 2, false);
+                        parseSimpleMarker(cursor, jstring, level + 2);
                         break;
                     case 0xE600:
-                        parseCharacterMarker(cursor, jstring, level + 2, false);
+                        parseCharacterMarker(cursor, jstring, level + 2);
                         break;
                     case 0x9431:
-                        parseArrowMarker(cursor, jstring, level + 2, false);
+                        parseArrowMarker(cursor, jstring, level + 2);
                         break;
                     default:
                         LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
@@ -142,7 +142,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
     return 0;
 }
 
-int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool withTail) {
+int parseSimpleMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Simple Marker...");
     write_to_json(jstring, "type", "\"Simple Marker\",", level);
 
@@ -171,7 +171,7 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool withT
     return 0;
 }
 
-int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool withTail) {
+int parseCharacterMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Character Marker...");
     write_to_json(jstring, "type", "\"Character Marker\",", level);
 
@@ -205,7 +205,7 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool wi
     return 0;
 }
 
-int parseArrowMarker(char **cursor, std::string &jstring, int level, bool withTail) {
+int parseArrowMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Arrow Marker...");
     write_to_json(jstring, "type", "\"Arrow Marker\",", level);
 
