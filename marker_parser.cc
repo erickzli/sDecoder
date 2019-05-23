@@ -72,37 +72,19 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
         bytesHopper(cursor, 16);
 
         try {
-            // When we reach the last layer
-            if (num_of_marker_layers - 1 == i) {
-                switch(marker_type) {
-                    case 0xE5FE: // 58878
-                        parseSimpleMarker(cursor, jstring, level + 2);
-                        break;
-                    case 0xE600: // 58880
-                        parseCharacterMarker(cursor, jstring, level + 2);
-                        break;
-                    case 0x9431: // 37937
-                        parseArrowMarker(cursor, jstring, level + 2);
-                        break;
-                    default:
-                        LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
-                        throw std::string("Marker type.");
-                }
-            } else {
-                switch(marker_type) {
-                    case 0xE5FE:
-                        parseSimpleMarker(cursor, jstring, level + 2);
-                        break;
-                    case 0xE600:
-                        parseCharacterMarker(cursor, jstring, level + 2);
-                        break;
-                    case 0x9431:
-                        parseArrowMarker(cursor, jstring, level + 2);
-                        break;
-                    default:
-                        LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
-                        throw std::string("Marker type.");
-                }
+            switch(marker_type) {
+                case 0xE5FE: // 58878
+                    parseSimpleMarker(cursor, jstring, level + 2);
+                    break;
+                case 0xE600: // 58880
+                    parseCharacterMarker(cursor, jstring, level + 2);
+                    break;
+                case 0x9431: // 37937
+                    parseArrowMarker(cursor, jstring, level + 2);
+                    break;
+                default:
+                    LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
+                    throw std::string("Marker type.");
             }
         } catch (std::string err) {
             throw err;

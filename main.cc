@@ -104,8 +104,10 @@ int main(int argc, char *argv[]) {
         std::cout.rdbuf(orig_buf);
     }
 
+    std::cout << std::endl << "~~~~~~ Beginning of the jstring ~~~~~~" << std::endl << std::endl;
     // Cout the JSON string gotten through the grand parser.
     std::cout << jstring << std::endl;
+    std::cout << "~~~~~~~~~~~ End of jstring ~~~~~~~~~~~" << std::endl;
 
     // Close the file...
     fclose(infile);
