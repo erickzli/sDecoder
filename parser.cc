@@ -65,8 +65,6 @@ std::string grandParser(char **input) {
     write_to_json(jstring, "", "}", 0);
     LOG("DONE :-)");
 
-
-
     return jstring;
 }
 
@@ -85,19 +83,22 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
     }
 
     // Get the filling type (3 for simple fill; 6 for line fill; 8 for marker fill)
-    int filling_type = getChar(cursor);
+    int filling_type = get16Bit(cursor);
     // name of the corresponding filling type.
     std::string filling_type_name = "";
 
     // For each filling type, enter into the corresponding field.
-    if (3 == filling_type) {
+    if (0xE603 == filling_type) {
         parseSimpleFill(cursor, jstring, type, level + 1);
-    } else if (6 == filling_type) {
+    } else if (0xE606 == filling_type) {
         parseLineFill(cursor, jstring, level + 1);
-    } else if (8 == filling_type) {
+    } else if (0xE608 == filling_type) {
         parseMarkerFill(cursor, jstring, level + 1);
+    } else if (0xE609 == filling_type) {
+        LOG("ERROR: Gradient Fill is currently not supported");
+        throw std::string("Currently unsupported filling type.");
     } else {
-        LOG("ERROR: Filling type " + std::to_string(filling_type) + " not support");
+        LOG("ERROR: Filling type " + std::to_string(filling_type) + " not supported");
         throw std::string("Filling type.");
     }
 
@@ -208,7 +209,7 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level) {
 
     try {
         // Validate if the header is there.
-        if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+        if (0 != hexValidation(cursor, "147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
             LOG("ERROR: Fail to validate Simple Fill pattern header...");
             throw std::string("Validation.");
         }
@@ -238,7 +239,7 @@ int parseLineFill(char **cursor, std::string &jstring, int level) {
 
     try {
         // Validate if the header is there.
-        if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+        if (0 != hexValidation(cursor, "147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
             LOG("ERROR: Fail to validate Line Fill pattern header...");
             throw std::string("Validation.");
         }
@@ -270,7 +271,7 @@ int parseMarkerFill(char **cursor, std::string &jstring, int level) {
 
     try {
         // Validate if the header is there.
-        if (0 != hexValidation(cursor, "E6147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
+        if (0 != hexValidation(cursor, "147992C8D0118BB6080009EE4E41", !DO_REWIND)) {
             LOG("ERROR: Fail to validate Marker Fill pattern header...");
             throw std::string("validation");
         }
@@ -386,7 +387,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
 
 
 int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
-    LOG("-------------------------");
+    LOG("---------------------------------------");
     LOG("START parsing template...");
 
     // It is possible that the template is not defined.

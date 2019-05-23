@@ -137,6 +137,7 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level) {
         parseDouble(cursor, jstring, "offsetY", level);
 
         bool showOutline = bool(getChar(cursor));
+        LOG("Show outline: " + std::to_string(showOutline));
         if (showOutline) {
             write_to_json(jstring, "showOutline", "true,", level);
         } else {
