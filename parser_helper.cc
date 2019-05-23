@@ -82,3 +82,19 @@ double getDouble(char **cursor) {
 void LOG(std::string mseg) {
     std::cout << mseg << std::endl;
 }
+
+void printHex(char **cursor, int num) {
+    if (num <= 0) {
+        std::cout << "WARNING: printHex() cannot take param <= 0... ";
+        std::cout << "  So...nothing is printed..." << std::endl;
+        return;
+    }
+
+    std::cout << "TEST: printing " << num << " byte(s)..." << std::endl;
+    for (int i = 0; i < num; i++) {
+        std::cout << std::hex << getChar(cursor) << " ";
+    }
+    std::cout << std::endl;
+
+    bytesRewinder(cursor, num);
+}

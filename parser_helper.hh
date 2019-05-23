@@ -70,5 +70,13 @@ double getDouble(char **cursor);
  */
 void LOG(std::string mseg);
 
+/**
+ * Print "num" bytes of the binary file from the current position. The cursor will be
+ *   automatically rewinded.
+ * @param the input file stream.
+ * @param number of bytes to be printed.
+ */
+void printHex(char **cursor, int num);
+
 
 #endif

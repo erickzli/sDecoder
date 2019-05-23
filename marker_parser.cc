@@ -47,7 +47,6 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
 
         // trace back to the front of the header
         bytesRewinder(cursor, 3);
-        write_to_json(jstring, "", "},", level);
 
         write_to_json(jstring, "numberOfMarkerLayers", std::to_string(num_of_marker_layers) + ",", level + 1);
     } else {
@@ -112,6 +111,32 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
         write_to_json(jstring, "", "},", level + 1);
     }
 
+    // Parse the activeness of layers.
+    int check_active = getChar(cursor);
+    bytesRewinder(cursor, 1);
+    if (check_active == 0 || check_active == 1) {
+        LOG("Checking marker activeness...");
+        write_to_json(jstring, "lineActiveness", "{", level + 1);
+        for (size_t i = 0; i < num_of_marker_layers; i++) {
+            int activeness = getInt(cursor); // 0: deactivated; 1: activated
+            LOG("Activeness: " + std::to_string(activeness));
+            write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
+        }
+        write_to_json(jstring, "", "}", level + 1);
+
+        for (size_t i = 0; i < num_of_marker_layers; i++) {
+            bytesHopper(cursor, 4); // Hop for (01 00 00 00) or (00 00 00 00)
+        }
+        bytesHopper(cursor, 16);
+        for (size_t i = 0; i < num_of_marker_layers; i++) {
+            if (0x02 == getChar(cursor)) {
+                bytesHopper(cursor, 5); // Hop for (02 00 00 00 00 00)
+            } else {
+                bytesRewinder(cursor, 1);
+            }
+        }
+    }
+
     write_to_json(jstring, "", "},", level);
 
     return 0;
@@ -141,12 +166,7 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level, bool withT
         throw err;
     }
 
-    if (withTail) {
-        bytesHopper(cursor, 32);
-    } else {
-        // NOTE
-        bytesHopper(cursor, 2);
-    }
+    bytesHopper(cursor, 2);
 
     return 0;
 }
@@ -168,9 +188,9 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool wi
     parseDouble(cursor, jstring, "markerOffsetY", level);
     bytesHopper(cursor, 16);
 
-    int title = getChar(cursor);
+    int stnl = getChar(cursor);
 
-    if (title == 0x0D) {
+    if (stnl == 0x0D) {
         bytesHopper(cursor, 13);
     } else {
         bytesRewinder(cursor, 1);
@@ -180,14 +200,6 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level, bool wi
         parseString(cursor, jstring, "font", level);
     } catch (std::string err) {
         throw err;
-    }
-
-    if (withTail) {
-        // Parse the TAIL pattern of carto line.
-        while (getChar(cursor) < 20) {}
-        bytesRewinder(cursor, 1);
-    } else {
-        bytesRewinder(cursor, 1);
     }
 
     return 0;
@@ -212,11 +224,13 @@ int parseArrowMarker(char **cursor, std::string &jstring, int level, bool withTa
     parseDouble(cursor, jstring, "XOffset", level);
     parseDouble(cursor, jstring, "YOffset", level);
 
-    if (withTail) {
-        bytesHopper(cursor, 32);
-    } else {
-        bytesHopper(cursor, 2);
-    }
+    bytesHopper(cursor, 2);
+
+    // if (withTail) {
+    //     bytesHopper(cursor, 32);
+    // } else {
+    //     bytesHopper(cursor, 2);
+    // }
 
     return 0;
 }

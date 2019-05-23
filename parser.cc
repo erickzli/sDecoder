@@ -60,8 +60,12 @@ std::string grandParser(char **input) {
         return std::string("\"error\": \"" + err + "\"\n");
     }
 
+    printHex(input, 20);
+
     write_to_json(jstring, "", "}", 0);
     LOG("DONE :-)");
+
+
 
     return jstring;
 }
@@ -374,6 +378,8 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
         LOG("ERROR: Failed to validate string format...");
         throw std::string("validation.");
     }
+
+    bytesRewinder(cursor, 1);
 
     return 0;
 }
