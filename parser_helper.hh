@@ -11,6 +11,7 @@
 #include <fstream>
 #include <string>
 #include <iostream>
+#include <iomanip>
 
 /**
  * Validate if the upcoming hex value is the same as hexStr.
@@ -55,7 +56,7 @@ int get16Bit(char **cursor);
  * @param the input file stream.
  * @return the integer.
  */
-int getInt(char **cursor);
+int get32Bit(char **cursor);
 
 /**
  * Get the double value from the current position.

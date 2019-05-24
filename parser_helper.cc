@@ -63,7 +63,7 @@ int get16Bit(char **cursor) {
     return *ret;
 }
 
-int getInt(char **cursor) {
+int get32Bit(char **cursor) {
     uint32_t *ret = (uint32_t *)*cursor;
     // After getting the current character, move to the next integer.
     bytesHopper(cursor, 4);
@@ -92,7 +92,13 @@ void printHex(char **cursor, int num) {
 
     std::cout << "TEST: printing " << num << " byte(s)..." << std::endl;
     for (int i = 0; i < num; i++) {
-        std::cout << std::hex << getChar(cursor) << " ";
+        std::cout << std::hex << std::setfill('0') << std::setw(2) << getChar(cursor) << " ";
+        if ((i + 1) % 8 == 0) {
+            std::cout << " ";
+        }
+        if ((i + 1) % 16 == 0) {
+            std::cout << std::endl;
+        }
     }
     std::cout << std::endl;
 

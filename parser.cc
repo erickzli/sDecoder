@@ -159,6 +159,8 @@ int parseLineFill(char **cursor, std::string &jstring, int level) {
 
         // Parse the line pattern for the filling lines.
         parseLinePattern(cursor, jstring, 0, "Filling Line", level);
+
+        LOG("??????????????????????????????????????");
         // parse the line pattern for the outline.
         parseLinePattern(cursor, jstring, 0, "Outline", level);
     } catch (std::string err) {
@@ -172,7 +174,7 @@ int parseLineFill(char **cursor, std::string &jstring, int level) {
     // Parse the line fill separation (the distance between each line)
     parseDouble(cursor, jstring, "separation", level);
 
-    printHex(cursor, 20);
+
 
     return 0;
 }
@@ -320,7 +322,7 @@ double parseDouble(char **cursor, std::string &jstring, std::string tag, int lev
 }
 
 int parseInt(char **cursor, std::string &jstring, std::string tag, int level) {
-    int val = getInt(cursor);
+    int val = get32Bit(cursor);
 
     // Put the name and value of the integer value into the JSON string.
     LOG(tag + " is: " + std::to_string(val));
