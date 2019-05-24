@@ -71,6 +71,14 @@ int get32Bit(char **cursor) {
     return *ret;
 }
 
+int get64Bit(char **cursor) {
+    uint64_t *ret = (uint64_t *)*cursor;
+    // After getting the current character, move to the next integer.
+    bytesHopper(cursor, 8);
+
+    return *ret;
+}
+
 double getDouble(char **cursor) {
     double *ret = (double *)*cursor;
     // After getting the current character, move to the next double.

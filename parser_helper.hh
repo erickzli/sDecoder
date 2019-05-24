@@ -59,6 +59,13 @@ int get16Bit(char **cursor);
 int get32Bit(char **cursor);
 
 /**
+ * Get the integer value (64-bit) from the current position.
+ * @param the input file stream.
+ * @return the integer.
+ */
+int get64Bit(char **cursor);
+
+/**
  * Get the double value from the current position.
  * @param the input file stream.
  * @return the double value.
