@@ -34,27 +34,30 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
     write_to_json(jstring, "numberOfLineLayers", std::to_string(num_of_line_layers) + ",", level + 1);
     LOG("Number of line layers: " + std::to_string(num_of_line_layers));
 
+    write_to_json(jstring, "lineLayer", "[", level + 1);
+
     // Go through each line layer.
     for (int i = 0; i < num_of_line_layers; i++) {
         LOG(" --- START parsing line layer NO. " + std::to_string(i + 1));
         line_type = getChar(cursor);
         bytesHopper(cursor, 17);
 
-        write_to_json(jstring, "lineLayer" + std::to_string(i + 1), "{", level + 1);
+        write_to_json(jstring, "", "{", level + 2);
+        write_to_json(jstring, "number", std::to_string(i + 1) + ",", level + 3);
 
         try {
             switch(line_type) {
                 case 0xF9:
-                    parseSimpleLine(cursor, jstring, level + 2);
+                    parseSimpleLine(cursor, jstring, level + 3);
                     break;
                 case 0xFB:
-                    parseCartoLine(cursor, jstring, level + 2);
+                    parseCartoLine(cursor, jstring, level + 3);
                     break;
                 case 0xFC:
-                    parseHashLine(cursor, jstring, level + 2);
+                    parseHashLine(cursor, jstring, level + 3);
                     break;
                 case 0xFD:
-                    parseMarkerLine(cursor, jstring, level + 2);
+                    parseMarkerLine(cursor, jstring, level + 3);
                     break;
                 default:
                     LOG("ERROR: Line type " + std::to_string(line_type) + " not found.");
@@ -64,8 +67,10 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
             throw err;
         }
 
-        write_to_json(jstring, "", "},", level + 1);
+        write_to_json(jstring, "", "},", level + 2);
     }
+
+    write_to_json(jstring, "", "],", level + 1);
 
     // TODO: IMPORTANT
     // Parse the activeness of layers.

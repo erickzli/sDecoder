@@ -41,10 +41,13 @@ std::string grandParser(char **input) {
             }
         }
 
+        write_to_json(jstring, "layer", "[", 1);
+
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
             LOG("++++ START parsing layer NO. " + std::to_string(i + 1));
-            parseLayer(input, jstring, 0, 1, i + 1);
+            parseLayer(input, jstring, 0, 2, i + 1);
+
             // Inter-layer pattern...
             if (i < num_of_layers - 1) {
                 bytesRewinder(input, 1);
@@ -55,6 +58,7 @@ std::string grandParser(char **input) {
                 bytesRewinder(input, 1);
             }
         }
+        write_to_json(jstring, "", "]", 1);
     } catch (std::string err) {
         LOG("ERROR occurred. Stopped...");
         return std::string("\"error\": \"" + err + "\"\n");
@@ -74,7 +78,8 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
     // Type 0: A normal layer
     if (type == 0) {
         LOG("START parsing a layer...");
-        write_to_json(jstring, "layer" + std::to_string(layer_no), "{", level);
+        write_to_json(jstring, "", "{", level);
+
         write_to_json(jstring, "number", std::to_string(layer_no) + ",", level + 1);
     // A Symbol
     } else {

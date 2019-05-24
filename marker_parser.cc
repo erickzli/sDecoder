@@ -56,12 +56,13 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
 
     LOG("Number of Marker Layers: " + std::to_string(num_of_marker_layers));
 
+    write_to_json(jstring, "markerLayer", "[", level + 1);
     // Parse different marker layers.
     for (int i = 0; i < num_of_marker_layers; i++) {
         LOG(" ^^^^START parsing marker layer NO. " + std::to_string(i + 1));
         // Indicate the number of the marker layer.
-        write_to_json(jstring, "markerLayer" + std::to_string(i + 1), "{", level + 1);
-        write_to_json(jstring, "number", std::to_string(i + 1), level + 2);
+        write_to_json(jstring, "", "{", level + 2);
+        write_to_json(jstring, "number", std::to_string(i + 1), level + 3);
         int marker_type = get16Bit(cursor);
         // this part can be deleted in the future...
         if (0xE5FC == marker_type) {
@@ -74,13 +75,13 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
         try {
             switch(marker_type) {
                 case 0xE5FE: // 58878
-                    parseSimpleMarker(cursor, jstring, level + 2);
+                    parseSimpleMarker(cursor, jstring, level + 3);
                     break;
                 case 0xE600: // 58880
-                    parseCharacterMarker(cursor, jstring, level + 2);
+                    parseCharacterMarker(cursor, jstring, level + 3);
                     break;
                 case 0x9431: // 37937
-                    parseArrowMarker(cursor, jstring, level + 2);
+                    parseArrowMarker(cursor, jstring, level + 3);
                     break;
                 default:
                     LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
@@ -90,8 +91,10 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
             throw err;
         }
 
-        write_to_json(jstring, "", "},", level + 1);
+        write_to_json(jstring, "", "},", level + 2);
     }
+
+    write_to_json(jstring, "", "],", level + 1);
 
     // Parse the activeness of layers.
     int check_active = getChar(cursor);
