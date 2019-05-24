@@ -97,7 +97,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
         for (size_t i = 0; i < num_of_line_layers; i++) {
             int activeness = get32Bit(cursor); // 0: deactivated; 1: activated
             LOG("Line layer" + std::to_string(i + 1) + " Activeness: " + std::to_string(activeness));
-            write_to_json(jstring, "lineLayer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
+            write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
         }
         write_to_json(jstring, "", "}", level + 1);
 

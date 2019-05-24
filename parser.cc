@@ -65,7 +65,22 @@ std::string grandParser(char **input) {
         return std::string("\"error\": \"" + err + "\"\n");
     }
 
-    printHex(input, 20);
+    int stnl = get64Bit(input);
+    if (0x0D != stnl) {
+        LOG("ERROR: sentinel");
+        throw std::string("0x0D sentinel");
+    }
+
+    write_to_json(jstring, "fillLayerActiveness", "{", 1);
+    LOG("Checking fill layer activeness...");
+
+    for (int i = 0; i < num_of_layers; i++) {
+        int activeness = get32Bit(input);
+        LOG("Fill layer " + std::to_string(i + 1) + ": " + std::to_string(activeness));
+        write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", 2);
+    }
+
+    write_to_json(jstring, "", "}", 1);
 
     write_to_json(jstring, "", "}", 0);
     LOG("DONE :-)");
