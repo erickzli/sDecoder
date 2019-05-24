@@ -59,7 +59,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
     write_to_json(jstring, "markerLayer", "[", level + 1);
     // Parse different marker layers.
     for (int i = 0; i < num_of_marker_layers; i++) {
-        LOG(" ^^^^START parsing marker layer NO. " + std::to_string(i + 1));
+        LOG(" >>>> START parsing marker layer NO. " + std::to_string(i + 1));
         // Indicate the number of the marker layer.
         write_to_json(jstring, "", "{", level + 2);
         write_to_json(jstring, "number", std::to_string(i + 1), level + 3);
@@ -211,12 +211,6 @@ int parseArrowMarker(char **cursor, std::string &jstring, int level) {
     parseDouble(cursor, jstring, "YOffset", level);
 
     bytesHopper(cursor, 2);
-
-    // if (withTail) {
-    //     bytesHopper(cursor, 32);
-    // } else {
-    //     bytesHopper(cursor, 2);
-    // }
 
     return 0;
 }
