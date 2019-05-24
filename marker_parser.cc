@@ -98,11 +98,11 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
     bytesRewinder(cursor, 1);
     if (check_active == 0 || check_active == 1) {
         LOG("Checking marker activeness...");
-        write_to_json(jstring, "lineActiveness", "{", level + 1);
+        write_to_json(jstring, "markerLayerActiveness", "{", level + 1);
         for (size_t i = 0; i < num_of_marker_layers; i++) {
             int activeness = getInt(cursor); // 0: deactivated; 1: activated
-            LOG("Activeness: " + std::to_string(activeness));
-            write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
+            LOG("Marker layer" + std::to_string(i + 1) + " Activeness: " + std::to_string(activeness));
+            write_to_json(jstring, "markerLayer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
         }
         write_to_json(jstring, "", "}", level + 1);
 
