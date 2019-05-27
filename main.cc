@@ -20,7 +20,7 @@
  * Print out the instruction for formatting.
  */
 void printFormat() {
-    std::clog << "usage: ./main [-F input_filename] [-P print_log (true/false)]" << std::endl;
+    std::clog << "usage: ./main [-f input_filename] [-p print_log (true/false)]" << std::endl;
 }
 
 int main(int argc, char *argv[]) {
@@ -45,10 +45,10 @@ int main(int argc, char *argv[]) {
     // Check each argument.
     for (int i = 1; i < argc; i++) {
         // Check filename.
-        if (!strcmp(argv[i], "-F")) {
+        if (!strcmp(argv[i], "-f")) {
             filename = std::string(argv[i + 1]);
         // Check the option of logging.
-        } else if (!strcmp(argv[i], "-P")) {
+    } else if (!strcmp(argv[i], "-p")) {
             if (!strcmp(argv[i + 1], "false")) {
                 enableLog = false;
             }
