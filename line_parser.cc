@@ -12,7 +12,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
     LOG("-----------------------------");
     if (type == 0) {
         LOG("START parsing line");
-        write_to_json(jstring, "lineProperties", "{", level);
+        write_to_json(jstring, "lineProperties_" + toSimpleCamelCase(property), "{", level);
         write_to_json(jstring, "name", "\"" + property + "\",", level + 1);
     } else {
         LOG("START parsing line symbol");
