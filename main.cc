@@ -152,10 +152,10 @@ int main(int argc, char *argv[]) {
 
             // failed
             if ('e' == jstring[1]) {
-                std::clog << "\033[1;31m" + *trav + "\033[0m -> " << jstring;
+                std::clog << "\033[1;31m" + *trav + "\033[0m -> " << jstring; // red bold font
                 failed += 1;
             } else { // passed
-                std::clog << "\033[1;32m" + *trav + "\033[0m\n";
+                std::clog << "\033[0;32m" + *trav + "\033[0m\n"; // green font
                 passed += 1;
             }
         }
@@ -223,7 +223,7 @@ int main(int argc, char *argv[]) {
     std::clog << std::endl << "~~~~~~ Beginning of the jstring ~~~~~~" << std::endl << std::endl;
     // clog the JSON string gotten through the grand parser.
     std::clog << jstring << std::endl;
-    std::clog << "~~~~~~~~~~~ End of jstring ~~~~~~~~~~~" << std::endl;
+    std::clog << "~~~~~~~~~ End of the jstring ~~~~~~~~~" << std::endl;
 
     // Close the file...
     fclose(infile);
