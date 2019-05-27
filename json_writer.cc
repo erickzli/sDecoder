@@ -12,7 +12,7 @@ void write_to_json(std::string &jstring, std::string tag, std::string buf, int l
 
     // Insert indention for the line.
     for (int i = 0; i < level; i++) {
-        output += "\t";
+        output += "    "; // Use 4 spaces instead of a tab
     }
 
     // If it has a tag -- `"tag": `

@@ -112,3 +112,34 @@ void printHex(char **cursor, int num) {
 
     bytesRewinder(cursor, num);
 }
+
+std::string toSimpleCamelCase(std::string str) {
+    int len = str.length();
+    char *ret = (char *)malloc(len);
+    int idx = 0;
+    bool mustUpper = false;
+    bool mustLower = true;
+
+    for (int i = 0; i < len; i++) {
+        if (str[i] == ' ') {
+            mustUpper = true;
+        } else if (mustUpper) {
+            ret[idx] = toupper(str[i]);
+            idx += 1;
+            mustUpper = false;
+        } else if (mustLower) {
+            ret[idx] = tolower(str[i]);
+            idx += 1;
+            mustLower = false;
+        } else {
+            ret[idx] = str[i];
+            idx += 1;
+        }
+    }
+    ret[idx] = '\0';
+
+    std::string strret(ret);
+    free(ret);
+
+    return strret;
+}

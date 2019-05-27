@@ -86,5 +86,12 @@ void LOG(std::string mseg);
  */
 void printHex(char **cursor, int num);
 
+/**
+ * Convert a string to camelCase format.
+ * @param the input string
+ * @return the camelCased output.
+ */
+std::string toSimpleCamelCase(std::string str);
+
 
 #endif
