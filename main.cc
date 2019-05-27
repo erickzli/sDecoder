@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
         while ((ent = readdir(dir)) != NULL) {
             std::string fname(ent->d_name);
             // Ignore current directory and parent directory..
-            if (fname != "." && fname != "..") {
+            if (fname[0] != '.') {
                 test_files.push_back(fname);
                 num_of_files += 1;
             }
@@ -98,6 +98,7 @@ int main(int argc, char *argv[]) {
         }
 
         std::list<std::string>::iterator trav;
+        test_files.sort();
         std::clog << "TEST MODE: Test summary" << std::endl;
         std::clog << "------------------------" << std::endl;
 

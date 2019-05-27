@@ -96,23 +96,6 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
 
     write_to_json(jstring, "", "],", level + 1);
 
-    // Dealing: only has activeness but without 02 00 00 00 00 00
-    int preprecheck = get32Bit(cursor);
-    bytesRewinder(cursor, 4);
-    if (preprecheck != 1) {
-        bytesHopper(cursor, num_of_marker_layers * 8);
-        int one = get32Bit(cursor);
-        int two = get16Bit(cursor);
-        bytesRewinder(cursor, num_of_marker_layers * 8 + 6);
-        if (one != 2 || two != 0) {
-            write_to_json(jstring, "", "},", level);
-            return 0;
-        }
-    }
-
-    // Parse the activeness of layers.
-    // int check_active = getChar(cursor);
-    // bytesRewinder(cursor, 1);
 
     int check_active_int = get32Bit(cursor);
     bytesRewinder(cursor, 4);

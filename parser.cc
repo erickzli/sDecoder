@@ -173,8 +173,6 @@ int parseLineFill(char **cursor, std::string &jstring, int level) {
 
         // Parse the line pattern for the filling lines.
         parseLinePattern(cursor, jstring, 0, "Filling Line", level);
-
-        LOG("??????????????????????????????????????");
         // parse the line pattern for the outline.
         parseLinePattern(cursor, jstring, 0, "Outline", level);
     } catch (std::string err) {
