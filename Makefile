@@ -1,8 +1,8 @@
 # Use C++ as the programming language
-CXX = g++
+CXX = clang++
 # -Wall shows all warning;
 # -g shows all debugging info.
-CXXFLAGS = -Wall -g
+CXXFLAGS = -Wall -g -std=c++11 -stdlib=libc++
 
 # Link main.o and parser.o
 main: main.o parser.o parser_helper.o json_writer.o line_parser.o marker_parser.o

@@ -81,7 +81,6 @@ std::string grandParser(char **input) {
     }
 
     write_to_json(jstring, "", "}", 1);
-
     write_to_json(jstring, "", "}", 0);
     LOG("DONE :-)");
 

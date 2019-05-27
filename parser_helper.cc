@@ -19,8 +19,8 @@ int hexValidation(char **cursor, std::string hexStr, bool rewind) {
         int num1 = stoi(hexStr.substr(currIdx, 2), 0, 16);
         int num2 = getChar(cursor);
 
-        // std::cout << "num1: " << num1 << std::endl;
-        // std::cout << "num2: " << num2 << std::endl;
+        // std::clog << "num1: " << num1 << std::endl;
+        // std::clog << "num2: " << num2 << std::endl;
         currIdx += 2;
         remain -= 2;
 
@@ -88,27 +88,27 @@ double getDouble(char **cursor) {
 }
 
 void LOG(std::string mseg) {
-    std::cout << mseg << std::endl;
+    std::clog << mseg << std::endl;
 }
 
 void printHex(char **cursor, int num) {
     if (num <= 0) {
-        std::cout << "WARNING: printHex() cannot take param <= 0... ";
-        std::cout << "  So...nothing is printed..." << std::endl;
+        std::clog << "WARNING: printHex() cannot take param <= 0... ";
+        std::clog << "  So...nothing is printed..." << std::endl;
         return;
     }
 
-    std::cout << "TEST: printing " << num << " byte(s)..." << std::endl;
+    std::clog << "TEST: printing " << num << " byte(s)..." << std::endl;
     for (int i = 0; i < num; i++) {
-        std::cout << std::hex << std::setfill('0') << std::setw(2) << getChar(cursor) << " ";
+        std::clog << std::hex << std::setfill('0') << std::setw(2) << getChar(cursor) << " ";
         if ((i + 1) % 8 == 0) {
-            std::cout << " ";
+            std::clog << " ";
         }
         if ((i + 1) % 16 == 0) {
-            std::cout << std::endl;
+            std::clog << std::endl;
         }
     }
-    std::cout << std::endl;
+    std::clog << std::endl;
 
     bytesRewinder(cursor, num);
 }

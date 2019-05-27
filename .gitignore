@@ -35,6 +35,7 @@ main
 # Folders
 BFiles
 Outfiles
+Test
 
 # Testing scripts
 *test*
