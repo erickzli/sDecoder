@@ -115,31 +115,25 @@ void printHex(char **cursor, int num) {
 
 std::string toSimpleCamelCase(std::string str) {
     int len = str.length();
-    char *ret = (char *)malloc(len);
-    int idx = 0;
+    std::string ret = "";
     bool mustUpper = false;
     bool mustLower = true;
 
     for (int i = 0; i < len; i++) {
         if (str[i] == ' ') {
             mustUpper = true;
+        } else if (str[i] == '*') {
+            continue;
         } else if (mustUpper) {
-            ret[idx] = toupper(str[i]);
-            idx += 1;
+            ret += toupper(str[i]);
             mustUpper = false;
         } else if (mustLower) {
-            ret[idx] = tolower(str[i]);
-            idx += 1;
+            ret += tolower(str[i]);
             mustLower = false;
         } else {
-            ret[idx] = str[i];
-            idx += 1;
+            ret += str[i];
         }
     }
-    ret[idx] = '\0';
 
-    std::string strret(ret);
-    free(ret);
-
-    return strret;
+    return ret;
 }

@@ -29,7 +29,7 @@ std::string grandParser(char **input);
  *     1: Mask symbol parser.
  * \param the level(indention).
  */
-int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no);
+int parseLayer(char **cursor, std::string &jstring, int type, int level);
 
 /**
  * Parses the binary block where it defines a color pattern

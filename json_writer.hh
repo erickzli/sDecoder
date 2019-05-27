@@ -12,6 +12,9 @@
 #include <string>
 #include <iostream>
 
+const char SPACE = ' ';
+const char NEWLINE = '\n';
+const char COMMA = ',';
 
 /**
  * Write a string into JSON file given tag name, and level(indention).
@@ -20,7 +23,8 @@
  * \param the value after the tag. ("tag": "value")
  * \param the level(indention)
  */
- void write_to_json(std::string &jstring, std::string tag, std::string buf, int level);
+void write_to_json(std::string &jstring, std::string tag, std::string buf, int level);
 
+std::string json_comma_remover(std::string &jstring);
 
 #endif

@@ -46,7 +46,9 @@ std::string grandParser(char **input) {
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
             LOG("++++ START parsing layer NO. " + std::to_string(i + 1));
-            parseLayer(input, jstring, 0, 2, i + 1);
+            write_to_json(jstring, "", "{", 2);
+            write_to_json(jstring, "number", std::to_string(i + 1) + ",", 3);
+            parseLayer(input, jstring, 0, 3);
 
             // Inter-layer pattern...
             if (i < num_of_layers - 1) {
@@ -57,9 +59,10 @@ std::string grandParser(char **input) {
                 } while (b != 3 && b != 6 && b != 8 && b != 9);
                 bytesRewinder(input, 1);
             }
+            write_to_json(jstring, "", "},", 2);
         }
 
-        write_to_json(jstring, "", "]", 1);
+        write_to_json(jstring, "", "],", 1);
     } catch (std::string err) {
         LOG("ERROR occurred. Stopped...");
         return std::string("\"error\": \"" + err + "\"\n");
@@ -80,26 +83,22 @@ std::string grandParser(char **input) {
         write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", 2);
     }
 
-    write_to_json(jstring, "", "}", 1);
+    write_to_json(jstring, "", "},", 1);
     write_to_json(jstring, "", "}", 0);
     LOG("DONE :-)");
 
-    return jstring;
+    return json_comma_remover(jstring);
 }
 
-int parseLayer(char **cursor, std::string &jstring, int type, int level, int layer_no) {
+int parseLayer(char **cursor, std::string &jstring, int type, int level) {
     LOG("-------------------------------");
 
     // Type 0: A normal layer
     if (type == 0) {
         LOG("START parsing a layer...");
-        write_to_json(jstring, "", "{", level);
-
-        write_to_json(jstring, "number", std::to_string(layer_no) + ",", level + 1);
     // A Symbol
     } else {
         LOG("START parsing a symbol...");
-        write_to_json(jstring, "fillSymbol", "{", level);
     }
 
     // Get the filling type (3 for simple fill; 6 for line fill; 8 for marker fill)
@@ -109,11 +108,11 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
 
     // For each filling type, enter into the corresponding field.
     if (0xE603 == filling_type) {
-        parseSimpleFill(cursor, jstring, type, level + 1);
+        parseSimpleFill(cursor, jstring, type, level);
     } else if (0xE606 == filling_type) {
-        parseLineFill(cursor, jstring, level + 1);
+        parseLineFill(cursor, jstring, level);
     } else if (0xE608 == filling_type) {
-        parseMarkerFill(cursor, jstring, level + 1);
+        parseMarkerFill(cursor, jstring, level);
     } else if (0xE609 == filling_type) {
         LOG("ERROR: Gradient Fill is currently not supported");
         throw std::string("Currently unsupported filling type.");
@@ -121,8 +120,6 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level, int lay
         LOG("ERROR: Filling type " + std::to_string(filling_type) + " not supported");
         throw std::string("Filling type.");
     }
-
-    write_to_json(jstring, "", "},", level);
 
     return 0;
 }
