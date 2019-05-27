@@ -62,7 +62,7 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
         LOG(" >>>> START parsing marker layer NO. " + std::to_string(i + 1));
         // Indicate the number of the marker layer.
         write_to_json(jstring, "", "{", level + 2);
-        write_to_json(jstring, "number", std::to_string(i + 1), level + 3);
+        write_to_json(jstring, "number", std::to_string(i + 1) + ",", level + 3);
         int marker_type = get16Bit(cursor);
         // this part can be deleted in the future...
         if (0xE5FC == marker_type) {
