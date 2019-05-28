@@ -47,8 +47,8 @@ int main(int argc, char *argv[]) {
         // Check filename.
         if (!strcmp(argv[i], "-f")) {
             filename = std::string(argv[i + 1]);
-        // Check the option of logging.
-    } else if (!strcmp(argv[i], "-p")) {
+            // Check the option of logging.
+        } else if (!strcmp(argv[i], "-p")) {
             if (!strcmp(argv[i + 1], "false")) {
                 enableLog = false;
             }
@@ -115,7 +115,7 @@ int main(int argc, char *argv[]) {
             if (infile == NULL) {
                 std::clog << "\033[1;31m" + *trav + "\033[0m";
                 std::clog << " -> ERROR: Cannot open the file" << std::endl;
-                continue;
+                continue; // If the file cannot open, just skip it...
             }
 
             // Get the size of the file to reserve enough memory.

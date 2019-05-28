@@ -31,7 +31,7 @@ std::string json_comma_remover(std::string &jstring) {
     size_t jlen = jstring.length();
     std::string ret = "";
     int count_spaces = 0;
-    int count_line = 1;
+    // int count_line = 1;
 
     for (size_t i = 0; i < jlen; i++) {
         if (COMMA == jstring[i] && NEWLINE == jstring[i + 1]) {
@@ -47,7 +47,7 @@ std::string json_comma_remover(std::string &jstring) {
             }
             count_spaces = next_space;
         } else if (NEWLINE == jstring[i]) {
-            std::clog << "Line " << count_line++ << ": " << count_spaces << std::endl;
+            // std::clog << "Line " << count_line++ << ": " << count_spaces << std::endl;
             int temp = i + 1;
             int next_space = 0;
             while (SPACE == jstring[temp]) {
