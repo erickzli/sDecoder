@@ -317,9 +317,6 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level) {
     return num_of_layers;
 }
 
-
-
-
 double parseDouble(char **cursor, std::string &jstring, std::string tag, int level) {
     double val = getDouble(cursor);
 
@@ -354,7 +351,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
          * Since the first representation contains a space after each character,
          *  I do `zigzagging` for identifying valid chars.
          */
-            // `reader == 32` includes the case of the font name with a space (unicode: 32).
+        // `reader == 32` includes the case of the font name with a space (unicode: 32).
         if (('a' <= reader && reader <= 'z') || ('A' <= reader && reader <= 'Z') || reader == 32) {
             str += reader;
         } else {
@@ -456,7 +453,6 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
             throw std::string("Template tail validation.");
         }
     }
-
 
     return 0;
 }

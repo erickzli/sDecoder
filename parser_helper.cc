@@ -122,8 +122,6 @@ std::string toSimpleCamelCase(std::string str) {
     for (int i = 0; i < len; i++) {
         if (str[i] == ' ') {
             mustUpper = true;
-        } else if (str[i] == '*') {
-            continue;
         } else if (mustUpper) {
             ret += toupper(str[i]);
             mustUpper = false;
