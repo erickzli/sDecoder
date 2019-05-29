@@ -22,22 +22,22 @@ std::string grandParser(char **cursor) {
         switch (grand_stnl) {
             case 0xE604:
                 // Fill Symbol
-                write_to_json(jstring, "symbolType", "fill,", 1);
+                write_to_json(jstring, "symbolType", "\"fill\",", 1);
                 parseFillPattern(cursor, jstring, 1);
                 break;
             case 0x0000:
                 // Fill Symbol without header
-                write_to_json(jstring, "symbolType", "fill,", 1);
+                write_to_json(jstring, "symbolType", "\"fill\",", 1);
                 parseFillPattern(cursor, jstring, 1);
                 break;
             case 0xE5FA:
                 // line symbol
-                write_to_json(jstring, "symbolType", "line,", 1);
+                write_to_json(jstring, "symbolType", "\"line\",", 1);
                 parseLinePattern(cursor, jstring, 1, "", 1);
                 break;
             case 0xE5FF:
                 // marker symbol
-                write_to_json(jstring, "symbolType", "marker,", 1);
+                write_to_json(jstring, "symbolType", "\"marker\",", 1);
                 parseMarkerPattern(cursor, jstring, 1);
                 break;
             default:
