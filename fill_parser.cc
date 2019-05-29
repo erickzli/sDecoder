@@ -36,7 +36,7 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
             }
         }
 
-        write_to_json(jstring, "layer", "[", 1);
+        write_to_json(jstring, "fillLayer", "[", 1);
 
         LOG("[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]" + std::to_string(num_of_layers));
 
