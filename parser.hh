@@ -9,6 +9,7 @@
 #define __PARSER__
 
 #include "parser_helper.hh"
+#include "fill_parser.hh"
 #include "line_parser.hh"
 #include "marker_parser.hh"
 #include "json_writer.hh"
@@ -51,34 +52,6 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
  *    val == -1: something wrong...
  */
 int parseLayerNumber(char **cursor, std::string &jstring, int level);
-
-
-/**
- * Parser the binary block where it defines a simple fill pattern
- * \param the input file stream.
- * \param the output file stream.
- * \param type:
- *     0: Normal process;
- *     1: Symbol process.
- * \param the level(indention)
- */
-int parseSimpleFill(char **cursor, std::string &jstring, int type, int level);
-
-/**
- * Parser the binary block where it defines a line fill pattern
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
- */
-int parseLineFill(char **cursor, std::string &jstring, int level);
-
-/**
- * Parser the binary block where it defines a marker fill pattern
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
- */
-int parseMarkerFill(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the binary block where it defines a double value
