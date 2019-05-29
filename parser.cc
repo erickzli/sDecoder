@@ -7,122 +7,54 @@
 
 #include "parser.hh"
 
-std::string grandParser(char **input) {
+std::string grandParser(char **cursor) {
     // Initialize a jstring (for JSON string)
     std::string jstring = "";
-    bool skipHead = false;
-    int num_of_layers = 0;
     write_to_json(jstring, "", "{", 0);
 
     try {
-        if (getChar(input) != 4) {
-            skipHead = true;
-            num_of_layers = 1;
-            bytesRewinder(input, 1);
-        } else {
-            // validate the header of the file.
-            int s = hexValidation(input, "E6147992C8D011", DO_REWIND);
-            if (s == 1) {
-                LOG("ERROR: Header cannot be parsed.");
-                throw std::string("Header.\n");
-            } else {
-                LOG("File is validated.");
-            }
-            // Move infile pointer 26 bytes to skip the header metadata.
-            bytesHopper(input, 25);
-            // Parse the first color pattern. Usage so far is unknown...
-            parseColorPattern(input, jstring, "Unknown", 1);
-            // Parse out the number of layers...
-            num_of_layers = parseLayerNumber(input, jstring, 1);
-            // Test if the number of layers behaves weird...
-            if (-1 == num_of_layers) {
-                LOG("ERROR: Number of Layers is abnormal.");
-                throw std::string("Number of layers.\n");
-            }
+        int grand_stnl = get16Bit(cursor);
+        if (0xE603 == grand_stnl || (0xE606 <= grand_stnl && grand_stnl <= 0xE609)) {
+            grand_stnl = 0x0000; // this is a special code for fill symbol without header...
         }
+        bytesRewinder(cursor, 2);
 
-        write_to_json(jstring, "layer", "[", 1);
-
-        // Start parsing each layer.
-        for (int i = 0; i < num_of_layers; i++) {
-            LOG("++++ START parsing layer NO. " + std::to_string(i + 1));
-            write_to_json(jstring, "", "{", 2);
-            write_to_json(jstring, "number", std::to_string(i + 1) + ",", 3);
-            parseLayer(input, jstring, 0, 3);
-
-            // Inter-layer pattern...
-            if (i < num_of_layers - 1) {
-                bytesRewinder(input, 1);
-                int b = 0;
-                do {
-                    b = getChar(input);
-                } while (b != 3 && b != 6 && b != 8 && b != 9);
-                bytesRewinder(input, 1);
-            }
-            write_to_json(jstring, "", "},", 2);
+        switch (grand_stnl) {
+            case 0xE604:
+                // Fill Symbol
+                write_to_json(jstring, "symbolType", "fill,", 1);
+                parseFillPattern(cursor, jstring, 1);
+                break;
+            case 0x0000:
+                // Fill Symbol without header
+                write_to_json(jstring, "symbolType", "fill,", 1);
+                parseFillPattern(cursor, jstring, 1);
+                break;
+            case 0xE5FA:
+                // line symbol
+                write_to_json(jstring, "symbolType", "line,", 1);
+                parseLinePattern(cursor, jstring, 1, "", 1);
+                break;
+            case 0xE5FF:
+                // marker symbol
+                write_to_json(jstring, "symbolType", "marker,", 1);
+                parseMarkerPattern(cursor, jstring, 1);
+                break;
+            default:
+                LOG("ERROR: Cannot recognize header...");
+                throw std::string("Symbol header.");
         }
-
-        write_to_json(jstring, "", "],", 1);
     } catch (std::string err) {
         LOG("ERROR occurred. Stopped...");
         return std::string("\"error\": \"" + err + "\"\n");
     }
 
-    int stnl = get64Bit(input);
-    if (0x0D != stnl) {
-        LOG("ERROR: sentinel");
-        throw std::string("0x0D sentinel");
-    }
-
-    write_to_json(jstring, "fillLayerActiveness", "{", 1);
-    LOG("Checking fill layer activeness...");
-
-    for (int i = 0; i < num_of_layers; i++) {
-        int activeness = get32Bit(input);
-        LOG("Fill layer " + std::to_string(i + 1) + ": " + std::to_string(activeness));
-        write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", 2);
-    }
-
-    write_to_json(jstring, "", "},", 1);
     write_to_json(jstring, "", "}", 0);
     LOG("DONE :-)");
 
     return json_comma_remover(jstring);
 }
 
-int parseLayer(char **cursor, std::string &jstring, int type, int level) {
-    LOG("-------------------------------");
-
-    // Type 0: A normal layer
-    if (type == 0) {
-        LOG("START parsing a layer...");
-    // A Symbol
-    } else {
-        LOG("START parsing a symbol...");
-    }
-
-    // Get the filling type (3 for simple fill; 6 for line fill; 8 for marker fill)
-    int filling_type = get16Bit(cursor);
-    // name of the corresponding filling type.
-    std::string filling_type_name = "";
-
-    // For each filling type, enter into the corresponding field.
-    if (0xE603 == filling_type) {
-        parseSimpleFill(cursor, jstring, type, level);
-    } else if (0xE606 == filling_type) {
-        parseLineFill(cursor, jstring, level);
-    } else if (0xE608 == filling_type) {
-        parseMarkerFill(cursor, jstring, level);
-    } else if (0xE609 == filling_type) {
-        LOG("ERROR: Gradient Fill is currently not supported");
-        throw std::string("Currently unsupported filling type.");
-    } else {
-        LOG("ERROR: Filling type " + std::to_string(filling_type) + " not supported");
-        throw std::string("Filling type.");
-    }
-
-    return 0;
-}
 
 int parseColorPattern(char **cursor, std::string &jstring, std::string color_type, int level) {
     LOG("----------------------");

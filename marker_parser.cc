@@ -13,8 +13,8 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
     LOG("START parsing marker");
     write_to_json(jstring, "markerProperties", "{", level);
 
-    int num_of_marker_layers = 1;
     int marker_type_precheck = get16Bit(cursor);
+    int num_of_marker_layers = 1;
 
     if (0xE5FF == marker_type_precheck) { // 58879
         try {

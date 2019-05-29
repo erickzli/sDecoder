@@ -20,17 +20,6 @@ const bool DO_REWIND = true;
 
 std::string grandParser(char **input);
 
-/**
- * Parses the symbol flow, which is the largest and most essential pipeline in
- *   the model.
- * \param the input file stream.
- * \param the output file stream.
- * \param type of parser:
- *     0: Normal parser;
- *     1: Mask symbol parser.
- * \param the level(indention).
- */
-int parseLayer(char **cursor, std::string &jstring, int type, int level);
 
 /**
  * Parses the binary block where it defines a color pattern
