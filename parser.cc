@@ -126,9 +126,7 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
     }
 
     write_to_json(jstring, "", "},", level);
-
     bytesHopper(cursor, 2);
-
     LOG("FINISHED parsing color :-)");
 
     return 0;
@@ -147,9 +145,7 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level) {
     }
 
     write_to_json(jstring, "numberOfLayers", std::to_string(num_of_layers) + ",", level);
-
     bytesHopper(cursor, 3);
-
     return num_of_layers;
 }
 
@@ -176,25 +172,18 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level) {
 int parseString(char **cursor, std::string &jstring, std::string tag, int level) {
     LOG("START parsing string...");
 
-    bool going = true; // When "going" is true, the while loop will keep going.
-    std::string str = "";
+    // bool going = true; // When "going" is true, the while loop will keep going.
+    // std::string str = "";
+    int code = 1;
+    write_to_json(jstring, "fontName", "[", level);
 
-    while (going) {
-        char reader = **cursor;
-        bytesHopper(cursor, 2);
-        /**
-         * Since the first representation contains a space after each character,
-         *  I do `zigzagging` for identifying valid chars.
-         */
-        // `reader == 32` includes the case of the font name with a space (unicode: 32).
-        if (('a' <= reader && reader <= 'z') || ('A' <= reader && reader <= 'Z') || reader == 32) {
-            str += reader;
-        } else {
-            going = false;
-        }
+    while (0 != (code = get16Bit(cursor))) {
+        write_to_json(jstring, "", std::to_string(code) + ",", level + 1);
+        // LOG(std::to_string(code));
+        // str += intToHexString(code);
     }
 
-    LOG("The string gotten is: " + str);
+    write_to_json(jstring, "", "]", level);
 
     // The length of the null pattern can be varied.
     int id = getChar(cursor);
@@ -207,30 +196,11 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
         throw std::string("validation.");
     }
 
-    going = true;
-    std::string str2 = "";
+    // printHex(cursor, 30);
 
-    // This round will have no space after each character.
-    while (going) {
-        char reader = **cursor;
-        bytesHopper(cursor, 1);
-
-        // `reader == 32` includes the case of the font name with a space (unicode: 32).
-        if (('a' <= reader && reader <= 'z') || ('A' <= reader && reader <= 'Z') || reader == 32) {
-            str2 += reader;
-        } else {
-            going = false;
-        }
-    }
-
-    LOG("The 2nd string gotten is: " + str2);
-
-    // Validate if the two string is matching.
-    if (str == str2) {
-        write_to_json(jstring, "fontName", "\"" + str + "\",", level);
-    } else {
-        LOG("ERROR: Failed to validate string format...");
-        throw std::string("validation.");
+    int secondCode = getChar(cursor);
+    while (1 != secondCode && 0 != secondCode) {
+        secondCode = getChar(cursor);
     }
 
     bytesRewinder(cursor, 1);
