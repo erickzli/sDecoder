@@ -235,13 +235,15 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
         LOG("There is(are) " + std::to_string(num_of_patterns) + " patterns.");
         bytesHopper(cursor, 3);
 
-        for (int i = 0; i < num_of_patterns; i++) {
-            write_to_json(jstring, "linePatternFeature", "{", level + 1);
-            parseDouble(cursor, jstring, "patternLength", level + 2);
-            parseDouble(cursor, jstring, "gapLength", level + 2);
-            write_to_json(jstring, "", "},", level + 1);
-        }
+        write_to_json(jstring, "linePatternFeature", "[", level + 1);
 
+        for (int i = 0; i < num_of_patterns; i++) {
+            write_to_json(jstring, "", "{", level + 2);
+            parseDouble(cursor, jstring, "patternLength", level + 3);
+            parseDouble(cursor, jstring, "gapLength", level + 3);
+            write_to_json(jstring, "", "},", level + 2);
+        }
+        write_to_json(jstring, "", "],", level + 1);
         write_to_json(jstring, "", "},", level);
         // bytesHopper(cursor, 16);
     } else {
