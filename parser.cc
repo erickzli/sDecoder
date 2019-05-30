@@ -173,16 +173,17 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
     LOG("START parsing string...");
 
     // bool going = true; // When "going" is true, the while loop will keep going.
-    std::string str = "";
+    // std::string str = "";
     int code = 1;
+    write_to_json(jstring, "fontName", "[", level);
 
     while (0 != (code = get16Bit(cursor))) {
-        bytesRewinder(cursor, 2);
-        str += char(getChar(cursor));
-        str += char(getChar(cursor));
+        write_to_json(jstring, "", std::to_string(code) + ",", level + 1);
+        // LOG(std::to_string(code));
+        // str += intToHexString(code);
     }
 
-    write_to_json(jstring, "fontName", "\"" + str + "\",", level);
+    write_to_json(jstring, "", "]", level);
 
     // The length of the null pattern can be varied.
     int id = getChar(cursor);
