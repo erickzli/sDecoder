@@ -23,21 +23,25 @@ std::string grandParser(char **cursor) {
             case 0xE604:
                 // Fill Symbol
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
+                LOG("START parsing fill symbol...");
                 parseFillPattern(cursor, jstring, 1);
                 break;
             case 0x0000:
                 // Fill Symbol without header
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
+                LOG("START parsing fill symbol...");
                 parseFillPattern(cursor, jstring, 1);
                 break;
             case 0xE5FA:
                 // line symbol
                 write_to_json(jstring, "symbolType", "\"line\",", 1);
+                LOG("START parsing line symbol...");
                 parseLinePattern(cursor, jstring, 1, "", 1);
                 break;
             case 0xE5FF:
                 // marker symbol
                 write_to_json(jstring, "symbolType", "\"marker\",", 1);
+                LOG("START parsing marker symbol...");
                 parseMarkerPattern(cursor, jstring, 1);
                 break;
             default:
@@ -50,14 +54,13 @@ std::string grandParser(char **cursor) {
     }
 
     write_to_json(jstring, "", "}", 0);
-    LOG("DONE :-)");
+    LOG("FINISHED parsing :-)");
 
     return json_comma_remover(jstring);
 }
 
 
 int parseColorPattern(char **cursor, std::string &jstring, std::string color_type, int level) {
-    LOG("----------------------");
     LOG("START parsing color...");
 
     // Get the color space (0x92 for HSV; 0x96 for RGB; 0x97 for CMYK)
@@ -126,12 +129,13 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
 
     bytesHopper(cursor, 2);
 
+    LOG("FINISHED parsing color :-)");
+
     return 0;
 }
 
 int parseLayerNumber(char **cursor, std::string &jstring, int level) {
-    LOG("-----------------------------");
-    LOG("START parsing layer number");
+    LOG("START parsing layer number...");
 
     // Number of layers.
     int num_of_layers = getChar(cursor);
@@ -170,7 +174,6 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level) {
 }
 
 int parseString(char **cursor, std::string &jstring, std::string tag, int level) {
-    LOG("-------------------------");
     LOG("START parsing string...");
 
     bool going = true; // When "going" is true, the while loop will keep going.
@@ -232,12 +235,13 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
 
     bytesRewinder(cursor, 1);
 
+    LOG("FINISHED parsing string. :-)");
+
     return 0;
 }
 
 
 int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
-    LOG("---------------------------------------");
     LOG("START parsing template...");
 
     // It is possible that the template is not defined.
@@ -285,6 +289,8 @@ int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
             throw std::string("Template tail validation.");
         }
     }
+
+    LOG("FINISHED parsing template. :-)");
 
     return 0;
 }

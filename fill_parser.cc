@@ -38,8 +38,6 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
 
         write_to_json(jstring, "fillLayer", "[", 1);
 
-        LOG("[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]" + std::to_string(num_of_layers));
-
         // Start parsing each layer.
         for (int i = 0; i < num_of_layers; i++) {
             LOG("++++ START parsing layer NO. " + std::to_string(i + 1));
@@ -85,8 +83,6 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
 }
 
 int parseLayer(char **cursor, std::string &jstring, int type, int level) {
-    LOG("-------------------------------");
-
     // Type 0: A normal layer
     if (type == 0) {
         LOG("START parsing a fill layer...");
@@ -120,7 +116,6 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level) {
 
 
 int parseSimpleFill(char **cursor, std::string &jstring, int type, int level) {
-    LOG("---------------------------");
     LOG("Filling type: Simple Fill");
 
     write_to_json(jstring, "fillingType", "\"Simple Fill\",", level);
@@ -150,7 +145,6 @@ int parseSimpleFill(char **cursor, std::string &jstring, int type, int level) {
 
 
 int parseLineFill(char **cursor, std::string &jstring, int level) {
-    LOG("---------------------------");
     LOG("Filling type: Line Fill");
 
     write_to_json(jstring, "fillingType", "\"Line Fill\",", level);
@@ -182,7 +176,6 @@ int parseLineFill(char **cursor, std::string &jstring, int level) {
 }
 
 int parseMarkerFill(char **cursor, std::string &jstring, int level) {
-    LOG("---------------------------");
     LOG("Filling type: Marker Fill");
 
     write_to_json(jstring, "fillingType", "\"Marker Fill\",", level);
