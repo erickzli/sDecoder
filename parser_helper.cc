@@ -135,3 +135,97 @@ std::string toSimpleCamelCase(std::string str) {
 
     return ret;
 }
+
+std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
+    if (0 != type && 1 != type) {
+        LOG("ERROR: Color conversion type not found...");
+        throw std::string("Color conversion type");
+    }
+
+    const double X_n = 95.0489;
+    const double Y_n = 100.0;
+    const double Z_n = 108.884;
+
+    double x = X_n * private_f((L + 16.0) / 116.0 + a / 500.0);
+    double y = Y_n * private_f((L + 16.0) / 116.0);
+    double z = Z_n * private_f((L + 16.0) / 116.0 - b / 200.0);
+
+    double r = format_rgb(3.240479 * x - 1.537150 * y - 0.498535 * z);
+    double g = format_rgb(-0.969256 * x + 1.875992 * y + 0.041556 * z);
+    double bl = format_rgb(0.055648 * x - 0.204043 * y + 1.057311 * z);
+
+    // return RGB
+    if (0 == type) {
+        std::list<double> myrgb;
+        myrgb.push_back(r);
+        myrgb.push_back(g);
+        myrgb.push_back(bl);
+        return myrgb;
+    }
+
+    // otherwise return HSV...
+    return RGB_to_HSV(r, g, bl);
+}
+
+std::list<double> RGB_to_HSV(double r, double g, double b) {
+    double r_pm = r / 255.0;
+    double g_pm = g / 255.0;
+    double b_pm = b / 255.0;
+
+    double c_max = std::max(r_pm, g_pm);
+    c_max = std::max(c_max, b_pm);
+    double c_min = std::min(r_pm, g_pm);
+    c_min = std::min(c_min, b_pm);
+
+    double delta = c_max - c_min;
+
+    double h = 0.0;
+    double s = 0.0;
+    double v = 0.0;
+
+    // Hue
+    if (0.0 == delta) {
+        h = 0.0;
+    } else if (c_max == r_pm) {
+        h = 60.0 * ((g_pm - b_pm) / delta + 6);
+    } else if (c_max == g_pm) {
+        h = 60.0 * ((b_pm - r_pm) / delta + 2);
+    } else if (c_max == b_pm) {
+        h = 60.0 * ((r_pm - g_pm) / delta + 4);
+    }
+
+    // Saturation
+    if (0.0 == c_max) {
+        s = 0.0;
+    } else {
+        s = delta / c_max;
+    }
+
+    // Value
+    v = c_max;
+
+    std::list<double> myhsv;
+    myhsv.push_back(h);
+    myhsv.push_back(s);
+    myhsv.push_back(v);
+    return myhsv;
+}
+
+double private_f(double t) {
+    const double SIGMA = 6.0 / 29.0;
+    if (t > SIGMA) {
+        return pow(t, 3.0);
+    } else {
+        return 3 * pow(SIGMA, 2.0) * (t - 4.0 / 29.0);
+    }
+}
+
+double format_rgb(double code) {
+    if (code > 255.0) {
+        return 255.0;
+    } else if (code < 0) {
+        return 0.0;
+    } else {
+        return code;
+    }
+}

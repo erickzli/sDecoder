@@ -91,17 +91,7 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         write_to_json(jstring, "Y", std::to_string(y) + ",", level + 1);
         write_to_json(jstring, "K", std::to_string(k), level + 1);
     } else {
-        // HSV color space...
-        if (0xC492 == color_space) {
-            LOG("Color Space: HSV.");
-        // RGB color space...
-    } else if (0xC496 == color_space) {
-            LOG("Color Space: RGB.");
-        } else {
-            // If the color space code is not 92, 96, or 97, then an error mesg will be printed out.
-            LOG("ERROR: Color Space " + std::to_string(color_space) + " not found.");
-            throw std::string("Color Space.");
-        }
+        std::list<double> mycolor;
         bytesHopper(cursor, 19);
 
         // There are three fields for both HSV and RGB.
@@ -115,14 +105,38 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         LOG("2nd field: " + std::to_string(second));
         LOG("3rd field: " + std::to_string(third));
 
+        // HSV color space...
+        if (0xC492 == color_space) {
+            LOG("Color Space: HSV.");
+            mycolor = CIELAB_to_RGB_HSV(first, second, third, 1);
+        // RGB color space...
+        } else if (0xC496 == color_space) {
+            LOG("Color Space: RGB.");
+            mycolor = CIELAB_to_RGB_HSV(first, second, third, 0);
+        } else {
+            // If the color space code is not 92, 96, or 97, then an error mesg will be printed out.
+            LOG("ERROR: Color Space " + std::to_string(color_space) + " not found.");
+            throw std::string("Color Space.");
+        }
+
         if (0xC492 == color_space) {
             write_to_json(jstring, "space", "\"HSV\",", level + 1);
         } else if (0xC496 == color_space) {
             write_to_json(jstring, "space", "\"RGB\",", level + 1);
         }
-        write_to_json(jstring, "firstField", std::to_string(first) + ",", level + 1);
-        write_to_json(jstring, "secondField", std::to_string(second) + ",", level + 1);
-        write_to_json(jstring, "thirdField", std::to_string(third), level + 1);
+
+        double fs = mycolor.front();
+        mycolor.pop_front();
+        double sd = mycolor.front();
+        mycolor.pop_front();
+        double td = mycolor.front();
+        mycolor.pop_front();
+
+        write_to_json(jstring, "colorCode", "[", level + 1);
+        write_to_json(jstring, "", std::to_string(fs) + ",", level + 2);
+        write_to_json(jstring, "", std::to_string(sd) + ",", level + 2);
+        write_to_json(jstring, "", std::to_string(td) + ",", level + 2);
+        write_to_json(jstring, "", "],", level + 1);
     }
 
     write_to_json(jstring, "", "},", level);

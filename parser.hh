@@ -27,6 +27,10 @@ std::string grandParser(char **input);
  * \param the output file stream.
  * \param color type, such as, "outline color", etc.
  * \param the level(indention).
+ * References: 1. ArcGIS uses CIELAB to represent RGB and HSV color.
+               https://support.esri.com/en/technical-article/000002092
+ *             2. The conversion to RGB/HSV is based on the knowledge from the websites:
+               https://www.cs.rit.edu/~ncs/color/t_convert.html#XYZ%20to%20CIE%20L*a*b*%20(CIELAB)%20&%20CIELAB%20to%20XYZ
  */
 int parseColorPattern(char **cursor, std::string &jstring, std::string color_type,
                 int level);
