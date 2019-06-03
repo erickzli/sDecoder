@@ -15,6 +15,8 @@
 #include <cmath>
 #include <list>
 
+const double SIGMA = 0.008856;
+
 /**
  * Validate if the upcoming hex value is the same as hexStr.
  * @param the input file stream.

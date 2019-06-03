@@ -142,17 +142,25 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
         throw std::string("Color conversion type");
     }
 
-    const double X_n = 95.0489;
-    const double Y_n = 100.0;
+    const double X_n = 95.047;
+    const double Y_n = 100.000;
     const double Z_n = 108.884;
 
-    double x = X_n * private_f((L + 16.0) / 116.0 + a / 500.0);
-    double y = Y_n * private_f((L + 16.0) / 116.0);
-    double z = Z_n * private_f((L + 16.0) / 116.0 - b / 200.0);
+    double x = X_n / 100.0 * private_f((L + 16.0) / 116.0 + a / 500.0);
+    double y = Y_n / 100.0 * private_f((L + 16.0) / 116.0);
+    double z = Z_n / 100.0 * private_f((L + 16.0) / 116.0 - b / 200.0);
 
     double r = format_rgb(3.240479 * x - 1.537150 * y - 0.498535 * z);
     double g = format_rgb(-0.969256 * x + 1.875992 * y + 0.041556 * z);
     double bl = format_rgb(0.055648 * x - 0.204043 * y + 1.057311 * z);
+
+    r = (r > 0.0031308) ? 1.055 * pow(r, (1 / 2.4)) - 0.055 : 12.92 * r;
+    g = (g > 0.0031308) ? 1.055 * pow(g, (1 / 2.4)) - 0.055 : 12.92 * g;
+    bl = (bl > 0.0031308) ? 1.055 * pow(bl, (1 / 2.4)) - 0.055 : 12.92 * bl;
+
+    r = r * 255;
+    g = g * 255;
+    bl = bl * 255;
 
     // return RGB
     if (0 == type) {
@@ -212,7 +220,6 @@ std::list<double> RGB_to_HSV(double r, double g, double b) {
 }
 
 double private_f(double t) {
-    const double SIGMA = 6.0 / 29.0;
     if (t > SIGMA) {
         return pow(t, 3.0);
     } else {
@@ -223,7 +230,7 @@ double private_f(double t) {
 double format_rgb(double code) {
     if (code > 255.0) {
         return 255.0;
-    } else if (code < 0) {
+    } else if (code < 0.0) {
         return 0.0;
     } else {
         return code;

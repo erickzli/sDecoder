@@ -17,6 +17,9 @@
 const bool PRINT_TO_FILE = true;
 const bool DO_REWIND = true;
 
+const int USE_RGB = 0;
+const int USE_HSV = 1;
+
 
 std::string grandParser(char **input);
 

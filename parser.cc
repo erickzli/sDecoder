@@ -110,11 +110,11 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         // HSV color space...
         if (0xC492 == color_space) {
             LOG("Color Space: HSV.");
-            mycolor = CIELAB_to_RGB_HSV(first, second, third, 1);
+            mycolor = CIELAB_to_RGB_HSV(first, second, third, USE_HSV);
         // RGB color space...
         } else if (0xC496 == color_space) {
             LOG("Color Space: RGB.");
-            mycolor = CIELAB_to_RGB_HSV(first, second, third, 0);
+            mycolor = CIELAB_to_RGB_HSV(first, second, third, USE_RGB);
         } else {
             // If the color space code is not 92, 96, or 97, then an error mesg will be printed out.
             LOG("ERROR: Color Space " + std::to_string(color_space) + " not found.");
@@ -133,6 +133,10 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         mycolor.pop_front();
         double td = mycolor.front();
         mycolor.pop_front();
+
+        LOG("-1: " + std::to_string(fs));
+        LOG("-2: " + std::to_string(sd));
+        LOG("-3: " + std::to_string(td));
 
         write_to_json(jstring, "colorCode", "[", level + 1);
         write_to_json(jstring, "", std::to_string(fs) + ",", level + 2);
