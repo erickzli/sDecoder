@@ -86,10 +86,12 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         LOG("K: " + std::to_string(k));
 
         write_to_json(jstring, "space", "\"CMYK\",", level + 1);
-        write_to_json(jstring, "C", std::to_string(c) + ",", level + 1);
-        write_to_json(jstring, "M", std::to_string(m) + ",", level + 1);
-        write_to_json(jstring, "Y", std::to_string(y) + ",", level + 1);
-        write_to_json(jstring, "K", std::to_string(k), level + 1);
+        write_to_json(jstring, "colorCode", "[", level + 1);
+        write_to_json(jstring, "", std::to_string(c) + ",", level + 2);
+        write_to_json(jstring, "", std::to_string(m) + ",", level + 2);
+        write_to_json(jstring, "", std::to_string(y) + ",", level + 2);
+        write_to_json(jstring, "", std::to_string(k) + ",", level + 2);
+        write_to_json(jstring, "", "],", level + 1);
     } else {
         std::list<double> mycolor;
         bytesHopper(cursor, 19);
