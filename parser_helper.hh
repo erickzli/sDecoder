@@ -14,6 +14,9 @@
 #include <iomanip>
 #include <cmath>
 #include <list>
+#include <algorithm>
+
+#include <stdint.h>
 
 const double SIGMA = 0.008856;
 

@@ -150,17 +150,25 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
     double y = Y_n / 100.0 * private_f((L + 16.0) / 116.0);
     double z = Z_n / 100.0 * private_f((L + 16.0) / 116.0 - b / 200.0);
 
-    double r = format_rgb(3.240479 * x - 1.537150 * y - 0.498535 * z);
-    double g = format_rgb(-0.969256 * x + 1.875992 * y + 0.041556 * z);
-    double bl = format_rgb(0.055648 * x - 0.204043 * y + 1.057311 * z);
+    double r = 3.240479 * x - 1.537150 * y - 0.498535 * z;
+    double g = -0.969256 * x + 1.875992 * y + 0.041556 * z;
+    double bl = 0.055648 * x - 0.204043 * y + 1.057311 * z;
 
     r = (r > 0.0031308) ? 1.055 * pow(r, (1 / 2.4)) - 0.055 : 12.92 * r;
     g = (g > 0.0031308) ? 1.055 * pow(g, (1 / 2.4)) - 0.055 : 12.92 * g;
     bl = (bl > 0.0031308) ? 1.055 * pow(bl, (1 / 2.4)) - 0.055 : 12.92 * bl;
 
-    r = r * 255;
-    g = g * 255;
-    bl = bl * 255;
+    // double r = x *  2.04137 + y * -0.56495 + z * -0.34469;
+    // double g = x * -0.96927 + y *  1.87601 + z *  0.04156;
+    // double bl = x *  0.01345 + y * -0.11839 + z *  1.01541;
+    //
+    // r = pow(r, (1 / 2.19921875));
+    // g = pow(g, (1 / 2.19921875));
+    // bl = pow(bl, (1 / 2.19921875));
+
+    r = format_rgb(r * 255);
+    g = format_rgb(g * 255);
+    bl = format_rgb(bl * 255);
 
     // return RGB
     if (0 == type) {

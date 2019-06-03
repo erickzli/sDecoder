@@ -99,6 +99,7 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         // There are three fields for both HSV and RGB.
         // Type and the definition are unknown so far.
         // HSV and RGB share the same coding philsophy.
+
         double first = getDouble(cursor);
         double second = getDouble(cursor);
         double third = getDouble(cursor);
