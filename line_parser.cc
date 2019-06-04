@@ -91,19 +91,15 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
     bytesRewinder(cursor, 4);
     double check_active_double = getDouble(cursor);
     bytesRewinder(cursor, 8);
+
+    write_to_json(jstring, "lineLayerActiveness", "{", level + 1);
     if ((check_active_int == 0 || check_active_int == 1) && check_active_double < 0.5) {
         LOG("Checking line layer activeness...");
-        write_to_json(jstring, "lineLayerActiveness", "{", level + 1);
         for (size_t i = 0; i < num_of_line_layers; i++) {
             int activeness = get32Bit(cursor); // 0: deactivated; 1: activated
             LOG("Line layer" + std::to_string(i + 1) + " Activeness: " + std::to_string(activeness));
-            if (num_of_line_layers - 1 != i) {
-                write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
-            } else {
-                write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness), level + 2);
-            }
+            write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
         }
-        write_to_json(jstring, "", "},", level + 1);
 
         for (size_t i = 0; i < num_of_line_layers; i++) {
             bytesHopper(cursor, 4); // Hop for (01 00 00 00) or (00 00 00 00)
@@ -115,7 +111,13 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
                 bytesRewinder(cursor, 1);
             }
         }
+    } else {
+        for (size_t i = 0; i < num_of_line_layers; i++) {
+            LOG("Line layer" + std::to_string(i + 1) + " Activeness: 1");
+            write_to_json(jstring, "layer" + std::to_string(i + 1), "1,", level + 2);
+        }
     }
+    write_to_json(jstring, "", "},", level + 1);
 
     write_to_json(jstring, "", "},", level);
 

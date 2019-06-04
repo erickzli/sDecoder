@@ -139,6 +139,12 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         LOG("-2: " + std::to_string(sd));
         LOG("-3: " + std::to_string(td));
 
+        write_to_json(jstring, "rawColorCode", "[", level + 1);
+        write_to_json(jstring, "", std::to_string(first) + ",", level + 2);
+        write_to_json(jstring, "", std::to_string(second) + ",", level + 2);
+        write_to_json(jstring, "", std::to_string(third) + ",", level + 2);
+        write_to_json(jstring, "", "],", level + 1);
+
         write_to_json(jstring, "colorCode", "[", level + 1);
         write_to_json(jstring, "", std::to_string(fs) + ",", level + 2);
         write_to_json(jstring, "", std::to_string(sd) + ",", level + 2);

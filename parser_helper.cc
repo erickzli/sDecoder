@@ -158,14 +158,6 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
     g = (g > 0.0031308) ? 1.055 * pow(g, (1 / 2.4)) - 0.055 : 12.92 * g;
     bl = (bl > 0.0031308) ? 1.055 * pow(bl, (1 / 2.4)) - 0.055 : 12.92 * bl;
 
-    // double r = x *  2.04137 + y * -0.56495 + z * -0.34469;
-    // double g = x * -0.96927 + y *  1.87601 + z *  0.04156;
-    // double bl = x *  0.01345 + y * -0.11839 + z *  1.01541;
-    //
-    // r = pow(r, (1 / 2.19921875));
-    // g = pow(g, (1 / 2.19921875));
-    // bl = pow(bl, (1 / 2.19921875));
-
     r = format_rgb(r * 255);
     g = format_rgb(g * 255);
     bl = format_rgb(bl * 255);
