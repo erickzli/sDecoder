@@ -113,7 +113,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
         }
     } else {
         for (size_t i = 0; i < num_of_line_layers; i++) {
-            LOG("Line layer" + std::to_string(i + 1) + " Activeness: 1");
+            LOG("Line layer" + std::to_string(i + 1) + " Activeness: 2");
             write_to_json(jstring, "layer" + std::to_string(i + 1), "1,", level + 2);
         }
     }
