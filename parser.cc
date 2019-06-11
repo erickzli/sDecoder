@@ -206,8 +206,6 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
 
     while (0 != (code = get16Bit(cursor))) {
         write_to_json(jstring, "", std::to_string(code) + ",", level + 1);
-        // LOG(std::to_string(code));
-        // str += intToHexString(code);
     }
 
     write_to_json(jstring, "", "]", level);
