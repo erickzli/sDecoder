@@ -142,9 +142,13 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
         throw std::string("Color conversion type");
     }
 
-    const double X_n = 95.047;
+    // const double X_n = 95.047;
+    // const double Y_n = 100.000;
+    // const double Z_n = 108.884;
+
+    const double X_n = 96.421;
     const double Y_n = 100.000;
-    const double Z_n = 108.884;
+    const double Z_n = 82.519;
 
     double x = X_n / 100.0 * private_f((L + 16.0) / 116.0 + a / 500.0);
     double y = Y_n / 100.0 * private_f((L + 16.0) / 116.0);
