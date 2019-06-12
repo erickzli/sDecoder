@@ -68,10 +68,35 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
         throw std::string("0x0D sentinel");
     }
 
-    // Move to the end of the file
-
-    write_to_json(jstring, "fillLayerActiveness", "{", 1);
     LOG("Checking fill layer activeness...");
+
+    // Move to the end of the file
+    while (0x99 != getChar(cursor)) {}
+
+    bytesRewinder(cursor, 7);
+    if (0x02 == getChar(cursor)) {
+        bytesRewinder(cursor, 6 * (num_of_layers - 1) + 1);
+        bytesRewinder(cursor, 8 * num_of_layers);
+        write_to_json(jstring, "fillLayerActiveness", "[", 1);
+        for (size_t i = 0; i < num_of_layers; i++) {
+            int activeness = get32Bit(cursor);
+            LOG("Fill layer " + std::to_string(i + 1) + ": " + std::to_string(activeness));
+            write_to_json(jstring, "", std::to_string(activeness) + ",", 2);
+        }
+        write_to_json(jstring, "", "],", 1);
+        write_to_json(jstring, "fillLayerLock", "[", 1);
+        for (size_t i = 0; i < num_of_layers; i++) {
+            int lock = get32Bit(cursor);
+            LOG("Fill layer lock " + std::to_string(i + 1) + ": " + std::to_string(lock));
+            write_to_json(jstring, "", std::to_string(lock) + ",", 2);
+        }
+        write_to_json(jstring, "", "],", 1);
+    }
+
+
+    return 0;
+
+
 
     for (int i = 0; i < num_of_layers; i++) {
         int activeness = get32Bit(cursor);
