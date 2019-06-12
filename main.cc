@@ -124,14 +124,14 @@ int main(int argc, char *argv[]) {
             rewind(infile);
 
             // Malloc enough memory for the binary file.
-            char *input = (char *)malloc(file_size + 1);
+            char *input = (char *)malloc(file_size);
             char *save = input;
+            char *tail = input + file_size - 1;
 
             // Read the file into the memory
             while ((ch = fgetc(infile)) != EOF) {
                 input[idx++] = (char) ch;
             }
-            input[idx] = '\0';
 
             // Underlying buffer.
             std::streambuf* orig_buf;
@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
             std::clog.rdbuf(NULL);
 
             // The most important part of the code.
-            std::string jstring = grandParser(&input, file_size + 1);
+            std::string jstring = grandParser(&input, &tail);
 
             // However, we still want the results being output, don't we?
             std::clog.rdbuf(orig_buf);
@@ -192,14 +192,14 @@ int main(int argc, char *argv[]) {
     rewind(infile);
 
     // Malloc enough memory for the binary file.
-    char *input = (char *)malloc(file_size + 1);
+    char *input = (char *)malloc(file_size);
     char *save = input;
 
     // Read the file into the memory
     while ((ch = fgetc(infile)) != EOF) {
         input[idx++] = (char) ch;
     }
-    input[idx] = '\0';
+    char *tail = input + file_size - 1;
 
     // Underlying buffer.
     std::streambuf* orig_buf;
@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
     }
 
     // The most important part of the code.
-    std::string jstring = grandParser(&input, file_size + 1);
+    std::string jstring = grandParser(&input, &tail);
 
     // However, we still want the results being output, don't we?
     if (!enableLog) {

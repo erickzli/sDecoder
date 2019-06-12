@@ -7,13 +7,13 @@
 
 #include "parser.hh"
 
-std::string grandParser(char **cursor, size_t num_of_bytes) {
+std::string grandParser(char **cursor, char **tail) {
     // Initialize a jstring (for JSON string)
     std::string jstring = "";
 
-    bytesHopper(cursor, num_of_bytes - 1);
-    **cursor = 0x99; // Indicate the end of the block
-    bytesRewinder(cursor, num_of_bytes - 1);
+    // bytesHopper(cursor, num_of_bytes - 1);
+    // **cursor = 0x99; // Indicate the end of the block
+    // bytesRewinder(cursor, num_of_bytes - 1);
 
     write_to_json(jstring, "", "{", 0);
 
@@ -29,13 +29,13 @@ std::string grandParser(char **cursor, size_t num_of_bytes) {
                 // Fill Symbol
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
                 LOG("START parsing fill symbol...");
-                parseFillPattern(cursor, jstring, 1);
+                parseFillPattern(cursor, jstring, 1, tail);
                 break;
             case 0x0000:
                 // Fill Symbol without header
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
                 LOG("START parsing fill symbol...");
-                parseFillPattern(cursor, jstring, 1);
+                parseFillPattern(cursor, jstring, 1, tail);
                 break;
             case 0xE5FA:
                 // line symbol

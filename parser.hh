@@ -23,12 +23,12 @@ const int USE_HSV = 1;
 /**
  * Entry of the module
  * \param the input source of the binary file on memory.
- * \param the total number of bytes.
+ * \param a pointer pointing to the last byte of the block
  * WARNING: The input source MUST have an extra byte at the end of the block, and the num_of_bytes MUST include that byte.
  *          Otherwise, undefined behavior may occur.
  * \return the jstring
  */
-std::string grandParser(char **input, size_t num_of_bytes);
+std::string grandParser(char **input, char **tail);
 
 
 /**

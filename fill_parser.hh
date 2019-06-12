@@ -13,7 +13,7 @@
 #include <iostream>
 
 
-int parseFillPattern(char **cursor, std::string &jstring, int level);
+int parseFillPattern(char **cursor, std::string &jstring, int level, char **tail);
 
 
 /**

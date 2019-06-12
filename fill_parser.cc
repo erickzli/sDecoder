@@ -8,7 +8,7 @@
 #include "fill_parser.hh"
 #include "parser.hh"
 
-int parseFillPattern(char **cursor, std::string &jstring, int level) {
+int parseFillPattern(char **cursor, std::string &jstring, int level, char **tail) {
     int num_of_layers = 1;
     try {
         if (getChar(cursor) != 4) {
@@ -71,9 +71,12 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
     LOG("Checking fill layer activeness...");
 
     // Move to the end of the file
-    while (0x99 != getChar(cursor)) {}
+    while (*cursor != *tail) {
+        // printHex(cursor, 10);
+        *cursor += 1;
+    }
 
-    bytesRewinder(cursor, 7);
+    bytesRewinder(cursor, 5);
     if (0x02 == getChar(cursor)) {
         bytesRewinder(cursor, 6 * (num_of_layers - 1) + 1);
         bytesRewinder(cursor, 8 * num_of_layers);
@@ -93,6 +96,7 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
         write_to_json(jstring, "", "],", 1);
     } else {
         LOG("WARNING: No ending pattern...all layers and locks will be treated as ON.");
+        write_to_json(jstring, "fillLayerActiveness", "[", 1);
         for (size_t i = 0; i < num_of_layers; i++) {
             write_to_json(jstring, "", "1,", 2);
         }
