@@ -68,6 +68,8 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
         throw std::string("0x0D sentinel");
     }
 
+    // Move to the end of the file
+
     write_to_json(jstring, "fillLayerActiveness", "{", 1);
     LOG("Checking fill layer activeness...");
 

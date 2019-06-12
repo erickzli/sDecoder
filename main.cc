@@ -141,7 +141,7 @@ int main(int argc, char *argv[]) {
             std::clog.rdbuf(NULL);
 
             // The most important part of the code.
-            std::string jstring = grandParser(&input);
+            std::string jstring = grandParser(&input, file_size + 1);
 
             // However, we still want the results being output, don't we?
             std::clog.rdbuf(orig_buf);
@@ -213,7 +213,7 @@ int main(int argc, char *argv[]) {
     }
 
     // The most important part of the code.
-    std::string jstring = grandParser(&input);
+    std::string jstring = grandParser(&input, file_size + 1);
 
     // However, we still want the results being output, don't we?
     if (!enableLog) {

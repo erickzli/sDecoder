@@ -20,8 +20,15 @@ const bool DO_REWIND = true;
 const int USE_RGB = 0;
 const int USE_HSV = 1;
 
-
-std::string grandParser(char **input);
+/**
+ * Entry of the module
+ * \param the input source of the binary file on memory.
+ * \param the total number of bytes.
+ * WARNING: The input source MUST have an extra byte at the end of the block, and the num_of_bytes MUST include that byte.
+ *          Otherwise, undefined behavior may occur.
+ * \return the jstring
+ */
+std::string grandParser(char **input, size_t num_of_bytes);
 
 
 /**
@@ -35,8 +42,7 @@ std::string grandParser(char **input);
  *             2. The conversion to RGB/HSV is based on the knowledge from the websites:
                https://www.cs.rit.edu/~ncs/color/t_convert.html#XYZ%20to%20CIE%20L*a*b*%20(CIELAB)%20&%20CIELAB%20to%20XYZ
  */
-int parseColorPattern(char **cursor, std::string &jstring, std::string color_type,
-                int level);
+int parseColorPattern(char **cursor, std::string &jstring, std::string color_type, int level);
 
 /**
  * Parses out layer number.

@@ -7,9 +7,14 @@
 
 #include "parser.hh"
 
-std::string grandParser(char **cursor) {
+std::string grandParser(char **cursor, size_t num_of_bytes) {
     // Initialize a jstring (for JSON string)
     std::string jstring = "";
+
+    bytesHopper(cursor, num_of_bytes - 1);
+    **cursor = 0x99; // Indicate the end of the block
+    bytesRewinder(cursor, num_of_bytes - 1);
+
     write_to_json(jstring, "", "{", 0);
 
     try {
