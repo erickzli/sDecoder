@@ -91,20 +91,18 @@ int parseFillPattern(char **cursor, std::string &jstring, int level) {
             write_to_json(jstring, "", std::to_string(lock) + ",", 2);
         }
         write_to_json(jstring, "", "],", 1);
+    } else {
+        LOG("WARNING: No ending pattern...all layers and locks will be treated as ON.");
+        for (size_t i = 0; i < num_of_layers; i++) {
+            write_to_json(jstring, "", "1,", 2);
+        }
+        write_to_json(jstring, "", "],", 1);
+        write_to_json(jstring, "fillLayerLock", "[", 1);
+        for (size_t i = 0; i < num_of_layers; i++) {
+            write_to_json(jstring, "", "1,", 2);
+        }
+        write_to_json(jstring, "", "],", 1);
     }
-
-
-    return 0;
-
-
-
-    for (int i = 0; i < num_of_layers; i++) {
-        int activeness = get32Bit(cursor);
-        LOG("Fill layer " + std::to_string(i + 1) + ": " + std::to_string(activeness));
-        write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", 2);
-    }
-
-    write_to_json(jstring, "", "},", 1);
 
     return 0;
 }

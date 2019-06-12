@@ -2,7 +2,7 @@
 CXX = clang++
 # -Wall shows all warning;
 # -g shows all debugging info.
-CXXFLAGS = -Wall -g -std=c++11 -stdlib=libc++
+CXXFLAGS = -Wall -g -std=c++98 -stdlib=libc++
 
 # Link main.o and parser.o
 main: main.o parser.o parser_helper.o json_writer.o fill_parser.o line_parser.o marker_parser.o
