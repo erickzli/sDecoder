@@ -27,8 +27,12 @@ const int USE_HSV = 1;
  * WARNING: The input source MUST have an extra byte at the end of the block, and the num_of_bytes MUST include that byte.
  *          Otherwise, undefined behavior may occur.
  * \return the jstring
+ *
+ *  *cursor        *tail
+ *     \             \
+ *     |0|1|2|3|4|5|6|7|
  */
-std::string grandParser(char **input, char **tail);
+std::string grandParser(char **cursor, char **tail);
 
 
 /**
