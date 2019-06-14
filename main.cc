@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
     // Index
     size_t idx = 0;
     // Relavant path of the input file.
-    const char *filepath = ("BFiles/" + filename).c_str();
+    const char *filepath = (filename).c_str();
 
     // Open file
     infile = fopen(filepath, "r");
