@@ -133,18 +133,8 @@ int main(int argc, char *argv[]) {
                 input[idx++] = (char) ch;
             }
 
-            // // Underlying buffer.
-            // std::streambuf* orig_buf;
-            // // Get underlying buffer
-            // orig_buf = std::clog.rdbuf();
-            // // Set NULL
-            // std::clog.rdbuf(NULL);
-
             // The most important part of the code.
             std::string jstring = grandParser(input, tail, false);
-
-            // // However, we still want the results being output, don't we?
-            // std::clog.rdbuf(orig_buf);
 
             // Close the file...
             fclose(infile);
@@ -176,7 +166,7 @@ int main(int argc, char *argv[]) {
     // Index
     size_t idx = 0;
     // Relavant path of the input file.
-    const char *filepath = (filename).c_str();
+    const char *filepath = ("BFiles/" + filename).c_str();
 
     // Open file
     infile = fopen(filepath, "r");
@@ -201,24 +191,8 @@ int main(int argc, char *argv[]) {
     }
     char *tail = input + file_size - 1;
 
-    // // Underlying buffer.
-    // std::streambuf* orig_buf;
-    //
-    // // If logging is disabled, then we need to close clog for logging.
-    // if (!enableLog) {
-    //     // Get underlying buffer
-    //     orig_buf = std::clog.rdbuf();
-    //     // Set NULL
-    //     std::clog.rdbuf(NULL);
-    // }
-
     // The most important part of the code.
     std::string jstring = grandParser(input, tail, enableLogging);
-
-    // // However, we still want the results being output, don't we?
-    // if (!enableLog) {
-    //     std::clog.rdbuf(orig_buf);
-    // }
 
     std::clog << std::endl << "~~~~~~ Beginning of the jstring ~~~~~~" << std::endl << std::endl;
     // clog the JSON string gotten through the grand parser.

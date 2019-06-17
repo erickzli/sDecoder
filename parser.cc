@@ -118,17 +118,20 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         std::list<double> mycolor;
         bytesHopper(cursor, 19);
 
+        if (0xC492 == color_space) {
+            write_to_json(jstring, "space", "\"HSV\",", level + 1);
+        } else if (0xC496 == color_space) {
+            write_to_json(jstring, "space", "\"RGB\",", level + 1);
+        }
+
         // There are three fields for both HSV and RGB.
         // Type and the definition are unknown so far.
         // HSV and RGB share the same coding philsophy.
-
-        double first = getDouble(cursor);
-        double second = getDouble(cursor);
-        double third = getDouble(cursor);
-
-        LOG("1st field: " + std::to_string(first));
-        LOG("2nd field: " + std::to_string(second));
-        LOG("3rd field: " + std::to_string(third));
+        write_to_json(jstring, "rawColorCode", "[", level + 1);
+        double first = parseDouble(cursor, jstring, "", level + 2);
+        double second = parseDouble(cursor, jstring, "", level + 2);
+        double third = parseDouble(cursor, jstring, "", level + 2);
+        write_to_json(jstring, "", "],", level + 1);
 
         // HSV color space...
         if (0xC492 == color_space) {
@@ -144,11 +147,7 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
             throw std::string("Color Space.");
         }
 
-        if (0xC492 == color_space) {
-            write_to_json(jstring, "space", "\"HSV\",", level + 1);
-        } else if (0xC496 == color_space) {
-            write_to_json(jstring, "space", "\"RGB\",", level + 1);
-        }
+
 
         double fs = mycolor.front();
         mycolor.pop_front();
@@ -157,15 +156,10 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         double td = mycolor.front();
         mycolor.pop_front();
 
-        LOG("-1: " + std::to_string(fs));
-        LOG("-2: " + std::to_string(sd));
-        LOG("-3: " + std::to_string(td));
-
-        write_to_json(jstring, "rawColorCode", "[", level + 1);
-        write_to_json(jstring, "", std::to_string(first) + ",", level + 2);
-        write_to_json(jstring, "", std::to_string(second) + ",", level + 2);
-        write_to_json(jstring, "", std::to_string(third) + ",", level + 2);
-        write_to_json(jstring, "", "],", level + 1);
+        LOG("Converted color");
+        LOG("1: " + std::to_string(fs));
+        LOG("2: " + std::to_string(sd));
+        LOG("3: " + std::to_string(td));
 
         write_to_json(jstring, "colorCode", "[", level + 1);
         write_to_json(jstring, "", std::to_string(fs) + ",", level + 2);
@@ -201,9 +195,16 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level) {
 double parseDouble(char **cursor, std::string &jstring, std::string tag, int level) {
     double val = getDouble(cursor);
 
+    // LOG("this");
+    // std::cout << std::setprecision(10) << val << std::endl;
+    std::stringstream ss;
+    ss << std::setprecision(50) << val;
+    std::string dstr;
+    ss >> dstr;
+
     // Put the name and the value of the double value into the JSON string.
     LOG(tag + " is: " + std::to_string(val));
-    write_to_json(jstring, tag, std::to_string(val) + ",", level);
+    write_to_json(jstring, tag, dstr + ",", level);
 
     return val;
 }

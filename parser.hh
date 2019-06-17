@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <sstream>
+
 const bool PRINT_TO_FILE = true;
 const bool DO_REWIND = true;
 
