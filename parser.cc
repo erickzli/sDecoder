@@ -7,9 +7,21 @@
 
 #include "parser.hh"
 
-std::string grandParser(char **cursor, char **tail) {
+std::string grandParser(char *head, char *tail, bool enableLogging) {
     // Initialize a jstring (for JSON string)
     std::string jstring = "";
+    char **cursor = &head;
+
+    // Underlying buffer.
+    std::streambuf* orig_buf;
+
+    // If logging is disabled, then we need to close clog for logging.
+    if (!enableLogging) {
+        // Get underlying buffer
+        orig_buf = std::clog.rdbuf();
+        // Set NULL
+        std::clog.rdbuf(NULL);
+    }
 
     // bytesHopper(cursor, num_of_bytes - 1);
     // **cursor = 0x99; // Indicate the end of the block
@@ -29,13 +41,13 @@ std::string grandParser(char **cursor, char **tail) {
                 // Fill Symbol
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
                 LOG("START parsing fill symbol...");
-                parseFillPattern(cursor, jstring, 1, tail);
+                parseFillPattern(cursor, jstring, 1, &tail);
                 break;
             case 0x0000:
                 // Fill Symbol without header
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
                 LOG("START parsing fill symbol...");
-                parseFillPattern(cursor, jstring, 1, tail);
+                parseFillPattern(cursor, jstring, 1, &tail);
                 break;
             case 0xE5FA:
                 // line symbol
@@ -60,6 +72,11 @@ std::string grandParser(char **cursor, char **tail) {
 
     write_to_json(jstring, "", "}", 0);
     LOG("FINISHED parsing :-)");
+
+    // However, we still want the results being output, don't we?
+    if (!enableLogging) {
+        std::clog.rdbuf(orig_buf);
+    }
 
     return json_comma_remover(jstring);
 }

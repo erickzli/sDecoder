@@ -14,6 +14,9 @@
 #include "marker_parser.hh"
 #include "json_writer.hh"
 
+#include <stdlib.h>
+#include <unistd.h>
+
 const bool PRINT_TO_FILE = true;
 const bool DO_REWIND = true;
 
@@ -22,17 +25,18 @@ const int USE_HSV = 1;
 
 /**
  * Entry of the module
- * \param the input source of the binary file on memory.
- * \param a pointer pointing to the last byte of the block
+ * \param a pointer pointing to the first bytes of the memory block.
+ * \param a pointer pointing to the last byte of the memory block
  * WARNING: The input source MUST have an extra byte at the end of the block, and the num_of_bytes MUST include that byte.
  *          Otherwise, undefined behavior may occur.
+ * \param opton to if logging should be enabled.
  * \return the jstring
  *
  *  *cursor        *tail
  *     \             \
  *     |0|1|2|3|4|5|6|7|
  */
-std::string grandParser(char **cursor, char **tail);
+std::string grandParser(char *head, char *tail, bool enableLogging);
 
 
 /**

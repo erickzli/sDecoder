@@ -41,6 +41,10 @@ Py
 
 # Testing scripts
 *test*
+main.cc
+
+# Diagram
+binary-parsing-flow.drawio
 
 # macOS Automatic Files
 .DS_Store

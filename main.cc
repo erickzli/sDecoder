@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     std::string filename;
 
     // Option to enable or disable logging for the information of parsing processes.
-    bool enableLog = true;
+    bool enableLogging = true;
 
     // Check each argument.
     for (int i = 1; i < argc; i++) {
@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
             // Check the option of logging.
         } else if (!strcmp(argv[i], "-p")) {
             if (!strcmp(argv[i + 1], "false")) {
-                enableLog = false;
+                enableLogging = false;
             }
         // If the argument flag is not shown above, then the format has some problems.
         } else {
@@ -75,7 +75,7 @@ int main(int argc, char *argv[]) {
             return -1;
         }
 
-        if (!enableLog) {
+        if (!enableLogging) {
             std::clog << "TEST MODE: Logging is automatically on under test mode..." << std::endl;
         }
 
@@ -133,18 +133,18 @@ int main(int argc, char *argv[]) {
                 input[idx++] = (char) ch;
             }
 
-            // Underlying buffer.
-            std::streambuf* orig_buf;
-            // Get underlying buffer
-            orig_buf = std::clog.rdbuf();
-            // Set NULL
-            std::clog.rdbuf(NULL);
+            // // Underlying buffer.
+            // std::streambuf* orig_buf;
+            // // Get underlying buffer
+            // orig_buf = std::clog.rdbuf();
+            // // Set NULL
+            // std::clog.rdbuf(NULL);
 
             // The most important part of the code.
-            std::string jstring = grandParser(&input, &tail);
+            std::string jstring = grandParser(input, tail, false);
 
-            // However, we still want the results being output, don't we?
-            std::clog.rdbuf(orig_buf);
+            // // However, we still want the results being output, don't we?
+            // std::clog.rdbuf(orig_buf);
 
             // Close the file...
             fclose(infile);
@@ -201,24 +201,24 @@ int main(int argc, char *argv[]) {
     }
     char *tail = input + file_size - 1;
 
-    // Underlying buffer.
-    std::streambuf* orig_buf;
-
-    // If logging is disabled, then we need to close clog for logging.
-    if (!enableLog) {
-        // Get underlying buffer
-        orig_buf = std::clog.rdbuf();
-        // Set NULL
-        std::clog.rdbuf(NULL);
-    }
+    // // Underlying buffer.
+    // std::streambuf* orig_buf;
+    //
+    // // If logging is disabled, then we need to close clog for logging.
+    // if (!enableLog) {
+    //     // Get underlying buffer
+    //     orig_buf = std::clog.rdbuf();
+    //     // Set NULL
+    //     std::clog.rdbuf(NULL);
+    // }
 
     // The most important part of the code.
-    std::string jstring = grandParser(&input, &tail);
+    std::string jstring = grandParser(input, tail, enableLogging);
 
-    // However, we still want the results being output, don't we?
-    if (!enableLog) {
-        std::clog.rdbuf(orig_buf);
-    }
+    // // However, we still want the results being output, don't we?
+    // if (!enableLog) {
+    //     std::clog.rdbuf(orig_buf);
+    // }
 
     std::clog << std::endl << "~~~~~~ Beginning of the jstring ~~~~~~" << std::endl << std::endl;
     // clog the JSON string gotten through the grand parser.

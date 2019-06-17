@@ -12,7 +12,13 @@
 #include <string>
 #include <iostream>
 
-
+/**
+ * The main parsing function for the fill pattern.
+ * \param the input file stream.
+ * \param the output JSON string.
+ * \param the current indentation for the JSON instance.
+ * \param a pointer of pointer pointing to the end of the file
+ */
 int parseFillPattern(char **cursor, std::string &jstring, int level, char **tail);
 
 
