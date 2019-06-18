@@ -42,6 +42,7 @@ Py
 # Testing scripts
 *test*
 main.cc
+main.cpp
 
 # Diagram
 binary-parsing-flow.drawio
