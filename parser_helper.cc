@@ -142,6 +142,8 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
         throw std::string("Color conversion type");
     }
 
+    // NOTE: Best color model has still not been found
+
     // D65
     // const double X_n = 95.047;
     // const double Y_n = 100.000;

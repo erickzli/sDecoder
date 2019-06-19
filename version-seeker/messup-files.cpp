@@ -41,25 +41,24 @@ int main() {
 
     std::cout << *addr << std::endl;
 
-    // return 0;
-
+    // Set up random range
     int lower = 0;
     int upper = filesize / 2;
     int upper2 = 23;
     srand(time(NULL));
+
+    // Get 100 randomly edited files.
     for (size_t i = 0; i < 100; i++) {
-        // addr = fixed;
         int num1 = (rand() % (upper - lower + 1)) + lower;
         char *messup = fixed + num1;
         int num2 = (rand() % (upper2 - lower + 1)) + lower;
         memset(messup, num2, 1);
-        // *messup = '3';
+
         FILE *fp;
         std::string nfile = "Files/tests/test" + std::to_string(i);
         fp = fopen(nfile.c_str(), "wb");
         std::cout << *addr << std::endl;
         int count = fwrite(addr, 1, filesize, fp);
-        // std::cout << count << std::endl;
         fclose(fp);
     }
 
