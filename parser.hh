@@ -67,6 +67,8 @@ int parseLayerNumber(char **cursor, std::string &jstring, int level);
 
 /**
  * Parser the binary block where it defines a double value
+ *  NOTE: this output of the result to the jstring will be converted based on the true decimal.
+ *  Examples: 1.000 will be parsed as "0"; 4.300 will be parsed as "4.3"; 3.928273383 will be parsed as it is.
  * \param the input file stream.
  * \param the output file stream.
  * \param the name of the double value.

@@ -1,3 +1,10 @@
+//
+//  version_seeker.h
+//
+//  Created by Erick Li on 06/18/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #ifndef __VERSION_SEEKER__
 #define __VERSION_SEEKER__
 

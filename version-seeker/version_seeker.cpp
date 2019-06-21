@@ -1,3 +1,10 @@
+//
+//  version_seeker.cpp
+//
+//  Created by Erick Li on 06/18/19.
+//  Copyright © 2019 Erick Li. All rights reserved.
+//
+
 #include "version_seeker.h"
 
 std::string find_version(std::string path_to_file) {
