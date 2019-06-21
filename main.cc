@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#include "parser.hh"
+#include "decoder.hh"
 #include "json_writer.hh"
 
 /**
@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
     // The name of the input file.
     std::string filename;
 
-    // Option to enable or disable logging for the information of parsing processes.
+    // Option to enable or disable logging for the information of decoding processes.
     bool enableLogging = true;
 
     // Check each argument.
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
             }
 
             // The most important part of the code.
-            std::string jstring = grandParser(input, tail, false);
+            std::string jstring = grandDecoder(input, tail, false);
 
             // Close the file...
             fclose(infile);
@@ -192,10 +192,10 @@ int main(int argc, char *argv[]) {
     char *tail = input + file_size - 1;
 
     // The most important part of the code.
-    std::string jstring = grandParser(input, tail, enableLogging);
+    std::string jstring = grandDecoder(input, tail, enableLogging);
 
     std::clog << std::endl << "~~~~~~ Beginning of the jstring ~~~~~~" << std::endl << std::endl;
-    // clog the JSON string gotten through the grand parser.
+    // clog the JSON string gotten through the grand decoder.
     std::clog << jstring << std::endl;
     std::clog << "~~~~~~~~~ End of the jstring ~~~~~~~~~" << std::endl;
 

@@ -45,7 +45,7 @@ main.cc
 main.cpp
 
 # Diagram
-binary-parsing-flow.drawio
+binary-decoding-flow.drawio
 
 # macOS Automatic Files
 .DS_Store

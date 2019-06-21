@@ -4,18 +4,18 @@ CXX = clang++
 # -g shows all debugging info.
 CXXFLAGS = -Wall -g -std=c++98 -stdlib=libc++
 
-# Link main.o and parser.o
-main: main.o parser.o parser_helper.o json_writer.o fill_parser.o line_parser.o marker_parser.o
-	$(CXX) $(CXXFLAGS) -o main main.o parser.o parser_helper.o json_writer.o fill_parser.o line_parser.o marker_parser.o
+# Link main.o and decoder.o
+main: main.o decoder.o decoder_helper.o json_writer.o fill_decoder.o line_decoder.o marker_decoder.o
+	$(CXX) $(CXXFLAGS) -o main main.o decoder.o decoder_helper.o json_writer.o fill_decoder.o line_decoder.o marker_decoder.o
 
-# Compile main.o and parser.o
-main.o: main.cc parser.hh parser_helper.hh json_writer.hh fill_parser.hh line_parser.hh marker_parser.hh
+# Compile main.o and decoder.o
+main.o: main.cc decoder.hh decoder_helper.hh json_writer.hh fill_decoder.hh line_decoder.hh marker_decoder.hh
 	$(CXX) $(CXXFLAGS) -c main.cc
-parser.o: parser_helper.hh parser.hh fill_parser.hh line_parser.hh marker_parser.hh
-parser_helper.o: parser_helper.hh
-fill_parser.o: fill_parser.hh
-line_parser.o: line_parser.hh
-marker_parser.o: marker_parser.hh
+decoder.o: decoder_helper.hh decoder.hh fill_decoder.hh line_decoder.hh marker_decoder.hh
+decoder_helper.o: decoder_helper.hh
+fill_decoder.o: fill_decoder.hh
+line_decoder.o: line_decoder.hh
+marker_decoder.o: marker_decoder.hh
 json_writer.o: json_writer.hh
 
 # Clean unwanted files.

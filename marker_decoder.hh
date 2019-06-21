@@ -1,12 +1,12 @@
 //
-//  marker_parser.hh
+//  marker_decoder.hh
 //
 //  Created by Erick Li on 04/16/19.
 //  Copyright © 2019 Erick Li. All rights reserved.
 //
 
-#ifndef __MARKER_PARSER__
-#define __MARKER_PARSER__
+#ifndef __MARKER_DECODER__
+#define __MARKER_DECODER__
 
 #include <fstream>
 #include <string>
@@ -14,59 +14,59 @@
 
 
 /**
- * Parser the marker pattern
+ * decoder the marker pattern
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseMarkerPattern(char **cursor, std::string &jstring, int level);
+int decodeMarkerPattern(char **cursor, std::string &jstring, int level);
 
 /**
- * Parser the simple marker pattern
+ * decoder the simple marker pattern
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseSimpleMarker(char **cursor, std::string &jstring, int level);
+int decodeSimpleMarker(char **cursor, std::string &jstring, int level);
 
 /**
- * Parser the character marker pattern
+ * decoder the character marker pattern
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseCharacterMarker(char **cursor, std::string &jstring, int level);
+int decodeCharacterMarker(char **cursor, std::string &jstring, int level);
 
 /**
- * Parser the arrow marker pattern
+ * decoder the arrow marker pattern
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseArrowMarker(char **cursor, std::string &jstring, int level);
+int decodeArrowMarker(char **cursor, std::string &jstring, int level);
 
 /**
- * Parser the type of markers (Grid or random)
+ * decoder the type of markers (Grid or random)
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseMarkerTypes(char **cursor, std::string &jstring, int level);
+int decodeMarkerTypes(char **cursor, std::string &jstring, int level);
 
 /**
- * Parser the type of masks (None or Halo)
+ * decoder the type of masks (None or Halo)
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseMaskTypes(char **cursor, std::string &jstring, int level);
+int decodeMaskTypes(char **cursor, std::string &jstring, int level);
 
 /**
- * Parser the type of marker
+ * decoder the type of marker
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseMarkerStyle(char **cursor, std::string &jstring, int level);
+int decodeMarkerStyle(char **cursor, std::string &jstring, int level);
 
 #endif

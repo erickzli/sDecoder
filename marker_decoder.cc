@@ -1,16 +1,16 @@
 //
-//  marker_parser.cc
+//  marker_decoder.cc
 //
 //  Created by Erick Li on 04/16/19.
 //  Copyright © 2019 Erick Li. All rights reserved.
 //
 
-#include "marker_parser.hh"
-#include "parser.hh"
+#include "marker_decoder.hh"
+#include "decoder.hh"
 
-int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
+int decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
     LOG("-----------------------------");
-    LOG("START parsing marker");
+    LOG("START decoding marker");
     write_to_json(jstring, "markerProperties", "{", level);
 
     int marker_type_precheck = get16Bit(cursor);
@@ -24,15 +24,15 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
                 throw std::string("Marker type validation.");
             }
             bytesHopper(cursor, 10);
-            parseDouble(cursor, jstring, "markerSize", level + 1);
+            decodeDouble(cursor, jstring, "markerSize", level + 1);
             bytesHopper(cursor, 24);
-            parseColorPattern(cursor, jstring, "Marker Color", level + 1);
+            decodeColorPattern(cursor, jstring, "Marker Color", level + 1);
 
             write_to_json(jstring, "mask", "{", level + 1);
-            parseMaskTypes(cursor, jstring, level + 2);
-            parseDouble(cursor, jstring, "size", level + 2);
+            decodeMaskTypes(cursor, jstring, level + 2);
+            decodeDouble(cursor, jstring, "size", level + 2);
             write_to_json(jstring, "fillSymbol", "{", level + 2);
-            parseLayer(cursor, jstring, 1, level + 3);
+            decodeLayer(cursor, jstring, 1, level + 3);
             write_to_json(jstring, "", "},", level + 2);
             write_to_json(jstring, "", "},", level + 1);
         } catch (std::string err) {
@@ -59,9 +59,9 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
     LOG("Number of Marker Layers: " + std::to_string(num_of_marker_layers));
 
     write_to_json(jstring, "markerLayer", "[", level + 1);
-    // Parse different marker layers.
+    // decode different marker layers.
     for (int i = 0; i < num_of_marker_layers; i++) {
-        LOG(" >>>> START parsing marker layer NO. " + std::to_string(i + 1));
+        LOG(" >>>> START decoding marker layer NO. " + std::to_string(i + 1));
         // Indicate the number of the marker layer.
         write_to_json(jstring, "", "{", level + 2);
         write_to_json(jstring, "number", std::to_string(i + 1) + ",", level + 3);
@@ -77,13 +77,13 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
         try {
             switch(marker_type) {
                 case 0xE5FE: // 58878
-                    parseSimpleMarker(cursor, jstring, level + 3);
+                    decodeSimpleMarker(cursor, jstring, level + 3);
                     break;
                 case 0xE600: // 58880
-                    parseCharacterMarker(cursor, jstring, level + 3);
+                    decodeCharacterMarker(cursor, jstring, level + 3);
                     break;
                 case 0x9431: // 37937
-                    parseArrowMarker(cursor, jstring, level + 3);
+                    decodeArrowMarker(cursor, jstring, level + 3);
                     break;
                 default:
                     LOG("ERROR: Marker type " + std::to_string(marker_type) + " not found.");
@@ -138,17 +138,17 @@ int parseMarkerPattern(char **cursor, std::string &jstring, int level) {
     return 0;
 }
 
-int parseSimpleMarker(char **cursor, std::string &jstring, int level) {
+int decodeSimpleMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Simple Marker...");
     write_to_json(jstring, "type", "\"Simple Marker\",", level);
 
     try {
-        parseColorPattern(cursor, jstring, "color", level);
-        parseDouble(cursor, jstring, "size", level);
-        parseMarkerStyle(cursor, jstring, level);
+        decodeColorPattern(cursor, jstring, "color", level);
+        decodeDouble(cursor, jstring, "size", level);
+        decodeMarkerStyle(cursor, jstring, level);
         bytesHopper(cursor, 16);
-        parseDouble(cursor, jstring, "offsetX", level);
-        parseDouble(cursor, jstring, "offsetY", level);
+        decodeDouble(cursor, jstring, "offsetX", level);
+        decodeDouble(cursor, jstring, "offsetY", level);
 
         bool showOutline = bool(getChar(cursor));
         LOG("Show outline: " + std::to_string(showOutline));
@@ -157,8 +157,8 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level) {
         } else {
             write_to_json(jstring, "showOutline", "false,", level);
         }
-        parseDouble(cursor, jstring, "outlineWidth", level);
-        parseColorPattern(cursor, jstring, "outline", level);
+        decodeDouble(cursor, jstring, "outlineWidth", level);
+        decodeColorPattern(cursor, jstring, "outline", level);
     } catch (std::string err) {
         throw err;
     }
@@ -168,21 +168,21 @@ int parseSimpleMarker(char **cursor, std::string &jstring, int level) {
     return 0;
 }
 
-int parseCharacterMarker(char **cursor, std::string &jstring, int level) {
+int decodeCharacterMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Character Marker...");
     write_to_json(jstring, "type", "\"Character Marker\",", level);
 
     try {
-        parseColorPattern(cursor, jstring, "Marker Color", level);
+        decodeColorPattern(cursor, jstring, "Marker Color", level);
     } catch (std::string err) {
         throw err;
     }
 
-    parseInt(cursor, jstring, "unicode", level);
-    parseDouble(cursor, jstring, "markerAngle", level);
-    parseDouble(cursor, jstring, "markerSize", level);
-    parseDouble(cursor, jstring, "markerOffsetX", level);
-    parseDouble(cursor, jstring, "markerOffsetY", level);
+    decodeInt(cursor, jstring, "unicode", level);
+    decodeDouble(cursor, jstring, "markerAngle", level);
+    decodeDouble(cursor, jstring, "markerSize", level);
+    decodeDouble(cursor, jstring, "markerOffsetX", level);
+    decodeDouble(cursor, jstring, "markerOffsetY", level);
     bytesHopper(cursor, 16);
 
     int stnl = getChar(cursor);
@@ -194,7 +194,7 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level) {
     }
 
     try {
-        parseString(cursor, jstring, "font", level);
+        decodeString(cursor, jstring, "font", level);
     } catch (std::string err) {
         throw err;
     }
@@ -202,31 +202,31 @@ int parseCharacterMarker(char **cursor, std::string &jstring, int level) {
     return 0;
 }
 
-int parseArrowMarker(char **cursor, std::string &jstring, int level) {
+int decodeArrowMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Arrow Marker...");
     write_to_json(jstring, "type", "\"Arrow Marker\",", level);
 
     try {
-        parseColorPattern(cursor, jstring, "Marker Color", level);
+        decodeColorPattern(cursor, jstring, "Marker Color", level);
     } catch (std::string err) {
         throw err;
     }
 
-    parseDouble(cursor, jstring, "size", level);
-    parseDouble(cursor, jstring, "width", level);
-    parseDouble(cursor, jstring, "angle", level);
+    decodeDouble(cursor, jstring, "size", level);
+    decodeDouble(cursor, jstring, "width", level);
+    decodeDouble(cursor, jstring, "angle", level);
 
     bytesHopper(cursor, 12);
 
-    parseDouble(cursor, jstring, "XOffset", level);
-    parseDouble(cursor, jstring, "YOffset", level);
+    decodeDouble(cursor, jstring, "XOffset", level);
+    decodeDouble(cursor, jstring, "YOffset", level);
 
     bytesHopper(cursor, 2);
 
     return 0;
 }
 
-int parseMarkerTypes(char **cursor, std::string &jstring, int level) {
+int decodeMarkerTypes(char **cursor, std::string &jstring, int level) {
     int marker_type_code = getChar(cursor);
     std::string marker_type_name = "";
 
@@ -247,7 +247,7 @@ int parseMarkerTypes(char **cursor, std::string &jstring, int level) {
     return marker_type_code;
 }
 
-int parseMaskTypes(char **cursor, std::string &jstring, int level) {
+int decodeMaskTypes(char **cursor, std::string &jstring, int level) {
     int mask_type_code = getChar(cursor);
     std::string mask_type_name = "";
 
@@ -269,7 +269,7 @@ int parseMaskTypes(char **cursor, std::string &jstring, int level) {
 }
 
 
-int parseMarkerStyle(char **cursor, std::string &jstring, int level) {
+int decodeMarkerStyle(char **cursor, std::string &jstring, int level) {
     int marker_style_code = getChar(cursor);
     std::string marker_style_name = "";
 

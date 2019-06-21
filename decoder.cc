@@ -1,13 +1,13 @@
 //
-//  parser.cc
+//  decoder.cc
 //
 //  Created by Erick Li on 04/11/19.
 //  Copyright © 2019 Erick Li. All rights reserved.
 //
 
-#include "parser.hh"
+#include "decoder.hh"
 
-std::string grandParser(char *head, char *tail, bool enableLogging) {
+std::string grandDecoder(char *head, char *tail, bool enableLogging) {
     // Initialize a jstring (for JSON string)
     std::string jstring = "";
     char **cursor = &head;
@@ -40,26 +40,26 @@ std::string grandParser(char *head, char *tail, bool enableLogging) {
             case 0xE604:
                 // Fill Symbol
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
-                LOG("START parsing fill symbol...");
-                parseFillPattern(cursor, jstring, 1, &tail);
+                LOG("START decoding fill symbol...");
+                decodeFillPattern(cursor, jstring, 1, &tail);
                 break;
             case 0x0000:
                 // Fill Symbol without header
                 write_to_json(jstring, "symbolType", "\"fill\",", 1);
-                LOG("START parsing fill symbol...");
-                parseFillPattern(cursor, jstring, 1, &tail);
+                LOG("START decoding fill symbol...");
+                decodeFillPattern(cursor, jstring, 1, &tail);
                 break;
             case 0xE5FA:
                 // line symbol
                 write_to_json(jstring, "symbolType", "\"line\",", 1);
-                LOG("START parsing line symbol...");
-                parseLinePattern(cursor, jstring, 1, "", 1);
+                LOG("START decoding line symbol...");
+                decodeLinePattern(cursor, jstring, 1, "", 1);
                 break;
             case 0xE5FF:
                 // marker symbol
                 write_to_json(jstring, "symbolType", "\"marker\",", 1);
-                LOG("START parsing marker symbol...");
-                parseMarkerPattern(cursor, jstring, 1);
+                LOG("START decoding marker symbol...");
+                decodeMarkerPattern(cursor, jstring, 1);
                 break;
             default:
                 LOG("ERROR: Cannot recognize header...");
@@ -71,7 +71,7 @@ std::string grandParser(char *head, char *tail, bool enableLogging) {
     }
 
     write_to_json(jstring, "", "}", 0);
-    LOG("FINISHED parsing :-)");
+    LOG("FINISHED decoding :-)");
 
     // However, we still want the results being output, don't we?
     if (!enableLogging) {
@@ -82,8 +82,8 @@ std::string grandParser(char *head, char *tail, bool enableLogging) {
 }
 
 
-int parseColorPattern(char **cursor, std::string &jstring, std::string color_type, int level) {
-    LOG("START parsing color...");
+void decodeColorPattern(char **cursor, std::string &jstring, std::string color_type, int level) {
+    LOG("START decoding color...");
 
     // Get the color space (0x92 for HSV; 0x96 for RGB; 0x97 for CMYK)
     int color_space = get16Bit(cursor);
@@ -128,9 +128,9 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
         // Type and the definition are unknown so far.
         // HSV and RGB share the same coding philsophy.
         write_to_json(jstring, "rawColorCode", "[", level + 1);
-        double first = parseDouble(cursor, jstring, "", level + 2);
-        double second = parseDouble(cursor, jstring, "", level + 2);
-        double third = parseDouble(cursor, jstring, "", level + 2);
+        double first = decodeDouble(cursor, jstring, "", level + 2);
+        double second = decodeDouble(cursor, jstring, "", level + 2);
+        double third = decodeDouble(cursor, jstring, "", level + 2);
         write_to_json(jstring, "", "],", level + 1);
 
         // HSV color space...
@@ -146,8 +146,6 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
             LOG("ERROR: Color Space " + std::to_string(color_space) + " not found.");
             throw std::string("Color Space.");
         }
-
-
 
         double fs = mycolor.front();
         mycolor.pop_front();
@@ -170,29 +168,33 @@ int parseColorPattern(char **cursor, std::string &jstring, std::string color_typ
 
     write_to_json(jstring, "", "},", level);
     bytesHopper(cursor, 2);
-    LOG("FINISHED parsing color :-)");
-
-    return 0;
+    LOG("FINISHED decoding color :-)");
 }
 
-int parseLayerNumber(char **cursor, std::string &jstring, int level) {
-    LOG("START parsing layer number...");
+int decodeLayerNumber(char **cursor, std::string &jstring, int level) {
+    LOG("START decoding layer number...");
 
     // Number of layers.
     int num_of_layers = getChar(cursor);
+
+    if (0 >= num_of_layers) {
+        LOG("ERROR: Number of layers is negative");
+        throw std::string("number of layers.");
+    }
     LOG("The number of layer is: " + std::to_string(num_of_layers));
 
     // Check whether the layer number is normal...
-    if (0 > num_of_layers || 5 < num_of_layers) {
+    if (10 < num_of_layers) {
         LOG("WARNING: Layer number is abnormal.");
     }
 
     write_to_json(jstring, "numberOfLayers", std::to_string(num_of_layers) + ",", level);
     bytesHopper(cursor, 3);
+
     return num_of_layers;
 }
 
-double parseDouble(char **cursor, std::string &jstring, std::string tag, int level) {
+double decodeDouble(char **cursor, std::string &jstring, std::string tag, int level) {
     double val = getDouble(cursor);
 
     // LOG("this");
@@ -209,7 +211,7 @@ double parseDouble(char **cursor, std::string &jstring, std::string tag, int lev
     return val;
 }
 
-int parseInt(char **cursor, std::string &jstring, std::string tag, int level) {
+int decodeInt(char **cursor, std::string &jstring, std::string tag, int level) {
     int val = get32Bit(cursor);
 
     // Put the name and value of the integer value into the JSON string.
@@ -219,8 +221,8 @@ int parseInt(char **cursor, std::string &jstring, std::string tag, int level) {
     return val;
 }
 
-int parseString(char **cursor, std::string &jstring, std::string tag, int level) {
-    LOG("START parsing string...");
+int decodeString(char **cursor, std::string &jstring, std::string tag, int level) {
+    LOG("START decoding string...");
 
     // bool going = true; // When "going" is true, the while loop will keep going.
     // std::string str = "";
@@ -253,64 +255,7 @@ int parseString(char **cursor, std::string &jstring, std::string tag, int level)
 
     bytesRewinder(cursor, 1);
 
-    LOG("FINISHED parsing string. :-)");
-
-    return 0;
-}
-
-
-int parseTemplate(char **cursor, std::string &jstring, int type, int level) {
-    LOG("START parsing template...");
-
-    // It is possible that the template is not defined.
-    double preq = getDouble(cursor);// WARNING should be 0 in the case i am working on
-    bytesRewinder(cursor, 8);
-
-    // If the template is defined, we can go through it.
-    if (0.0 != preq) {
-        // Validate if the header is there.
-        if (0 != hexValidation(cursor, "713A0941E1CCD011BFAA0080C7E24280", !DO_REWIND)) {
-            LOG("ERROR: Fail to validate template pattern header...");
-            throw std::string("Template validation.");
-        }
-        bytesHopper(cursor, 2);
-
-        write_to_json(jstring, "template", "{", level);
-
-        // Distance between two patterns.
-        parseDouble(cursor, jstring, "interval", level + 1);
-        int num_of_patterns = getChar(cursor);
-        LOG("There is(are) " + std::to_string(num_of_patterns) + " patterns.");
-        bytesHopper(cursor, 3);
-
-        write_to_json(jstring, "linePatternFeature", "[", level + 1);
-
-        for (int i = 0; i < num_of_patterns; i++) {
-            write_to_json(jstring, "", "{", level + 2);
-            parseDouble(cursor, jstring, "patternLength", level + 3);
-            parseDouble(cursor, jstring, "gapLength", level + 3);
-            write_to_json(jstring, "", "},", level + 2);
-        }
-        write_to_json(jstring, "", "],", level + 1);
-        write_to_json(jstring, "", "},", level);
-        // bytesHopper(cursor, 16);
-    } else {
-        // Null bytes for null template.
-        bytesHopper(cursor, 16);
-    }
-
-    if (type == 1) {
-        while (0x0D != getChar(cursor)) {}
-        bytesHopper(cursor, 16);
-    } else {
-        while (0x24 != getChar(cursor)) {}
-        if (0x40 != getChar(cursor)) {
-            LOG("ERROR: Fail to validate template tail...");
-            throw std::string("Template tail validation.");
-        }
-    }
-
-    LOG("FINISHED parsing template. :-)");
+    LOG("FINISHED decoding string. :-)");
 
     return 0;
 }

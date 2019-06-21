@@ -1,41 +1,41 @@
 //
-//  fill_parser.hh
+//  fill_decoder.hh
 //
 //  Created by Erick Li on 05/29/19.
 //  Copyright © 2019 Erick Li. All rights reserved.
 //
 
-#ifndef __FILL_PARSER__
-#define __FILL_PARSER__
+#ifndef __FILL_DECODER__
+#define __FILL_DECODER__
 
 #include <fstream>
 #include <string>
 #include <iostream>
 
 /**
- * The main parsing function for the fill pattern.
+ * The main decoding function for the fill pattern.
  * \param the input file stream.
  * \param the output JSON string.
  * \param the current indentation for the JSON instance.
  * \param a pointer of pointer pointing to the end of the file
  */
-int parseFillPattern(char **cursor, std::string &jstring, int level, char **tail);
+int decodeFillPattern(char **cursor, std::string &jstring, int level, char **tail);
 
 
 /**
- * Parses the symbol flow, which is the largest and most essential pipeline in
+ * decodes the symbol flow, which is the largest and most essential pipeline in
  *   the model.
  * \param the input file stream.
  * \param the output file stream.
- * \param type of parser:
- *     0: Normal parser;
- *     1: Mask symbol parser.
+ * \param type of decoder:
+ *     0: Normal decoder;
+ *     1: Mask symbol decoder.
  * \param the level(indention).
  */
-int parseLayer(char **cursor, std::string &jstring, int type, int level);
+int decodeLayer(char **cursor, std::string &jstring, int type, int level);
 
 /**
- * Parser the binary block where it defines a simple fill pattern
+ * decoder the binary block where it defines a simple fill pattern
  * \param the input file stream.
  * \param the output file stream.
  * \param type:
@@ -43,22 +43,22 @@ int parseLayer(char **cursor, std::string &jstring, int type, int level);
  *     1: Symbol process.
  * \param the level(indention)
  */
-int parseSimpleFill(char **cursor, std::string &jstring, int type, int level);
+int decodeSimpleFill(char **cursor, std::string &jstring, int type, int level);
 
 /**
- * Parser the binary block where it defines a line fill pattern
+ * decoder the binary block where it defines a line fill pattern
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseLineFill(char **cursor, std::string &jstring, int level);
+int decodeLineFill(char **cursor, std::string &jstring, int level);
 
 /**
- * Parser the binary block where it defines a marker fill pattern
+ * decoder the binary block where it defines a marker fill pattern
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
  */
-int parseMarkerFill(char **cursor, std::string &jstring, int level);
+int decodeMarkerFill(char **cursor, std::string &jstring, int level);
 
 #endif

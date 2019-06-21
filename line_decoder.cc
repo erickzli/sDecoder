@@ -1,21 +1,21 @@
 //
-//  line_parser.cc
+//  line_decoder.cc
 //
 //  Created by Erick Li on 04/16/19.
 //  Copyright © 2019 Erick Li. All rights reserved.
 //
 
-#include "line_parser.hh"
-#include "parser.hh"
+#include "line_decoder.hh"
+#include "decoder.hh"
 
-int parseLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level) {
+int decodeLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level) {
     LOG("-----------------------------");
     if (type == 0) {
-        LOG("START parsing line");
+        LOG("START decoding line");
         write_to_json(jstring, "lineProperties_" + toSimpleCamelCase(property), "{", level);
         write_to_json(jstring, "name", "\"" + property + "\",", level + 1);
     } else {
-        LOG("START parsing line symbol");
+        LOG("START decoding line symbol");
         write_to_json(jstring, "lineSymbol", "{", level);
     }
 
@@ -38,7 +38,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
 
     // Go through each line layer.
     for (int i = 0; i < num_of_line_layers; i++) {
-        LOG(" --- START parsing line layer NO. " + std::to_string(i + 1));
+        LOG(" --- START decoding line layer NO. " + std::to_string(i + 1));
         line_type = getChar(cursor);
         bytesHopper(cursor, 17);
 
@@ -48,16 +48,16 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
         try {
             switch(line_type) {
                 case 0xF9:
-                    parseSimpleLine(cursor, jstring, level + 3);
+                    decodeSimpleLine(cursor, jstring, level + 3);
                     break;
                 case 0xFB:
-                    parseCartoLine(cursor, jstring, level + 3);
+                    decodeCartoLine(cursor, jstring, level + 3);
                     break;
                 case 0xFC:
-                    parseHashLine(cursor, jstring, level + 3);
+                    decodeHashLine(cursor, jstring, level + 3);
                     break;
                 case 0xFD:
-                    parseMarkerLine(cursor, jstring, level + 3);
+                    decodeMarkerLine(cursor, jstring, level + 3);
                     break;
                 default:
                     LOG("ERROR: Line type " + std::to_string(line_type) + " not found.");
@@ -86,7 +86,7 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
         }
     }
 
-    // Parse the activeness of layers.
+    // decode the activeness of layers.
     int check_active_int = get32Bit(cursor);
     bytesRewinder(cursor, 4);
     double check_active_double = getDouble(cursor);
@@ -124,46 +124,46 @@ int parseLinePattern(char **cursor, std::string &jstring, int type, std::string 
     return 0;
 }
 
-int parseSimpleLine(char **cursor, std::string &jstring, int level) {
+int decodeSimpleLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Simple Line...");
     write_to_json(jstring, "type", "\"Simple Line\",", level);
 
     try {
-        // Parse the color for the line.
-        parseColorPattern(cursor, jstring, "Simple Line Color", level);
-        // Parse the width of the line.
-        parseDouble(cursor, jstring, "width", level);
-        // Parse the line style of the line. (Solid, dashed, dotted, dash-dot, dash-dot-dot, null)
-        parseLineStyle(cursor, jstring, level);
+        // decode the color for the line.
+        decodeColorPattern(cursor, jstring, "Simple Line Color", level);
+        // decode the width of the line.
+        decodeDouble(cursor, jstring, "width", level);
+        // decode the line style of the line. (Solid, dashed, dotted, dash-dot, dash-dot-dot, null)
+        decodeLineStyle(cursor, jstring, level);
     } catch (std::string err) {
         throw err;
     }
 
-    // Parse the TAIL pattern of simple line.
+    // decode the TAIL pattern of simple line.
     //while (0x0D != getChar(cursor)) {}
     bytesHopper(cursor, 8);
 
     return 0;
 }
 
-int parseCartoLine(char **cursor, std::string &jstring, int level) {
+int decodeCartoLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Cartographic Line...");
     write_to_json(jstring, "type", "\"Cartographic Line\",", level);
 
     try {
-        // Parse line caps (butt, round, square)
-        parseLineCaps(cursor, jstring, level);
-        // Parse line joins (miter, round, bevel)
-        parseLineJoins(cursor, jstring, level);
-        // Parse the cartographic line width
-        parseDouble(cursor, jstring, "cartographicLineWidth", level);
+        // decode line caps (butt, round, square)
+        decodeLineCaps(cursor, jstring, level);
+        // decode line joins (miter, round, bevel)
+        decodeLineJoins(cursor, jstring, level);
+        // decode the cartographic line width
+        decodeDouble(cursor, jstring, "cartographicLineWidth", level);
         bytesHopper(cursor, 1);
-        // Parse the offset in the line properties section.
-        parseDouble(cursor, jstring, "propertiesOffset", level);
-        // Parse the color of the cartographic line.
-        parseColorPattern(cursor, jstring, "Cartographic Line Color", level);
-        // Parse the TEMPLATE
-        parseTemplate(cursor, jstring, 0, level);
+        // decode the offset in the line properties section.
+        decodeDouble(cursor, jstring, "propertiesOffset", level);
+        // decode the color of the cartographic line.
+        decodeColorPattern(cursor, jstring, "Cartographic Line Color", level);
+        // decode the TEMPLATE
+        decodeTemplate(cursor, jstring, 0, level);
     } catch (std::string err) {
         throw err;
     }
@@ -171,20 +171,20 @@ int parseCartoLine(char **cursor, std::string &jstring, int level) {
     return 0;
 }
 
-int parseHashLine(char **cursor, std::string &jstring, int level) {
+int decodeHashLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Hash Line...");
     write_to_json(jstring, "type", "\"Hash Line\",", level);
 
     try {
-        parseDouble(cursor, jstring, "hashLineAngle", level);
-        parseLineCaps(cursor, jstring, level);
-        parseLineJoins(cursor, jstring, level);
-        parseDouble(cursor, jstring, "cartographicLineWidth", level);
+        decodeDouble(cursor, jstring, "hashLineAngle", level);
+        decodeLineCaps(cursor, jstring, level);
+        decodeLineJoins(cursor, jstring, level);
+        decodeDouble(cursor, jstring, "cartographicLineWidth", level);
         bytesHopper(cursor, 1);
-        parseDouble(cursor, jstring, "propertiesOffset", level);
-        parseLinePattern(cursor, jstring, 1, "Outline", level);
-        parseColorPattern(cursor, jstring, "Cartographic Line Color", level);
-        parseTemplate(cursor, jstring, 0, level);
+        decodeDouble(cursor, jstring, "propertiesOffset", level);
+        decodeLinePattern(cursor, jstring, 1, "Outline", level);
+        decodeColorPattern(cursor, jstring, "Cartographic Line Color", level);
+        decodeTemplate(cursor, jstring, 0, level);
     } catch (std::string err) {
         throw err;
     }
@@ -192,18 +192,18 @@ int parseHashLine(char **cursor, std::string &jstring, int level) {
     return 0;
 }
 
-int parseMarkerLine(char **cursor, std::string &jstring, int level) {
+int decodeMarkerLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Marker Line...");
     write_to_json(jstring, "type", "\"Marker Line\",", level);
 
     bytesHopper(cursor, 1);
-    parseDouble(cursor, jstring, "propertiesOffset", level);
+    decodeDouble(cursor, jstring, "propertiesOffset", level);
 
     try {
-        parseMarkerPattern(cursor, jstring, level);
-        parseTemplate(cursor, jstring, 1, level);
-        parseLineCaps(cursor, jstring, level);
-        parseLineJoins(cursor, jstring, level);
+        decodeMarkerPattern(cursor, jstring, level);
+        decodeTemplate(cursor, jstring, 1, level);
+        decodeLineCaps(cursor, jstring, level);
+        decodeLineJoins(cursor, jstring, level);
     } catch (std::string err) {
         throw err;
     }
@@ -214,7 +214,7 @@ int parseMarkerLine(char **cursor, std::string &jstring, int level) {
     return 0;
 }
 
-int parseLineCaps(char **cursor, std::string &jstring, int level) {
+int decodeLineCaps(char **cursor, std::string &jstring, int level) {
     int line_caps_code = getChar(cursor);
     std::string line_caps_name = "";
 
@@ -242,7 +242,7 @@ int parseLineCaps(char **cursor, std::string &jstring, int level) {
     return line_caps_code;
 }
 
-int parseLineJoins(char **cursor, std::string &jstring, int level) {
+int decodeLineJoins(char **cursor, std::string &jstring, int level) {
     int line_joins_code = getChar(cursor);
     std::string line_joins_name = "";
 
@@ -271,7 +271,7 @@ int parseLineJoins(char **cursor, std::string &jstring, int level) {
 }
 
 
-int parseLineStyle(char **cursor, std::string &jstring, int level) {
+int decodeLineStyle(char **cursor, std::string &jstring, int level) {
     int line_style_code = getChar(cursor);
     std::string line_style_name = "";
 
@@ -306,4 +306,60 @@ int parseLineStyle(char **cursor, std::string &jstring, int level) {
     bytesHopper(cursor, 3);
 
     return line_style_code;
+}
+
+int decodeTemplate(char **cursor, std::string &jstring, int type, int level) {
+    LOG("START decoding template...");
+
+    // It is possible that the template is not defined.
+    double preq = getDouble(cursor);// WARNING should be 0 in the case i am working on
+    bytesRewinder(cursor, 8);
+
+    // If the template is defined, we can go through it.
+    if (0.0 != preq) {
+        // Validate if the header is there.
+        if (0 != hexValidation(cursor, "713A0941E1CCD011BFAA0080C7E24280", !DO_REWIND)) {
+            LOG("ERROR: Fail to validate template pattern header...");
+            throw std::string("Template validation.");
+        }
+        bytesHopper(cursor, 2);
+
+        write_to_json(jstring, "template", "{", level);
+
+        // Distance between two patterns.
+        decodeDouble(cursor, jstring, "interval", level + 1);
+        int num_of_patterns = getChar(cursor);
+        LOG("There is(are) " + std::to_string(num_of_patterns) + " patterns.");
+        bytesHopper(cursor, 3);
+
+        write_to_json(jstring, "linePatternFeature", "[", level + 1);
+
+        for (int i = 0; i < num_of_patterns; i++) {
+            write_to_json(jstring, "", "{", level + 2);
+            decodeDouble(cursor, jstring, "patternLength", level + 3);
+            decodeDouble(cursor, jstring, "gapLength", level + 3);
+            write_to_json(jstring, "", "},", level + 2);
+        }
+        write_to_json(jstring, "", "],", level + 1);
+        write_to_json(jstring, "", "},", level);
+        // bytesHopper(cursor, 16);
+    } else {
+        // Null bytes for null template.
+        bytesHopper(cursor, 16);
+    }
+
+    if (type == 1) {
+        while (0x0D != getChar(cursor)) {}
+        bytesHopper(cursor, 16);
+    } else {
+        while (0x24 != getChar(cursor)) {}
+        if (0x40 != getChar(cursor)) {
+            LOG("ERROR: Fail to validate template tail...");
+            throw std::string("Template tail validation.");
+        }
+    }
+
+    LOG("FINISHED decoding template. :-)");
+
+    return 0;
 }
