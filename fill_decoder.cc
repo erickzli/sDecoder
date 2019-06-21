@@ -26,7 +26,7 @@ int decodeFillPattern(char **cursor, std::string &jstring, int level, char **tai
             // Move infile pointer 26 bytes to skip the header metadata.
             bytesHopper(cursor, 25);
             // decode the first color pattern. Usage so far is unknown...
-            decodeColorPattern(cursor, jstring, "Unknown", 1);
+            decodeColorPattern(cursor, jstring, 1, "Unknown");
             // decode out the number of layers...
             num_of_layers = decodeLayerNumber(cursor, jstring, 1);
             // Test if the number of layers behaves weird...
@@ -43,7 +43,7 @@ int decodeFillPattern(char **cursor, std::string &jstring, int level, char **tai
             LOG("++++ START decoding layer NO. " + std::to_string(i + 1));
             write_to_json(jstring, "", "{", 2);
             write_to_json(jstring, "number", std::to_string(i + 1) + ",", 3);
-            decodeLayer(cursor, jstring, 0, 3);
+            decodeLayer(cursor, jstring, 3, 0);
 
             // Inter-layer pattern...
             if (i < num_of_layers - 1) {
@@ -111,7 +111,7 @@ int decodeFillPattern(char **cursor, std::string &jstring, int level, char **tai
     return 0;
 }
 
-int decodeLayer(char **cursor, std::string &jstring, int type, int level) {
+int decodeLayer(char **cursor, std::string &jstring, int level, int type) {
     // Type 0: A normal layer
     if (type == 0) {
         LOG("START decoding a fill layer...");
@@ -127,7 +127,7 @@ int decodeLayer(char **cursor, std::string &jstring, int type, int level) {
 
     // For each filling type, enter into the corresponding field.
     if (0xE603 == filling_type) {
-        decodeSimpleFill(cursor, jstring, type, level);
+        decodeSimpleFill(cursor, jstring, level, type);
     } else if (0xE606 == filling_type) {
         decodeLineFill(cursor, jstring, level);
     } else if (0xE608 == filling_type) {
@@ -144,7 +144,7 @@ int decodeLayer(char **cursor, std::string &jstring, int type, int level) {
 }
 
 
-int decodeSimpleFill(char **cursor, std::string &jstring, int type, int level) {
+int decodeSimpleFill(char **cursor, std::string &jstring, int level, int type) {
     LOG("Filling type: Simple Fill");
 
     write_to_json(jstring, "fillingType", "\"Simple Fill\",", level);
@@ -159,12 +159,12 @@ int decodeSimpleFill(char **cursor, std::string &jstring, int type, int level) {
 
         // Type of the process (0 for normal process; 1 for the symbol process)
         if (type == 0) {
-            decodeLinePattern(cursor, jstring, 0, "Outline", level);
+            decodeLinePattern(cursor, jstring, 0, level, "Outline");
         } else {
-            decodeLinePattern(cursor, jstring, 1, "Filling Line", level);
+            decodeLinePattern(cursor, jstring, 1, level, "Filling Line");
         }
 
-        decodeColorPattern(cursor, jstring, "Filling Color", level);
+        decodeColorPattern(cursor, jstring, level, "Filling Color");
     } catch (std::string err) {
         throw err;
     }
@@ -187,19 +187,19 @@ int decodeLineFill(char **cursor, std::string &jstring, int level) {
         bytesHopper(cursor, 18);
 
         // decode the line pattern for the filling lines.
-        decodeLinePattern(cursor, jstring, 0, "Filling Line", level);
+        decodeLinePattern(cursor, jstring, 0, level, "Filling Line");
         // decode the line pattern for the outline.
-        decodeLinePattern(cursor, jstring, 0, "Outline", level);
+        decodeLinePattern(cursor, jstring, 0, level, "Outline");
     } catch (std::string err) {
         throw err;
     }
 
     // decode the line fill angle. (the angle of the line inclination)
-    decodeDouble(cursor, jstring, "angle", level);
+    decodeDouble(cursor, jstring, level, "angle");
     // decode the line fill offset. (the horizontal displacement of the lines)
-    decodeDouble(cursor, jstring, "offset", level);
+    decodeDouble(cursor, jstring, level, "offset");
     // decode the line fill separation (the distance between each line)
-    decodeDouble(cursor, jstring, "separation", level);
+    decodeDouble(cursor, jstring, level, "separation");
 
     return 0;
 }
@@ -220,18 +220,18 @@ int decodeMarkerFill(char **cursor, std::string &jstring, int level) {
         // decode the marker types (Grid(uniform) or random distribution)
         decodeMarkerTypes(cursor, jstring, level);
         // decode the X and Y-axial offset (horizontal displacement of the markers)
-        decodeDouble(cursor, jstring, "fillPropertiesOffsetX", level);
-        decodeDouble(cursor, jstring, "fillPropertiesOffsetY", level);
+        decodeDouble(cursor, jstring, level, "fillPropertiesOffsetX");
+        decodeDouble(cursor, jstring, level, "fillPropertiesOffsetY");
         // decode the X and Y-axial separation of the markers
-        decodeDouble(cursor, jstring, "fillPropertiesSeparationX", level);
-        decodeDouble(cursor, jstring, "fillPropertiesSeparationY", level);
+        decodeDouble(cursor, jstring, level, "fillPropertiesSeparationX");
+        decodeDouble(cursor, jstring, level, "fillPropertiesSeparationY");
         bytesHopper(cursor, 16);
 
         // decode the Marker in detail
         decodeMarkerPattern(cursor, jstring, level);
 
         // decode the outline.
-        decodeLinePattern(cursor, jstring, 0, "Outline", level);
+        decodeLinePattern(cursor, jstring, 0, level, "Outline");
     } catch (std::string err) {
         throw err;
     }

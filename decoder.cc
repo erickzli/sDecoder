@@ -53,7 +53,7 @@ std::string grandDecoder(char *head, char *tail, bool enableLogging) {
                 // line symbol
                 write_to_json(jstring, "symbolType", "\"line\",", 1);
                 LOG("START decoding line symbol...");
-                decodeLinePattern(cursor, jstring, 1, "", 1);
+                decodeLinePattern(cursor, jstring, 1, 1, "");
                 break;
             case 0xE5FF:
                 // marker symbol
@@ -82,7 +82,7 @@ std::string grandDecoder(char *head, char *tail, bool enableLogging) {
 }
 
 
-void decodeColorPattern(char **cursor, std::string &jstring, std::string color_type, int level) {
+void decodeColorPattern(char **cursor, std::string &jstring, int level, std::string color_type) {
     LOG("START decoding color...");
 
     // Get the color space (0x92 for HSV; 0x96 for RGB; 0x97 for CMYK)
@@ -128,9 +128,9 @@ void decodeColorPattern(char **cursor, std::string &jstring, std::string color_t
         // Type and the definition are unknown so far.
         // HSV and RGB share the same coding philsophy.
         write_to_json(jstring, "rawColorCode", "[", level + 1);
-        double first = decodeDouble(cursor, jstring, "", level + 2);
-        double second = decodeDouble(cursor, jstring, "", level + 2);
-        double third = decodeDouble(cursor, jstring, "", level + 2);
+        double first = decodeDouble(cursor, jstring, level + 2, "");
+        double second = decodeDouble(cursor, jstring, level + 2, "");
+        double third = decodeDouble(cursor, jstring, level + 2, "");
         write_to_json(jstring, "", "],", level + 1);
 
         // HSV color space...
@@ -194,7 +194,7 @@ int decodeLayerNumber(char **cursor, std::string &jstring, int level) {
     return num_of_layers;
 }
 
-double decodeDouble(char **cursor, std::string &jstring, std::string tag, int level) {
+double decodeDouble(char **cursor, std::string &jstring, int level, std::string tag) {
     double val = getDouble(cursor);
 
     // LOG("this");
@@ -211,7 +211,7 @@ double decodeDouble(char **cursor, std::string &jstring, std::string tag, int le
     return val;
 }
 
-int decodeInt(char **cursor, std::string &jstring, std::string tag, int level) {
+int decodeInt(char **cursor, std::string &jstring, int level, std::string tag) {
     int val = get32Bit(cursor);
 
     // Put the name and value of the integer value into the JSON string.
@@ -221,7 +221,7 @@ int decodeInt(char **cursor, std::string &jstring, std::string tag, int level) {
     return val;
 }
 
-int decodeString(char **cursor, std::string &jstring, std::string tag, int level) {
+int decodeString(char **cursor, std::string &jstring, int level, std::string tag) {
     LOG("START decoding string...");
 
     // bool going = true; // When "going" is true, the while loop will keep going.

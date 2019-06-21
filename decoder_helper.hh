@@ -5,8 +5,8 @@
 //  Copyright © 2019 Erick Li. All rights reserved.
 //
 
-#ifndef __DECODER_HELPER__
-#define __DECODER_HELPER__
+#ifndef __DECODER_HELPER_H__
+#define __DECODER_HELPER_H__
 
 #include <fstream>
 #include <string>
@@ -86,8 +86,8 @@ double getDouble(char **cursor);
 void LOG(std::string mseg);
 
 /**
- * Print "num" bytes of the binary file from the current position. The cursor will be
- *   automatically rewinded.
+ * Print "num" bytes of the binary file from the current position. The cursor
+ *   will be automatically rewinded.
  * @param the input file stream.
  * @param number of bytes to be printed.
  */
@@ -107,8 +107,11 @@ std::string toSimpleCamelCase(std::string str);
  * @param b
  * @param type: 0: to RGB; 1: to HSV.
  * @return the corresponding list of RGB color code.
- * Reference: 1. The conversion CIELAB -> CIEXYZ is from English Wikipedia page "CIELAB color space"
-              2. The conversion CIEXYZ -> RGB is from https://www.cs.rit.edu/~ncs/color/t_convert.html#XYZ%20to%20CIE%20L*a*b*%20(CIELAB)%20&%20CIELAB%20to%20XYZ
+ * NOTE:
+ *   1. The conversion CIELAB -> CIEXYZ is from English Wikipedia page "CIELAB
+ *     color space";
+ *   2. The conversion CIEXYZ -> RGB is from
+ *     https://www.cs.rit.edu/~ncs/color/t_convert.html#XYZ%20to%20CIE%20L*a*b*%20(CIELAB)%20&%20CIELAB%20to%20XYZ
  */
 std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type);
 

@@ -8,7 +8,7 @@
 #include "line_decoder.hh"
 #include "decoder.hh"
 
-int decodeLinePattern(char **cursor, std::string &jstring, int type, std::string property, int level) {
+int decodeLinePattern(char **cursor, std::string &jstring, int type, int level, std::string property) {
     LOG("-----------------------------");
     if (type == 0) {
         LOG("START decoding line");
@@ -130,9 +130,9 @@ int decodeSimpleLine(char **cursor, std::string &jstring, int level) {
 
     try {
         // decode the color for the line.
-        decodeColorPattern(cursor, jstring, "Simple Line Color", level);
+        decodeColorPattern(cursor, jstring, level, "Simple Line Color");
         // decode the width of the line.
-        decodeDouble(cursor, jstring, "width", level);
+        decodeDouble(cursor, jstring, level, "width");
         // decode the line style of the line. (Solid, dashed, dotted, dash-dot, dash-dot-dot, null)
         decodeLineStyle(cursor, jstring, level);
     } catch (std::string err) {
@@ -156,14 +156,14 @@ int decodeCartoLine(char **cursor, std::string &jstring, int level) {
         // decode line joins (miter, round, bevel)
         decodeLineJoins(cursor, jstring, level);
         // decode the cartographic line width
-        decodeDouble(cursor, jstring, "cartographicLineWidth", level);
+        decodeDouble(cursor, jstring, level, "cartographicLineWidth");
         bytesHopper(cursor, 1);
         // decode the offset in the line properties section.
-        decodeDouble(cursor, jstring, "propertiesOffset", level);
+        decodeDouble(cursor, jstring, level, "propertiesOffset");
         // decode the color of the cartographic line.
-        decodeColorPattern(cursor, jstring, "Cartographic Line Color", level);
+        decodeColorPattern(cursor, jstring, level, "Cartographic Line Color");
         // decode the TEMPLATE
-        decodeTemplate(cursor, jstring, 0, level);
+        decodeTemplate(cursor, jstring, level, 0);
     } catch (std::string err) {
         throw err;
     }
@@ -176,15 +176,15 @@ int decodeHashLine(char **cursor, std::string &jstring, int level) {
     write_to_json(jstring, "type", "\"Hash Line\",", level);
 
     try {
-        decodeDouble(cursor, jstring, "hashLineAngle", level);
+        decodeDouble(cursor, jstring, level, "hashLineAngle");
         decodeLineCaps(cursor, jstring, level);
         decodeLineJoins(cursor, jstring, level);
-        decodeDouble(cursor, jstring, "cartographicLineWidth", level);
+        decodeDouble(cursor, jstring, level, "cartographicLineWidth");
         bytesHopper(cursor, 1);
-        decodeDouble(cursor, jstring, "propertiesOffset", level);
-        decodeLinePattern(cursor, jstring, 1, "Outline", level);
-        decodeColorPattern(cursor, jstring, "Cartographic Line Color", level);
-        decodeTemplate(cursor, jstring, 0, level);
+        decodeDouble(cursor, jstring, level, "propertiesOffset");
+        decodeLinePattern(cursor, jstring, 1, level, "Outline");
+        decodeColorPattern(cursor, jstring, level, "Cartographic Line Color");
+        decodeTemplate(cursor, jstring, level, 0);
     } catch (std::string err) {
         throw err;
     }
@@ -197,11 +197,11 @@ int decodeMarkerLine(char **cursor, std::string &jstring, int level) {
     write_to_json(jstring, "type", "\"Marker Line\",", level);
 
     bytesHopper(cursor, 1);
-    decodeDouble(cursor, jstring, "propertiesOffset", level);
+    decodeDouble(cursor, jstring, level, "propertiesOffset");
 
     try {
         decodeMarkerPattern(cursor, jstring, level);
-        decodeTemplate(cursor, jstring, 1, level);
+        decodeTemplate(cursor, jstring, level, 1);
         decodeLineCaps(cursor, jstring, level);
         decodeLineJoins(cursor, jstring, level);
     } catch (std::string err) {
@@ -308,7 +308,7 @@ int decodeLineStyle(char **cursor, std::string &jstring, int level) {
     return line_style_code;
 }
 
-int decodeTemplate(char **cursor, std::string &jstring, int type, int level) {
+int decodeTemplate(char **cursor, std::string &jstring, int level, int type) {
     LOG("START decoding template...");
 
     // It is possible that the template is not defined.
@@ -327,7 +327,7 @@ int decodeTemplate(char **cursor, std::string &jstring, int type, int level) {
         write_to_json(jstring, "template", "{", level);
 
         // Distance between two patterns.
-        decodeDouble(cursor, jstring, "interval", level + 1);
+        decodeDouble(cursor, jstring, level + 1, "interval");
         int num_of_patterns = getChar(cursor);
         LOG("There is(are) " + std::to_string(num_of_patterns) + " patterns.");
         bytesHopper(cursor, 3);
@@ -336,8 +336,8 @@ int decodeTemplate(char **cursor, std::string &jstring, int type, int level) {
 
         for (int i = 0; i < num_of_patterns; i++) {
             write_to_json(jstring, "", "{", level + 2);
-            decodeDouble(cursor, jstring, "patternLength", level + 3);
-            decodeDouble(cursor, jstring, "gapLength", level + 3);
+            decodeDouble(cursor, jstring, level + 3, "patternLength");
+            decodeDouble(cursor, jstring, level + 3, "gapLength");
             write_to_json(jstring, "", "},", level + 2);
         }
         write_to_json(jstring, "", "],", level + 1);

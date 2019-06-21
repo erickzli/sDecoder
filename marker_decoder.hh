@@ -5,8 +5,8 @@
 //  Copyright © 2019 Erick Li. All rights reserved.
 //
 
-#ifndef __MARKER_DECODER__
-#define __MARKER_DECODER__
+#ifndef __MARKER_DECODER_H__
+#define __MARKER_DECODER_H__
 
 #include <fstream>
 #include <string>
@@ -14,7 +14,7 @@
 
 
 /**
- * decoder the marker pattern
+ * The main function of marker pattern decoder.
  * \param the input file stream.
  * \param the output file stream.
  * \param the level(indention)
@@ -22,50 +22,50 @@
 int decodeMarkerPattern(char **cursor, std::string &jstring, int level);
 
 /**
- * decoder the simple marker pattern
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
+ * Decode the pattern of Simple Marker Symbol
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
  */
 int decodeSimpleMarker(char **cursor, std::string &jstring, int level);
 
 /**
- * decoder the character marker pattern
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
+ * Decode the pattern of Character Marker Symbol
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
  */
 int decodeCharacterMarker(char **cursor, std::string &jstring, int level);
 
 /**
- * decoder the arrow marker pattern
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
+ * Decode the pattern of Arrow Marker Symbol
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
  */
 int decodeArrowMarker(char **cursor, std::string &jstring, int level);
 
 /**
- * decoder the type of markers (Grid or random)
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
+ * Decode the types of markers
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
  */
 int decodeMarkerTypes(char **cursor, std::string &jstring, int level);
 
 /**
- * decoder the type of masks (None or Halo)
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
+ * Decode the types of masks
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
  */
 int decodeMaskTypes(char **cursor, std::string &jstring, int level);
 
 /**
- * decoder the type of marker
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
+ * Decode the style of markers
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
  */
 int decodeMarkerStyle(char **cursor, std::string &jstring, int level);
 

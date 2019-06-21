@@ -24,15 +24,15 @@ int decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
                 throw std::string("Marker type validation.");
             }
             bytesHopper(cursor, 10);
-            decodeDouble(cursor, jstring, "markerSize", level + 1);
+            decodeDouble(cursor, jstring, level + 1, "markerSize");
             bytesHopper(cursor, 24);
-            decodeColorPattern(cursor, jstring, "Marker Color", level + 1);
+            decodeColorPattern(cursor, jstring, level + 1, "Marker Color");
 
             write_to_json(jstring, "mask", "{", level + 1);
             decodeMaskTypes(cursor, jstring, level + 2);
-            decodeDouble(cursor, jstring, "size", level + 2);
+            decodeDouble(cursor, jstring, level + 2, "size");
             write_to_json(jstring, "fillSymbol", "{", level + 2);
-            decodeLayer(cursor, jstring, 1, level + 3);
+            decodeLayer(cursor, jstring, level + 3, 1);
             write_to_json(jstring, "", "},", level + 2);
             write_to_json(jstring, "", "},", level + 1);
         } catch (std::string err) {
@@ -143,12 +143,12 @@ int decodeSimpleMarker(char **cursor, std::string &jstring, int level) {
     write_to_json(jstring, "type", "\"Simple Marker\",", level);
 
     try {
-        decodeColorPattern(cursor, jstring, "color", level);
-        decodeDouble(cursor, jstring, "size", level);
+        decodeColorPattern(cursor, jstring, level, "color");
+        decodeDouble(cursor, jstring, level, "size");
         decodeMarkerStyle(cursor, jstring, level);
         bytesHopper(cursor, 16);
-        decodeDouble(cursor, jstring, "offsetX", level);
-        decodeDouble(cursor, jstring, "offsetY", level);
+        decodeDouble(cursor, jstring, level, "offsetX");
+        decodeDouble(cursor, jstring, level, "offsetY");
 
         bool showOutline = bool(getChar(cursor));
         LOG("Show outline: " + std::to_string(showOutline));
@@ -157,8 +157,8 @@ int decodeSimpleMarker(char **cursor, std::string &jstring, int level) {
         } else {
             write_to_json(jstring, "showOutline", "false,", level);
         }
-        decodeDouble(cursor, jstring, "outlineWidth", level);
-        decodeColorPattern(cursor, jstring, "outline", level);
+        decodeDouble(cursor, jstring, level, "outlineWidth");
+        decodeColorPattern(cursor, jstring, level, "outline");
     } catch (std::string err) {
         throw err;
     }
@@ -173,16 +173,16 @@ int decodeCharacterMarker(char **cursor, std::string &jstring, int level) {
     write_to_json(jstring, "type", "\"Character Marker\",", level);
 
     try {
-        decodeColorPattern(cursor, jstring, "Marker Color", level);
+        decodeColorPattern(cursor, jstring, level, "Marker Color");
     } catch (std::string err) {
         throw err;
     }
 
-    decodeInt(cursor, jstring, "unicode", level);
-    decodeDouble(cursor, jstring, "markerAngle", level);
-    decodeDouble(cursor, jstring, "markerSize", level);
-    decodeDouble(cursor, jstring, "markerOffsetX", level);
-    decodeDouble(cursor, jstring, "markerOffsetY", level);
+    decodeInt(cursor, jstring, level, "unicode");
+    decodeDouble(cursor, jstring, level, "markerAngle");
+    decodeDouble(cursor, jstring, level, "markerSize");
+    decodeDouble(cursor, jstring, level, "markerOffsetX");
+    decodeDouble(cursor, jstring, level, "markerOffsetY");
     bytesHopper(cursor, 16);
 
     int stnl = getChar(cursor);
@@ -194,7 +194,7 @@ int decodeCharacterMarker(char **cursor, std::string &jstring, int level) {
     }
 
     try {
-        decodeString(cursor, jstring, "font", level);
+        decodeString(cursor, jstring, level, "font");
     } catch (std::string err) {
         throw err;
     }
@@ -207,19 +207,19 @@ int decodeArrowMarker(char **cursor, std::string &jstring, int level) {
     write_to_json(jstring, "type", "\"Arrow Marker\",", level);
 
     try {
-        decodeColorPattern(cursor, jstring, "Marker Color", level);
+        decodeColorPattern(cursor, jstring, level, "Marker Color");
     } catch (std::string err) {
         throw err;
     }
 
-    decodeDouble(cursor, jstring, "size", level);
-    decodeDouble(cursor, jstring, "width", level);
-    decodeDouble(cursor, jstring, "angle", level);
+    decodeDouble(cursor, jstring, level, "size");
+    decodeDouble(cursor, jstring, level, "width");
+    decodeDouble(cursor, jstring, level, "angle");
 
     bytesHopper(cursor, 12);
 
-    decodeDouble(cursor, jstring, "XOffset", level);
-    decodeDouble(cursor, jstring, "YOffset", level);
+    decodeDouble(cursor, jstring, level, "XOffset");
+    decodeDouble(cursor, jstring, level, "YOffset");
 
     bytesHopper(cursor, 2);
 
