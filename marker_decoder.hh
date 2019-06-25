@@ -15,9 +15,9 @@
 
 /**
  * The main function of marker pattern decoder.
- * \param the input file stream.
- * \param the output file stream.
- * \param the level(indention)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
+ * \param (See json_writer.hh)
  */
 int decodeMarkerPattern(char **cursor, std::string &jstring, int level);
 

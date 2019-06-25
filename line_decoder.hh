@@ -82,8 +82,8 @@ int decodeLineJoins(char **cursor, std::string &jstring, int level);
 int decodeLineStyle(char **cursor, std::string &jstring, int level);
 
 /**
- * Decode the pattern of a TEMPLATE
- *     TEMPLATE is for line feature which defines dot repeats.
+ * Decode the line style
+ *     TEMPLATE is for line dot-dash patterns.
  *     interval length -> line length -> gap length.
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)

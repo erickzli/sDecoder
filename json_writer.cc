@@ -9,7 +9,7 @@
 
 
 
-void write_to_json(std::string &jstring, std::string tag, std::string buf, int level) {
+void write_to_json(std::string &jstring, std::string key, std::string value, int level) {
     std::string output = "";
 
     // Insert indention for the line.

@@ -87,19 +87,19 @@ double getDouble(char **cursor) {
     return *ret;
 }
 
-void LOG(std::string mseg) {
-    std::clog << mseg << std::endl;
+void LOG(std::string msg) {
+    std::clog << msg << std::endl;
 }
 
-void printHex(char **cursor, int num) {
-    if (num <= 0) {
+void printHex(char **cursor, int numOfBytes) {
+    if (numOfBytes <= 0) {
         std::clog << "WARNING: printHex() cannot take param <= 0... ";
         std::clog << "  So...nothing is printed..." << std::endl;
         return;
     }
 
-    std::clog << "TEST: printing " << num << " byte(s)..." << std::endl;
-    for (int i = 0; i < num; i++) {
+    std::clog << "TEST: printing " << numOfBytes << " byte(s)..." << std::endl;
+    for (int i = 0; i < numOfBytes; i++) {
         std::clog << std::hex << std::setfill('0') << std::setw(2) << getChar(cursor) << " ";
         if ((i + 1) % 8 == 0) {
             std::clog << " ";
@@ -110,7 +110,7 @@ void printHex(char **cursor, int num) {
     }
     std::clog << std::endl;
 
-    bytesRewinder(cursor, num);
+    bytesRewinder(cursor, numOfBytes);
 }
 
 std::string toSimpleCamelCase(std::string str) {
@@ -159,9 +159,9 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
     const double Y_n = 100.000;
     const double Z_n = 90.099;
 
-    double x = X_n / 100.0 * private_f((L + 16.0) / 116.0 + a / 500.0);
-    double y = Y_n / 100.0 * private_f((L + 16.0) / 116.0);
-    double z = Z_n / 100.0 * private_f((L + 16.0) / 116.0 - b / 200.0);
+    double x = X_n / 100.0 * _f((L + 16.0) / 116.0 + a / 500.0);
+    double y = Y_n / 100.0 * _f((L + 16.0) / 116.0);
+    double z = Z_n / 100.0 * _f((L + 16.0) / 116.0 - b / 200.0);
 
     double r = 3.240479 * x - 1.537150 * y - 0.498535 * z;
     double g = -0.969256 * x + 1.875992 * y + 0.041556 * z;
@@ -185,10 +185,10 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
     }
 
     // otherwise return HSV...
-    return RGB_to_HSV(r, g, bl);
+    return _RGB_to_HSV(r, g, bl);
 }
 
-std::list<double> RGB_to_HSV(double r, double g, double b) {
+std::list<double> _RGB_to_HSV(double r, double g, double b) {
     double r_pm = r / 255.0;
     double g_pm = g / 255.0;
     double b_pm = b / 255.0;
@@ -232,7 +232,7 @@ std::list<double> RGB_to_HSV(double r, double g, double b) {
     return myhsv;
 }
 
-double private_f(double t) {
+double _f(double t) {
     if (t > SIGMA) {
         return pow(t, 3.0);
     } else {
