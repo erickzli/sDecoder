@@ -88,7 +88,7 @@ void decodeColorPattern(char **cursor, std::string &jstring, int level, std::str
     // Get the color space (0x92 for HSV; 0x96 for RGB; 0x97 for CMYK)
     int color_space = get16Bit(cursor);
 
-    write_to_json(jstring, "color_" + toSimpleCamelCase(color_type), "{", level);
+    write_to_json(jstring, "color_" + _toCamelCaseSimple(color_type), "{", level);
     write_to_json(jstring, "name", "\"" + color_type + "\",", level + 1);
 
     // CMYK color space...

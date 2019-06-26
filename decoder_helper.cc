@@ -113,7 +113,7 @@ void printHex(char **cursor, int numOfBytes) {
     bytesRewinder(cursor, numOfBytes);
 }
 
-std::string toSimpleCamelCase(std::string str) {
+std::string _toCamelCaseSimple(std::string str) {
     int len = str.length();
     std::string ret = "";
     bool mustUpper = false;
@@ -171,9 +171,9 @@ std::list<double> CIELAB_to_RGB_HSV(double L, double a, double b, int type) {
     g = (g > 0.0031308) ? 1.055 * pow(g, (1 / 2.4)) - 0.055 : 12.92 * g;
     bl = (bl > 0.0031308) ? 1.055 * pow(bl, (1 / 2.4)) - 0.055 : 12.92 * bl;
 
-    r = format_rgb(r * 255);
-    g = format_rgb(g * 255);
-    bl = format_rgb(bl * 255);
+    r = _format_rgb(r * 255);
+    g = _format_rgb(g * 255);
+    bl = _format_rgb(bl * 255);
 
     // return RGB
     if (0 == type) {
@@ -240,7 +240,7 @@ double _f(double t) {
     }
 }
 
-double format_rgb(double code) {
+double _format_rgb(double code) {
     if (code > 255.0) {
         return 255.0;
     } else if (code < 0.0) {

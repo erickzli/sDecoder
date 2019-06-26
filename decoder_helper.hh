@@ -127,7 +127,7 @@ void printHex(char **cursor, int numOfBytes);
  * \param the input string
  * \return the camelCased output.
  */
-std::string toSimpleCamelCase(std::string str);
+std::string _toCamelCaseSimple(std::string str);
 
 /**
  * Convert CIELAB color to RGB or HSV
