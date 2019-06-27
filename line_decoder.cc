@@ -8,11 +8,11 @@
 #include "line_decoder.hh"
 #include "decoder.hh"
 
-int decodeLinePattern(char **cursor, std::string &jstring, int type, int level, std::string property) {
+void decodeLinePattern(char **cursor, std::string &jstring, int type, int level, std::string property) {
     LOG("-----------------------------");
     if (type == 0) {
         LOG("START decoding line");
-        write_to_json(jstring, "lineProperties_" + toSimpleCamelCase(property), "{", level);
+        write_to_json(jstring, "lineProperties_" + _toCamelCaseSimple(property), "{", level);
         write_to_json(jstring, "name", "\"" + property + "\",", level + 1);
     } else {
         LOG("START decoding line symbol");
@@ -82,7 +82,7 @@ int decodeLinePattern(char **cursor, std::string &jstring, int type, int level, 
         bytesRewinder(cursor, num_of_line_layers * 8 + 6);
         if (one != 2 || two != 0) {
             write_to_json(jstring, "", "},", level);
-            return 0;
+            return;
         }
     }
 
@@ -92,13 +92,13 @@ int decodeLinePattern(char **cursor, std::string &jstring, int type, int level, 
     double check_active_double = getDouble(cursor);
     bytesRewinder(cursor, 8);
 
-    write_to_json(jstring, "lineLayerActiveness", "{", level + 1);
+    write_to_json(jstring, "lineLayerActiveness", "[", level + 1);
     if ((check_active_int == 0 || check_active_int == 1) && check_active_double < 0.5) {
         LOG("Checking line layer activeness...");
         for (size_t i = 0; i < num_of_line_layers; i++) {
             int activeness = get32Bit(cursor); // 0: deactivated; 1: activated
             LOG("Line layer" + std::to_string(i + 1) + " Activeness: " + std::to_string(activeness));
-            write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
+            write_to_json(jstring, "", std::to_string(activeness) + ",", level + 2);
         }
 
         for (size_t i = 0; i < num_of_line_layers; i++) {
@@ -114,17 +114,17 @@ int decodeLinePattern(char **cursor, std::string &jstring, int type, int level, 
     } else {
         for (size_t i = 0; i < num_of_line_layers; i++) {
             LOG("Line layer" + std::to_string(i + 1) + " Activeness: 2");
-            write_to_json(jstring, "layer" + std::to_string(i + 1), "1,", level + 2);
+            write_to_json(jstring, "", "1,", level + 2);
         }
     }
-    write_to_json(jstring, "", "},", level + 1);
+    write_to_json(jstring, "", "],", level + 1);
 
     write_to_json(jstring, "", "},", level);
 
-    return 0;
+    return;
 }
 
-int decodeSimpleLine(char **cursor, std::string &jstring, int level) {
+void decodeSimpleLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Simple Line...");
     write_to_json(jstring, "type", "\"Simple Line\",", level);
 
@@ -142,11 +142,9 @@ int decodeSimpleLine(char **cursor, std::string &jstring, int level) {
     // decode the TAIL pattern of simple line.
     //while (0x0D != getChar(cursor)) {}
     bytesHopper(cursor, 8);
-
-    return 0;
 }
 
-int decodeCartoLine(char **cursor, std::string &jstring, int level) {
+void decodeCartoLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Cartographic Line...");
     write_to_json(jstring, "type", "\"Cartographic Line\",", level);
 
@@ -167,11 +165,9 @@ int decodeCartoLine(char **cursor, std::string &jstring, int level) {
     } catch (std::string err) {
         throw err;
     }
-
-    return 0;
 }
 
-int decodeHashLine(char **cursor, std::string &jstring, int level) {
+void decodeHashLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Hash Line...");
     write_to_json(jstring, "type", "\"Hash Line\",", level);
 
@@ -188,11 +184,9 @@ int decodeHashLine(char **cursor, std::string &jstring, int level) {
     } catch (std::string err) {
         throw err;
     }
-
-    return 0;
 }
 
-int decodeMarkerLine(char **cursor, std::string &jstring, int level) {
+void decodeMarkerLine(char **cursor, std::string &jstring, int level) {
     LOG("Type: Marker Line...");
     write_to_json(jstring, "type", "\"Marker Line\",", level);
 
@@ -210,8 +204,6 @@ int decodeMarkerLine(char **cursor, std::string &jstring, int level) {
 
     //while (0x0D != getChar(cursor)) {}
     bytesHopper(cursor, 8);
-
-    return 0;
 }
 
 int decodeLineCaps(char **cursor, std::string &jstring, int level) {
@@ -308,7 +300,7 @@ int decodeLineStyle(char **cursor, std::string &jstring, int level) {
     return line_style_code;
 }
 
-int decodeTemplate(char **cursor, std::string &jstring, int level, int type) {
+void decodeTemplate(char **cursor, std::string &jstring, int level, int type) {
     LOG("START decoding template...");
 
     // It is possible that the template is not defined.
@@ -360,6 +352,4 @@ int decodeTemplate(char **cursor, std::string &jstring, int level, int type) {
     }
 
     LOG("FINISHED decoding template. :-)");
-
-    return 0;
 }

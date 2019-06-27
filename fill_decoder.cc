@@ -8,7 +8,7 @@
 #include "fill_decoder.hh"
 #include "decoder.hh"
 
-int decodeFillPattern(char **cursor, std::string &jstring, int level, char **tail) {
+void decodeFillPattern(char **cursor, std::string &jstring, int level, char **tail) {
     int num_of_layers = 1;
     try {
         if (getChar(cursor) != 4) {
@@ -107,11 +107,9 @@ int decodeFillPattern(char **cursor, std::string &jstring, int level, char **tai
         }
         write_to_json(jstring, "", "],", 1);
     }
-
-    return 0;
 }
 
-int decodeLayer(char **cursor, std::string &jstring, int level, int type) {
+void decodeLayer(char **cursor, std::string &jstring, int level, int type) {
     // Type 0: A normal layer
     if (type == 0) {
         LOG("START decoding a fill layer...");
@@ -139,12 +137,10 @@ int decodeLayer(char **cursor, std::string &jstring, int level, int type) {
         LOG("ERROR: Filling type " + std::to_string(filling_type) + " not supported");
         throw std::string("Filling type.");
     }
-
-    return 0;
 }
 
 
-int decodeSimpleFill(char **cursor, std::string &jstring, int level, int type) {
+void decodeSimpleFill(char **cursor, std::string &jstring, int level, int type) {
     LOG("Filling type: Simple Fill");
 
     write_to_json(jstring, "fillingType", "\"Simple Fill\",", level);
@@ -168,12 +164,10 @@ int decodeSimpleFill(char **cursor, std::string &jstring, int level, int type) {
     } catch (std::string err) {
         throw err;
     }
-
-    return 0;
 }
 
 
-int decodeLineFill(char **cursor, std::string &jstring, int level) {
+void decodeLineFill(char **cursor, std::string &jstring, int level) {
     LOG("Filling type: Line Fill");
 
     write_to_json(jstring, "fillingType", "\"Line Fill\",", level);
@@ -200,11 +194,9 @@ int decodeLineFill(char **cursor, std::string &jstring, int level) {
     decodeDouble(cursor, jstring, level, "offset");
     // decode the line fill separation (the distance between each line)
     decodeDouble(cursor, jstring, level, "separation");
-
-    return 0;
 }
 
-int decodeMarkerFill(char **cursor, std::string &jstring, int level) {
+void decodeMarkerFill(char **cursor, std::string &jstring, int level) {
     LOG("Filling type: Marker Fill");
 
     write_to_json(jstring, "fillingType", "\"Marker Fill\",", level);
@@ -235,6 +227,4 @@ int decodeMarkerFill(char **cursor, std::string &jstring, int level) {
     } catch (std::string err) {
         throw err;
     }
-
-    return 0;
 }

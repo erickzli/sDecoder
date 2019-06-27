@@ -18,11 +18,11 @@ void write_to_json(std::string &jstring, std::string key, std::string value, int
     }
 
     // If it has a tag -- `"tag": `
-    if (0 != tag.length()) {
-        output += ("\"" + tag + "\": ");
+    if (0 != key.length()) {
+        output += ("\"" + key + "\": ");
     }
 
-    output +=  buf + "\n";
+    output +=  value + "\n";
 
     jstring += output;
 }
@@ -31,7 +31,6 @@ std::string json_comma_remover(std::string &jstring) {
     size_t jlen = jstring.length();
     std::string ret = "";
     int count_spaces = 0;
-    // int count_line = 1;
 
     for (size_t i = 0; i < jlen; i++) {
         if (COMMA == jstring[i] && NEWLINE == jstring[i + 1]) {

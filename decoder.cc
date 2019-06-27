@@ -221,7 +221,7 @@ int decodeInt(char **cursor, std::string &jstring, int level, std::string tag) {
     return val;
 }
 
-int decodeString(char **cursor, std::string &jstring, int level, std::string tag) {
+void decodeString(char **cursor, std::string &jstring, int level) {
     LOG("START decoding string...");
 
     // bool going = true; // When "going" is true, the while loop will keep going.
@@ -256,6 +256,4 @@ int decodeString(char **cursor, std::string &jstring, int level, std::string tag
     bytesRewinder(cursor, 1);
 
     LOG("FINISHED decoding string. :-)");
-
-    return 0;
 }

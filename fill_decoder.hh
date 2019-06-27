@@ -20,7 +20,7 @@
  * \param (See json_writer.hh)
  * \param a double pointer pointing to the last byte of the data block
  */
-int decodeFillPattern(char **cursor, std::string &jstring, int level,
+void decodeFillPattern(char **cursor, std::string &jstring, int level,
                       char **tail);
 
 
@@ -34,7 +34,7 @@ int decodeFillPattern(char **cursor, std::string &jstring, int level,
  *     0: Normal decoder;
  *     1: Mask symbol decoder.
  */
-int decodeLayer(char **cursor, std::string &jstring, int level, int type);
+void decodeLayer(char **cursor, std::string &jstring, int level, int type);
 
 /**
  * Decode the pattern of Simple Fill Symbol
@@ -45,7 +45,7 @@ int decodeLayer(char **cursor, std::string &jstring, int level, int type);
  *     0: Normal process;
  *     1: Symbol process.
  */
-int decodeSimpleFill(char **cursor, std::string &jstring, int level, int type);
+void decodeSimpleFill(char **cursor, std::string &jstring, int level, int type);
 
 /**
  * Decode the pattern of Line Fill Symbol
@@ -53,7 +53,7 @@ int decodeSimpleFill(char **cursor, std::string &jstring, int level, int type);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeLineFill(char **cursor, std::string &jstring, int level);
+void decodeLineFill(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of Marker Fill Symbol
@@ -61,6 +61,6 @@ int decodeLineFill(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeMarkerFill(char **cursor, std::string &jstring, int level);
+void decodeMarkerFill(char **cursor, std::string &jstring, int level);
 
 #endif

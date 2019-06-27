@@ -22,7 +22,7 @@
  *     1: Symbol.
  * \param the property, which can be `outline` etc.
  */
-int decodeLinePattern(char **cursor, std::string &jstring, int level, int type,
+void decodeLinePattern(char **cursor, std::string &jstring, int level, int type,
                       std::string property);
 
 /**
@@ -31,7 +31,7 @@ int decodeLinePattern(char **cursor, std::string &jstring, int level, int type,
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeSimpleLine(char **cursor, std::string &jstring, int level);
+void decodeSimpleLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of Cartographical Line Symbol
@@ -39,7 +39,7 @@ int decodeSimpleLine(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeCartoLine(char **cursor, std::string &jstring, int level);
+void decodeCartoLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of Hash Line Symbol
@@ -47,7 +47,7 @@ int decodeCartoLine(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeHashLine(char **cursor, std::string &jstring, int level);
+void decodeHashLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of Marker Line Symbol
@@ -55,7 +55,7 @@ int decodeHashLine(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeMarkerLine(char **cursor, std::string &jstring, int level);
+void decodeMarkerLine(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of line caps
@@ -90,6 +90,6 @@ int decodeLineStyle(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param type type of template feed (0: hash/carto line; 1: marker line)
  */
-int decodeTemplate(char **cursor, std::string &jstring, int level, int type);
+void decodeTemplate(char **cursor, std::string &jstring, int level, int type);
 
 #endif

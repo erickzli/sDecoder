@@ -120,7 +120,7 @@ std::string _toCamelCaseSimple(std::string str) {
     bool mustLower = true;
 
     for (int i = 0; i < len; i++) {
-        if (str[i] == ' ') {
+        if (!isalnum(str[i])) {
             mustUpper = true;
         } else if (mustUpper) {
             ret += toupper(str[i]);

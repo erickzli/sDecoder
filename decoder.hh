@@ -110,10 +110,8 @@ int decodeInt(char **cursor, std::string &jstring, int level, std::string tag);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
- * \param the tag of the string.
  * NOTE: This method so far just supports decoding the string for font name.
  */
-int decodeString(char **cursor, std::string &jstring, int level,
-                 std::string tag);
+void decodeString(char **cursor, std::string &jstring, int level);
 
 #endif

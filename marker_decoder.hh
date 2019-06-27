@@ -19,7 +19,7 @@
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeMarkerPattern(char **cursor, std::string &jstring, int level);
+void decodeMarkerPattern(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of Simple Marker Symbol
@@ -27,7 +27,7 @@ int decodeMarkerPattern(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeSimpleMarker(char **cursor, std::string &jstring, int level);
+void decodeSimpleMarker(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of Character Marker Symbol
@@ -35,7 +35,7 @@ int decodeSimpleMarker(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeCharacterMarker(char **cursor, std::string &jstring, int level);
+void decodeCharacterMarker(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the pattern of Arrow Marker Symbol
@@ -43,7 +43,7 @@ int decodeCharacterMarker(char **cursor, std::string &jstring, int level);
  * \param (See json_writer.hh)
  * \param (See json_writer.hh)
  */
-int decodeArrowMarker(char **cursor, std::string &jstring, int level);
+void decodeArrowMarker(char **cursor, std::string &jstring, int level);
 
 /**
  * Decode the types of markers

@@ -8,7 +8,7 @@
 #include "marker_decoder.hh"
 #include "decoder.hh"
 
-int decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
+void decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
     LOG("-----------------------------");
     LOG("START decoding marker");
     write_to_json(jstring, "markerProperties", "{", level);
@@ -104,13 +104,13 @@ int decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
     double check_active_double = getDouble(cursor);
     bytesRewinder(cursor, 8);
 
-    write_to_json(jstring, "markerLayerActiveness", "{", level + 1);
+    write_to_json(jstring, "markerLayerActiveness", "[", level + 1);
     if ((check_active_int == 0 || check_active_int == 1) && check_active_double < 0.5) {
         LOG("Checking marker activeness...");
         for (size_t i = 0; i < num_of_marker_layers; i++) {
             int activeness = get32Bit(cursor); // 0: deactivated; 1: activated
             LOG("Marker layer" + std::to_string(i + 1) + " Activeness: " + std::to_string(activeness));
-            write_to_json(jstring, "layer" + std::to_string(i + 1), std::to_string(activeness) + ",", level + 2);
+            write_to_json(jstring, "", std::to_string(activeness) + ",", level + 2);
         }
 
         for (size_t i = 0; i < num_of_marker_layers; i++) {
@@ -127,23 +127,21 @@ int decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
     } else {
         for (size_t i = 0; i < num_of_marker_layers; i++) {
             LOG("Marker layer" + std::to_string(i + 1) + " Activeness: 2");
-            write_to_json(jstring, "layer" + std::to_string(i + 1), "1,", level + 2);
+            write_to_json(jstring, "", "1,", level + 2);
         }
     }
 
-    write_to_json(jstring, "", "},", level + 1);
+    write_to_json(jstring, "", "],", level + 1);
 
     write_to_json(jstring, "", "},", level);
-
-    return 0;
 }
 
-int decodeSimpleMarker(char **cursor, std::string &jstring, int level) {
+void decodeSimpleMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Simple Marker...");
     write_to_json(jstring, "type", "\"Simple Marker\",", level);
 
     try {
-        decodeColorPattern(cursor, jstring, level, "color");
+        decodeColorPattern(cursor, jstring, level, "marker color");
         decodeDouble(cursor, jstring, level, "size");
         decodeMarkerStyle(cursor, jstring, level);
         bytesHopper(cursor, 16);
@@ -164,11 +162,9 @@ int decodeSimpleMarker(char **cursor, std::string &jstring, int level) {
     }
 
     bytesHopper(cursor, 2);
-
-    return 0;
 }
 
-int decodeCharacterMarker(char **cursor, std::string &jstring, int level) {
+void decodeCharacterMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Character Marker...");
     write_to_json(jstring, "type", "\"Character Marker\",", level);
 
@@ -194,15 +190,13 @@ int decodeCharacterMarker(char **cursor, std::string &jstring, int level) {
     }
 
     try {
-        decodeString(cursor, jstring, level, "font");
+        decodeString(cursor, jstring, level);
     } catch (std::string err) {
         throw err;
     }
-
-    return 0;
 }
 
-int decodeArrowMarker(char **cursor, std::string &jstring, int level) {
+void decodeArrowMarker(char **cursor, std::string &jstring, int level) {
     LOG("Type: Arrow Marker...");
     write_to_json(jstring, "type", "\"Arrow Marker\",", level);
 
@@ -222,8 +216,6 @@ int decodeArrowMarker(char **cursor, std::string &jstring, int level) {
     decodeDouble(cursor, jstring, level, "YOffset");
 
     bytesHopper(cursor, 2);
-
-    return 0;
 }
 
 int decodeMarkerTypes(char **cursor, std::string &jstring, int level) {
