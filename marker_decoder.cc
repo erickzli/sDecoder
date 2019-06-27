@@ -104,18 +104,24 @@ void decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
     double check_active_double = getDouble(cursor);
     bytesRewinder(cursor, 8);
 
-    write_to_json(jstring, "markerLayerActiveness", "[", level + 1);
+
     if ((check_active_int == 0 || check_active_int == 1) && check_active_double < 0.5) {
+        write_to_json(jstring, "markerLayerActiveness", "[", level + 1);
         LOG("Checking marker activeness...");
         for (size_t i = 0; i < num_of_marker_layers; i++) {
             int activeness = get32Bit(cursor); // 0: deactivated; 1: activated
             LOG("Marker layer" + std::to_string(i + 1) + " Activeness: " + std::to_string(activeness));
             write_to_json(jstring, "", std::to_string(activeness) + ",", level + 2);
         }
+        write_to_json(jstring, "", "],", level + 1);
 
+        write_to_json(jstring, "markerLayerLock", "[", level + 1);
         for (size_t i = 0; i < num_of_marker_layers; i++) {
-            bytesHopper(cursor, 4); // Hop for (01 00 00 00) or (00 00 00 00)
+            int mlock = get32Bit(cursor); // 0: deactivated; 1: activated
+            LOG("Marker layer" + std::to_string(i + 1) + " Lock: " + std::to_string(mlock));
+            write_to_json(jstring, "", std::to_string(mlock) + ",", level + 2);
         }
+        write_to_json(jstring, "", "],", level + 1);
         bytesHopper(cursor, 16);
         for (size_t i = 0; i < num_of_marker_layers; i++) {
             if (0x02 == getChar(cursor)) {
@@ -125,13 +131,22 @@ void decodeMarkerPattern(char **cursor, std::string &jstring, int level) {
             }
         }
     } else {
+        write_to_json(jstring, "markerLayerActiveness", "[", level + 1);
         for (size_t i = 0; i < num_of_marker_layers; i++) {
             LOG("Marker layer" + std::to_string(i + 1) + " Activeness: 2");
             write_to_json(jstring, "", "1,", level + 2);
         }
+        write_to_json(jstring, "", "],", level + 1);
+
+        write_to_json(jstring, "markerLayerLock", "[", level + 1);
+        for (size_t i = 0; i < num_of_marker_layers; i++) {
+            LOG("Marker layer" + std::to_string(i + 1) + " Lock: 2");
+            write_to_json(jstring, "", "1,", level + 2);
+        }
+        write_to_json(jstring, "", "],", level + 1);
     }
 
-    write_to_json(jstring, "", "],", level + 1);
+
 
     write_to_json(jstring, "", "},", level);
 }

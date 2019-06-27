@@ -92,18 +92,24 @@ void decodeLinePattern(char **cursor, std::string &jstring, int type, int level,
     double check_active_double = getDouble(cursor);
     bytesRewinder(cursor, 8);
 
-    write_to_json(jstring, "lineLayerActiveness", "[", level + 1);
+
     if ((check_active_int == 0 || check_active_int == 1) && check_active_double < 0.5) {
+        write_to_json(jstring, "lineLayerActiveness", "[", level + 1);
         LOG("Checking line layer activeness...");
         for (size_t i = 0; i < num_of_line_layers; i++) {
             int activeness = get32Bit(cursor); // 0: deactivated; 1: activated
             LOG("Line layer" + std::to_string(i + 1) + " Activeness: " + std::to_string(activeness));
             write_to_json(jstring, "", std::to_string(activeness) + ",", level + 2);
         }
+        write_to_json(jstring, "", "],", level + 1);
 
+        write_to_json(jstring, "lineLayerLock", "[", level + 1);
         for (size_t i = 0; i < num_of_line_layers; i++) {
-            bytesHopper(cursor, 4); // Hop for (01 00 00 00) or (00 00 00 00)
+            int llock = get32Bit(cursor); // 0: deactivated; 1: activated
+            LOG("Line layer" + std::to_string(i + 1) + " Lock: " + std::to_string(llock));
+            write_to_json(jstring, "", std::to_string(llock) + ",", level + 2);
         }
+        write_to_json(jstring, "", "],", level + 1);
         for (size_t i = 0; i < num_of_line_layers; i++) {
             if (0x02 == getChar(cursor)) {
                 bytesHopper(cursor, 5); // Hop for (02 00 00 00 00 00)
@@ -112,12 +118,20 @@ void decodeLinePattern(char **cursor, std::string &jstring, int type, int level,
             }
         }
     } else {
+        write_to_json(jstring, "lineLayerActiveness", "[", level + 1);
         for (size_t i = 0; i < num_of_line_layers; i++) {
             LOG("Line layer" + std::to_string(i + 1) + " Activeness: 2");
             write_to_json(jstring, "", "1,", level + 2);
         }
+        write_to_json(jstring, "", "],", level + 1);
+
+        write_to_json(jstring, "lineLayerLock", "[", level + 1);
+        for (size_t i = 0; i < num_of_line_layers; i++) {
+            LOG("Line layer" + std::to_string(i + 1) + " Lock: 2");
+            write_to_json(jstring, "", "1,", level + 2);
+        }
+        write_to_json(jstring, "", "],", level + 1);
     }
-    write_to_json(jstring, "", "],", level + 1);
 
     write_to_json(jstring, "", "},", level);
 

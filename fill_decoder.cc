@@ -87,23 +87,25 @@ void decodeFillPattern(char **cursor, std::string &jstring, int level, char **ta
             write_to_json(jstring, "", std::to_string(activeness) + ",", 2);
         }
         write_to_json(jstring, "", "],", 1);
+
         write_to_json(jstring, "fillLayerLock", "[", 1);
         for (size_t i = 0; i < num_of_layers; i++) {
-            int lock = get32Bit(cursor);
-            LOG("Fill layer lock " + std::to_string(i + 1) + ": " + std::to_string(lock));
-            write_to_json(jstring, "", std::to_string(lock) + ",", 2);
+            int flock = get32Bit(cursor);
+            LOG("Fill layer lock " + std::to_string(i + 1) + ": " + std::to_string(flock));
+            write_to_json(jstring, "", std::to_string(flock) + ",", 2);
         }
         write_to_json(jstring, "", "],", 1);
     } else {
-        LOG("WARNING: No ending pattern...all layers and locks will be treated as ON.");
+        LOG("WARNING: No ending pattern...we let user know.");
         write_to_json(jstring, "fillLayerActiveness", "[", 1);
         for (size_t i = 0; i < num_of_layers; i++) {
-            write_to_json(jstring, "", "1,", 2);
+            write_to_json(jstring, "", "2,", 2);
         }
         write_to_json(jstring, "", "],", 1);
+
         write_to_json(jstring, "fillLayerLock", "[", 1);
         for (size_t i = 0; i < num_of_layers; i++) {
-            write_to_json(jstring, "", "1,", 2);
+            write_to_json(jstring, "", "2,", 2);
         }
         write_to_json(jstring, "", "],", 1);
     }
